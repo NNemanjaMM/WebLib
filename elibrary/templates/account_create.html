@@ -88,6 +88,19 @@
             <hr/>
 
             <div>
+                {{ form.date_registered.label }}
+                {{ form.date_registered }}
+                {% if form.date_registered.errors %}
+                    <div>
+                        {% for error in form.date_registered.errors %}
+                            {% if not error == "Not a valid date value" %}
+                                <span>{{ error }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
                 {{ form.username.label }}
                 {{ form.username }}
                 {% if form.username.errors %}

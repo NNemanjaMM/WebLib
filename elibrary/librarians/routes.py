@@ -146,6 +146,7 @@ def librarians_create():
         librarian.phone_2 = form.phone_2.data
         librarian.address = form.address.data
         librarian.town = form.town.data
+        librarian.date_registered = form.date_registered.data
         librarian.username = form.username.data
         librarian.password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         librarian.is_admin = form.is_administrator.data
