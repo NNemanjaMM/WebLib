@@ -11,11 +11,6 @@ main = Blueprint('main', __name__)
 def home():
     return render_template('home.html')
 
-@main.route("/members")
-@login_required
-def members():
-    return render_template('users.html', title='About')
-
 @main.route("/books")
 @login_required
 def books():
