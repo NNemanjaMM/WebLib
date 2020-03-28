@@ -1,6 +1,7 @@
 db_init.py
 messages_backup.txt
 elibrary/site.db
+elibrary/config.py
 elibrary/translations/
 
 # Byte-compiled / optimized / DLL files
