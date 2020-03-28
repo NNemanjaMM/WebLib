@@ -26,9 +26,11 @@ def create_app(config_class=Config):
     babel.init_app(app)
 
     from elibrary.librarians.routes import librarians
+    from elibrary.members.routes import members
     from elibrary.main.routes import main
     from elibrary.errors.handlers import errors
     app.register_blueprint(librarians)
+    app.register_blueprint(members)
     app.register_blueprint(main)
     app.register_blueprint(errors)
 
