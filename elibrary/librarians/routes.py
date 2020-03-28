@@ -130,6 +130,7 @@ def librarians_details(librarian_id):
     librarian = Librarian.query.get_or_404(librarian_id)
     return render_template('account.html', title=_l('Librarian account details'), account=librarian, admin_is_editing=True)
 
+
 @librarians.route("/librarians/create", methods=['GET', 'POST'])
 @login_required
 def librarians_create():
@@ -162,7 +163,6 @@ def librarians_update(librarian_id):
     librarian = Librarian.query.get_or_404(librarian_id)
     if librarian.id == current_user.id:
         return redirect(url_for('librarians.account_change'))
-
     form = LibrarianUpdateForm()
     if form.validate_on_submit():
         librarian.first_name = form.first_name.data
@@ -195,7 +195,6 @@ def librarians_password(librarian_id):
         return redirect(url_for('librarians.account_password'))
     elif not librarian.change_password:
         abort(405)
-
     form = LibrarianChangePasswordForm()
     if form.validate_on_submit():
         librarian.password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
@@ -213,10 +212,8 @@ def librarians_username(librarian_id):
     librarian = Librarian.query.get_or_404(librarian_id)
     if not librarian.change_username:
         abort(405)
-
     form_accept = AcceptForm()
     form_reject = RejectForm()
-
     if not request.method == 'GET':
         if form_reject.submit_reject.data and form_reject.validate():
             flash(_l('Account username change has been rejected')+'.', 'info')
@@ -232,7 +229,6 @@ def librarians_username(librarian_id):
         librarian.change_username_value = None
         db.session.commit()
         return redirect(url_for('librarians.librarians_active'))
-
     return render_template('account_username_change_request.html', title=_l('Update update'), form1=form_accept, form2=form_reject, librarian=librarian)
 
 @librarians.route("/librarians/availability/<int:librarian_id>", methods=['GET', 'POST'])
@@ -243,10 +239,8 @@ def librarians_availability(librarian_id):
     librarian = Librarian.query.get_or_404(librarian_id)
     if current_user.id == librarian_id:
         abort(405)
-
     form_accept = AcceptForm()
     form_reject = RejectForm()
-
     if not request.method == 'GET':
         if form_reject.submit_reject.data and form_reject.validate():
             flash(_l('Account availability is not changed')+'.', 'info')
@@ -255,5 +249,4 @@ def librarians_availability(librarian_id):
             flash(_l('Account availability is changed')+'.', 'info')
         db.session.commit()
         return redirect(url_for('librarians.librarians_active'))
-
     return render_template('account_availability.html', title=_l('Availability update'), form1=form_accept, form2=form_reject, librarian=librarian)
