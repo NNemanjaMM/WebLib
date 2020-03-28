@@ -1,7 +1,7 @@
 {% extends "base_layout.html" %}
 {% block content %}
 
-<h1>{{ gettext('Librarian username update') }}</h1>
+<h1>{{ gettext('Librarian\'s account availability update') }}</h1>
 
 <div>
     <strong>{{ gettext('For a librarian') }}</strong>
@@ -20,16 +20,20 @@
     </div>
 
     <div>
-        {{ gettext('Current username') }}
+        {{ gettext('Username') }}
         <strong>
             {{ librarian.username }}
         </strong>
     </div>
 
     <div>
-        {{ gettext('Requested username') }}
+        {{ gettext('Current status') }}
         <strong>
-            {{ librarian.change_username_value }}
+            {% if librarian.is_operational %}
+                {{ gettext('Enabled') }}
+            {% else %}
+                {{ gettext('Disabled') }}
+            {% endif %}
         </strong>
     </div>
 <div>
@@ -37,9 +41,13 @@
 <div>
     <fieldset>
         <p>
-            {{ gettext('Do you approve librarian\'s username change request') }}?
+            {{ gettext('Do you approve librarian\'s account availability change') }}?
             <br/>
-            {{ gettext('From') }} <strong>{{ librarian.username }}</strong> {{ gettext('to') }} <strong>{{ librarian.change_username_value }}</strong>.
+            {% if librarian.is_operational %}
+                {{ gettext('From') }} <strong>{{gettext('Enabled') }}</strong> {{ gettext('to') }} <strong>{{ gettext('Disabled') }}</strong>.
+            {% else %}
+                {{ gettext('From') }} <strong>{{ gettext('Disabled') }}</strong> {{ gettext('to') }} <strong>{{gettext('Enabled') }}</strong>.
+            {% endif %}
         </p>
         <form method="POST" action="">
             {{ form1.hidden_tag() }}

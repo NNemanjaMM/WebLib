@@ -1,0 +1,13 @@
+{% extends "base_layout.html" %}
+{% block content %}
+    <div>
+        <h1>{{ gettext('Method Not Allowed') }} (405)</h1>
+        <p>
+            {{ gettext('The method requested is not allowed under the current circumstances.') }}
+            <br/>
+            {{ gettext('The execution may result in the application misbehaviour.') }}
+            <br/>
+            {{ gettext('Please choose a different action or try to change the account.') }}
+        </p>
+    </div>
+{% endblock content %}

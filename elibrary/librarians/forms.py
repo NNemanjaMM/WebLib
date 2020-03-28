@@ -55,7 +55,7 @@ class LibrarianUpdatePasswordForm(LibrarianChangePasswordForm):
     old_password = PasswordField(_l('Old password'), validators=[DataRequired(), Length(min=6)])
 
 class AcceptForm(FlaskForm):
-    submit_accept = SubmitField(_l('Accept change'))
+    submit_accept = SubmitField(_l('Approve'))
 
 class RejectForm(FlaskForm):
-    submit_reject = SubmitField(_l('Reject change'))
+    submit_reject = SubmitField(_l('Reject'))

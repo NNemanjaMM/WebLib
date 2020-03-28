@@ -120,7 +120,15 @@
             {% endif %}
             <br/>
             <a href="{{ url_for('librarians.librarians_update', librarian_id=account.id) }}">{{ gettext('Update account') }}</a>
-            <a href="#">{{ gettext('Disable account') }}</a>
+
+            {% if not current_user.id == account.id %}
+                {% if account.is_operational %}
+                    <a href="{{ url_for('librarians.librarians_availability', librarian_id=account.id) }}">{{ gettext('Disable account') }}</a>
+                {% else %}
+                    <a href="{{ url_for('librarians.librarians_availability', librarian_id=account.id) }}">{{ gettext('Enable account') }}</a>
+                {% endif %}
+            {% endif %}
+
         </p>
     {% else %}
         <p>

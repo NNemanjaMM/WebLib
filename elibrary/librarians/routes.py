@@ -30,7 +30,8 @@ def login():
             else:
                 flash(_l('Login Unsuccessful.')+' '+_l('Please check username and password'), 'danger')
         else:
-            flash(_l('Login Unsuccessful.')+' '+_l('This user is inactive. For the activation consult the administrator.'), 'danger')
+            flash(_l('Login Unsuccessful')+'. '+_l('This user is inactive')+'.', 'danger')
+            flash(_l('For the activation consult the administrator')+'. ', 'danger')
     form.username.data=''
     return render_template('login.html', form=form, title=_l('Login'))
 
@@ -193,7 +194,7 @@ def librarians_password(librarian_id):
     if librarian.id == current_user.id:
         return redirect(url_for('librarians.account_password'))
     elif not librarian.change_password:
-        abort(404)
+        abort(405)
 
     form = LibrarianChangePasswordForm()
     if form.validate_on_submit():
@@ -211,7 +212,7 @@ def librarians_username(librarian_id):
         abort(403)
     librarian = Librarian.query.get_or_404(librarian_id)
     if not librarian.change_username:
-        abort(404)
+        abort(405)
 
     form_accept = AcceptForm()
     form_reject = RejectForm()
@@ -232,4 +233,27 @@ def librarians_username(librarian_id):
         db.session.commit()
         return redirect(url_for('librarians.librarians_active'))
 
-    return render_template('account_username_change_request.html', title=_l('Librarian username update'), form1=form_accept, form2=form_reject, librarian=librarian)
+    return render_template('account_username_change_request.html', title=_l('Update update'), form1=form_accept, form2=form_reject, librarian=librarian)
+
+@librarians.route("/librarians/availability/<int:librarian_id>", methods=['GET', 'POST'])
+@login_required
+def librarians_availability(librarian_id):
+    if not current_user.is_admin:
+        abort(403)
+    librarian = Librarian.query.get_or_404(librarian_id)
+    if current_user.id == librarian_id:
+        abort(405)
+
+    form_accept = AcceptForm()
+    form_reject = RejectForm()
+
+    if not request.method == 'GET':
+        if form_reject.submit_reject.data and form_reject.validate():
+            flash(_l('Account availability is not changed')+'.', 'info')
+        elif form_accept.submit_accept.data and form_accept.validate():
+            librarian.is_operational = not librarian.is_operational
+            flash(_l('Account availability is changed')+'.', 'info')
+        db.session.commit()
+        return redirect(url_for('librarians.librarians_active'))
+
+    return render_template('account_availability.html', title=_l('Availability update'), form1=form_accept, form2=form_reject, librarian=librarian)
