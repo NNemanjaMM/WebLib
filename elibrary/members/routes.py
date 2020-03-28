@@ -6,3 +6,8 @@ from elibrary import db
 from elibrary.models import Member
 
 members = Blueprint('members', __name__)
+
+@members.route("/members")
+@login_required
+def members_all():
+    return render_template('users.html', title='About')

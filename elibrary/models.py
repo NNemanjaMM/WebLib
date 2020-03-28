@@ -18,6 +18,7 @@ class Member(db.Model):
     town = db.Column(db.String(20), nullable=False)
     date_registered = db.Column(db.Date, nullable=False, default=date.today())
     date_expiration = db.Column(db.Date, nullable=False, default=date.today() + timedelta(days=365))
+    books_rented = db.Column(db.Integer, nullable=False, default=0)
     #TODO lista knjiga koje su trenutno kod njega
 
     def __repr__(self):
