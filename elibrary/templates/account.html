@@ -1,0 +1,135 @@
+{% extends "base_layout.html" %}
+{% block content %}
+    <h1>{{ title }}</h1>
+
+    <p>
+        {{ gettext('First name') }}
+        <strong>
+            {{ account.first_name }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Last name') }}
+        <strong>
+            {{ account.last_name }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Username') }}
+        <strong>
+            {{ account.username }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('E-mail') }}
+        <strong>
+            {{ account.email }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Phone number') }}
+        <strong>
+            {{ account.phone_1 }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Second phone number') }}
+        <strong>
+            {{ account.phone_2 }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Address') }}
+        <strong>
+            {{ account.address }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Town') }}
+        <strong>
+            {{ account.town }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Date of registration') }}
+        <strong>
+            {{ account.date_registered.strftime('%d.%m.%Y.') }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Is administrator') }}
+        <strong>
+            {% if account.is_admin %}
+                {{ gettext('Yes') }}
+            {% else %}
+                {{ gettext('No') }}
+            {% endif %}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Is operational') }}
+        <strong>
+            {% if account.is_operational %}
+                {{ gettext('Yes') }}
+            {% else %}
+                {{ gettext('No') }}
+            {% endif %}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Requested password reset') }}
+        <strong>
+            {% if account.change_password %}
+                {{ gettext('Yes') }}
+            {% else %}
+                {{ gettext('No') }}
+            {% endif %}
+        </strong>
+    </p>
+
+    {% if account.change_username %}
+        <hr/>
+        <p>
+            {{ gettext('Requested username change') }}
+            <strong>
+                {{ account.change_username_value }}
+            </strong>
+        </p>
+    {% endif %}
+
+    <hr/>
+
+    {% if admin_is_editing %}
+        <p>
+            {% if account.change_password %}
+                <a href="{{ url_for('librarians.librarians_password', librarian_id=account.id) }}">{{ gettext('Update password') }}</a>
+            {% endif %}
+            {% if account.change_username %}
+                <a href="{{ url_for('librarians.librarians_username', librarian_id=account.id) }}">{{ gettext('Update username') }}</a>
+            {% endif %}
+            <br/>
+            <a href="{{ url_for('librarians.librarians_update', librarian_id=account.id) }}">{{ gettext('Update account') }}</a>
+            <a href="#">{{ gettext('Disable account') }}</a>
+        </p>
+    {% else %}
+        <p>
+            <a href="{{ url_for('librarians.account_change') }}">{{ gettext('Update account') }}</a>
+            <a href="{{ url_for('librarians.account_password') }}">{{ gettext('Update password') }}</a>
+        </p>
+    {% endif %}
+
+
+
+
+{% endblock content %}

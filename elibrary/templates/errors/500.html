@@ -1,0 +1,13 @@
+{% extends "base_layout.html" %}
+{% block content %}
+    <div>
+        <h1>{{ gettext('Internal server error') }} (500)</h1>
+        <p>
+            {{ gettext('We are experiencing some trouble with the application.') }}
+            <br/>
+            {{ gettext('Please check your parameters and try again. If the problem persists contact the application provider.') }}
+            <br/>
+            {{ gettext('Meanwhile, you can perform other actions or access other pages - use the menu at the top of the page.') }}
+        </p>
+    </div>
+{% endblock content %}

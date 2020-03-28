@@ -1,0 +1,13 @@
+{% extends "base_layout.html" %}
+{% block content %}
+    <div>
+        <h1>{{ gettext('Not authorized') }} (403)</h1>
+        <p>
+            {{ gettext('You do not have permission to perform requested action or access the requested page.') }}
+            <br/>
+            {{ gettext('Please check with your administrator if you should be able to perform this action or access the requested page.') }}
+            <br/>
+            {{ gettext('Meanwhile, you can perform other actions or access other pages - use the menu at the top of the page.') }}
+        </p>
+    </div>
+{% endblock content %}

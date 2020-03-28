@@ -1,0 +1,142 @@
+{% extends "base_layout.html" %}
+{% block content %}
+
+<h1>{{ gettext('Create account') }}</h1>
+
+<div>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset>
+            <div>
+                {{ form.first_name.label }}
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <div>
+                        {% for error in form.first_name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.last_name.label }}
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <div>
+                        {% for error in form.last_name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.email.label }}
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div>
+                        {% for error in form.email.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.phone_1.label }}
+                {{ form.phone_1 }}
+                {% if form.phone_1.errors %}
+                    <div>
+                        {% for error in form.phone_1.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.phone_2.label }}
+                {{ form.phone_2 }}
+                {% if form.phone_2.errors %}
+                    <div>
+                        {% for error in form.phone_2.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.address.label }}
+                {{ form.address }}
+                {% if form.address.errors %}
+                    <div>
+                        {% for error in form.address.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.town.label }}
+                {{ form.town }}
+                {% if form.town.errors %}
+                    <div>
+                        {% for error in form.town.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <hr/>
+
+            <div>
+                {{ form.username.label }}
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div>
+                        {% for error in form.username.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.password.label }}
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <div>
+                        {% for error in form.password.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.confirm_password.label }}
+                {{ form.confirm_password }}
+                {% if form.confirm_password.errors %}
+                    <div>
+                        {% for error in form.confirm_password.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.is_administrator.label }}
+                {{ form.is_administrator }}
+                {% if form.is_administrator.errors %}
+                    <div>
+                        {% for error in form.is_administrator.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+        </fieldset>
+        <div>
+            {{ form.submit }}
+        </div>
+    </form>
+</div>
+
+{% endblock content %}

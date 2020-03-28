@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="sr" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+    <title>{{ gettext('e-Library') }} - {{ title }}</title>
+</head>
+<body>
+
+    <div>
+        <small>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </small>
+    </div>
+
+    <main>
+        <div>
+            {% block content %}
+
+            {% endblock %}
+        </div>
+    </main>
+
+</body>
+</html>

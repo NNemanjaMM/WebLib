@@ -1,3 +1,6 @@
+db_init.py
+messages_backup.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

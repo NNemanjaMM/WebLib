@@ -1,0 +1,51 @@
+{% extends "base_layout.html" %}
+{% block content %}
+
+<h1>{{ gettext('Librarians') }}</h1>
+
+<a href="{{ url_for('librarians.librarians_create') }}">{{ gettext('Add new librarian') }}</a>
+<br/>
+
+{% if include_disabled %}
+    <a href="{{ url_for('librarians.librarians_active') }}">{{ gettext('Do not include inactive librarians') }}</a>
+{% else %}
+    <a href="{{ url_for('librarians.librarians_all') }}">{{ gettext('Include inactive librarians') }}</a>
+{% endif %}
+
+
+
+
+{% for librarian in librarians_list %}
+    <p>
+        <span>{{ librarian.first_name }} {{ librarian.last_name }} </span>
+
+        <span>{{ librarian.username }} </span>
+
+        <span>{{ librarian.date_registered }} </span>
+
+        {% if librarian.is_admin %}
+            <span>{{ gettext('Is administrator') }}</span>
+        {% else %}
+            <span>{{ gettext('Is not administrator') }}</span>
+        {% endif %}
+
+        {% if not librarian.is_operational %}
+            <span>{{ gettext('Is not operational') }}</span>
+        {% endif %}
+
+        {% if librarian.change_password %}
+            <span>{{ gettext('Requested password change') }}</span>
+        {% endif %}
+
+        {% if librarian.change_username %}
+            <span>{{ gettext('Requested username change') }}</span>
+        {% endif %}
+
+        <span>
+            <a href="{{ url_for('librarians.librarians_details', librarian_id=librarian.id) }}">{{ gettext('More details') }}</a>
+        </span>
+
+    </p>
+{% endfor %}
+
+{% endblock content %}
