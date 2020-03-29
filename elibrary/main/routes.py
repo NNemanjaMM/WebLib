@@ -14,9 +14,9 @@ def home():
 @main.route("/books")
 @login_required
 def books():
-    return render_template('users.html', title='About')
+    return render_template('users.html')
 
 @main.route("/stats")
 @login_required
 def stats():
-    return render_template('users.html', title='About')
+    return render_template('users.html')

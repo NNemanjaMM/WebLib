@@ -1,6 +1,7 @@
-from elibrary import db, login_manager
-from flask_login import UserMixin
 from datetime import date, timedelta
+from flask_login import UserMixin
+from elibrary import db, login_manager
+from elibrary.utils.numeric_defines import MEMBERSHIP_EXTENSION_DAYS, EXPIRATION_EXTENSION_LIMIT
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -10,16 +11,32 @@ class Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(20), nullable=False)
     last_name = db.Column(db.String(40), nullable=False)
-    birth_year = db.Column(db.Integer, nullable=False)
+    birth_year = db.Column(db.Integer, nullable=True)
     email = db.Column(db.String(120), nullable=True)
     phone_1 = db.Column(db.String(15), nullable=False)
     phone_2 = db.Column(db.String(15), nullable=True)
     address = db.Column(db.String(50), nullable=False)
     town = db.Column(db.String(20), nullable=False)
     date_registered = db.Column(db.Date, nullable=False, default=date.today())
-    date_expiration = db.Column(db.Date, nullable=False, default=date.today() + timedelta(days=365))
-    books_rented = db.Column(db.Integer, nullable=False, default=0)
+    date_expiration = db.Column(db.Date, nullable=False, default=date.today() + timedelta(MEMBERSHIP_EXTENSION_DAYS))
+    total_books_rented = db.Column(db.Integer, nullable=False, default=0)
     #TODO lista knjiga koje su trenutno kod njega
+
+    @property
+    def is_membership_expired(self):
+        return self.date_expiration < date.today()
+
+    @property
+    def is_membership_near_expired(self):
+        return self.date_expiration - timedelta(EXPIRATION_EXTENSION_LIMIT) < date.today()
+
+    @property
+    def age(self):
+        return int(date.today().year) - self.birth_year
+
+    @property
+    def number_of_rented_books(self):
+        return 1
 
     def __repr__(self):
 #        return f"Member('{self.first_name}', '{self.last_name}', '{self.date_expiration}')" #dodati i broj knjiga

@@ -1,0 +1,40 @@
+{% extends "base_layout.html" %}
+{% block content %}
+
+<h1>{{ gettext('Library members') }}</h1>
+
+<a href="{{ url_for('members.members_create') }}">{{ gettext('Add new library member') }}</a>
+<br/>
+{% if include_expired %}
+    <a href="{{ url_for('members.members_active') }}">{{ gettext('Do not include members with expired membership') }}</a>
+{% else %}
+    <a href="{{ url_for('members.members_all') }}">{{ gettext('Include members with expired membership') }}</a>
+{% endif %}
+
+<div>
+    Ovde ce biti filteri
+</div>
+
+{% for member in members_list %}
+    <p>
+        <span>{{ member.first_name }} {{ member.last_name }} </span>
+
+        <span>{{ member.phone_1 }} </span>
+        <span><i>{{ member.number_of_rented_books }}</i></span>
+        <span>{{ member.date_registered.strftime('%d.%m.%Y.') }} </span>
+        <span>{{ member.date_expiration.strftime('%d.%m.%Y.') }} </span>
+
+        {% if member.is_membership_expired %}
+            <span>{{ gettext('Membership expired') }}</span>
+        {% elif member.is_membership_near_expired %}
+            <span>{{ gettext('Membership near expiration') }}</span>
+        {% endif %}
+
+        <span>
+            <a href="{{ url_for('members.members_details', member_id=member.id) }}">{{ gettext('More details') }}</a>
+        </span>
+
+    </p>
+{% endfor %}
+
+{% endblock content %}

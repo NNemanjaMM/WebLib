@@ -3,8 +3,8 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_babel import gettext, lazy_gettext as _l
 from elibrary import bcrypt, db
 from elibrary.librarians.forms import (LibrarianCreateForm, LibrarianUpdateForm, LoginForm,
-        LibrarianUpdatePasswordForm, LibrarianChangePasswordForm, LibrarianRequestChangePasswordForm,
-        AcceptForm, RejectForm)
+        LibrarianUpdatePasswordForm, LibrarianChangePasswordForm, LibrarianRequestChangePasswordForm)
+from elibrary.main.forms import AcceptForm, RejectForm
 from elibrary.models import Librarian
 
 librarians = Blueprint('librarians', __name__)
@@ -33,7 +33,7 @@ def login():
             flash(_l('Login Unsuccessful')+'. '+_l('This user is inactive')+'.', 'danger')
             flash(_l('For the activation consult the administrator')+'. ', 'danger')
     form.username.data=''
-    return render_template('login.html', form=form, title=_l('Login'))
+    return render_template('login.html', title=_l('Login'), form=form)
 
 @librarians.route("/login/password", methods=['GET', 'POST'])
 def login_password_reset():
@@ -59,7 +59,7 @@ def login_password_reset():
 @librarians.route("/account")
 @login_required
 def account():
-    return render_template('account.html', title=_l('My account'), account=current_user, admin_is_editing=False)
+    return render_template('account.html', account=current_user, title=_l('My account'), admin_is_editing=False)
 
 @librarians.route("/account/change", methods=['GET', 'POST'])
 @login_required
@@ -88,7 +88,7 @@ def account_change():
         form.phone_2.data = current_user.phone_2
         form.address.data = current_user.address
         form.town.data = current_user.town
-    return render_template('account_change.html', title=_l('Account update'), form=form, admin_is_editing=False)
+    return render_template('account_change.html', form=form, admin_is_editing=False)
 
 @librarians.route("/account/password", methods=['GET', 'POST'])
 @login_required
@@ -103,7 +103,7 @@ def account_password():
             return redirect(url_for('librarians.account'))
         else:
             flash(_l('Current password value is not correct')+'.', 'error')
-    return render_template('account_password_change.html', title=_l('Password update'), form=form)
+    return render_template('account_password_change.html', form=form)
 
 
 @librarians.route("/librarians/all")
@@ -112,15 +112,15 @@ def librarians_all():
     if not current_user.is_admin:
         abort(403)
     list = Librarian.query.order_by('first_name').all()
-    return render_template('librarians.html', title=_l('Librarians'), librarians_list=list, include_disabled=True)
+    return render_template('librarians.html', librarians_list=list, include_disabled=True)
 
 @librarians.route("/librarians/active")
 @login_required
 def librarians_active():
     if not current_user.is_admin:
         abort(403)
-    list = Librarian.query.filter(Librarian.is_operational == True).order_by('first_name').all()
-    return render_template('librarians.html', title=_l('Librarians'), librarians_list=list, include_disabled=False)
+    list = Librarian.query.filter(Librarian.is_operational).order_by('first_name').all()
+    return render_template('librarians.html', librarians_list=list, include_disabled=False)
 
 @librarians.route("/librarians/details/<int:librarian_id>")
 @login_required
@@ -128,7 +128,7 @@ def librarians_details(librarian_id):
     if not current_user.is_admin:
         abort(403)
     librarian = Librarian.query.get_or_404(librarian_id)
-    return render_template('account.html', title=_l('Librarian account details'), account=librarian, admin_is_editing=True)
+    return render_template('account.html', account=librarian, title=_l('Account details'), admin_is_editing=True)
 
 
 @librarians.route("/librarians/create", methods=['GET', 'POST'])
@@ -154,7 +154,7 @@ def librarians_create():
         db.session.commit()
         flash(_l('Account has been created')+'.', 'success')
         return redirect(url_for('librarians.librarians_active'))
-    return render_template('account_create.html', title=_l('Librarian account update'), form=form)
+    return render_template('account_create.html', form=form)
 
 @librarians.route("/librarians/update/<int:librarian_id>", methods=['GET', 'POST'])
 @login_required
@@ -184,7 +184,7 @@ def librarians_update(librarian_id):
         form.phone_2.data = librarian.phone_2
         form.address.data = librarian.address
         form.town.data = librarian.town
-    return render_template('account_change.html', title=_l('Librarian account update'), form=form, admin_is_editing=True)
+    return render_template('account_change.html', form=form, admin_is_editing=True)
 
 @librarians.route("/librarians/password/<int:librarian_id>", methods=['GET', 'POST'])
 @login_required
@@ -203,7 +203,7 @@ def librarians_password(librarian_id):
         db.session.commit()
         flash(_l('Account password has been updated')+'.', 'success')
         return redirect(url_for('librarians.librarians_details', librarian_id=librarian.id))
-    return render_template('account_password_change_request.html', title=_l('Librarian password update'), form=form, librarian=librarian)
+    return render_template('account_password_change_request.html', form=form, librarian=librarian)
 
 @librarians.route("/librarians/username/<int:librarian_id>", methods=['GET', 'POST'])
 @login_required
@@ -230,7 +230,7 @@ def librarians_username(librarian_id):
         librarian.change_username_value = None
         db.session.commit()
         return redirect(url_for('librarians.librarians_active'))
-    return render_template('account_username_change_request.html', title=_l('Update update'), form1=form_accept, form2=form_reject, librarian=librarian)
+    return render_template('account_username_change_request.html', form1=form_accept, form2=form_reject, librarian=librarian)
 
 @librarians.route("/librarians/availability/<int:librarian_id>", methods=['GET', 'POST'])
 @login_required
@@ -250,4 +250,4 @@ def librarians_availability(librarian_id):
             flash(_l('Account availability is changed')+'.', 'info')
         db.session.commit()
         return redirect(url_for('librarians.librarians_active'))
-    return render_template('account_availability.html', title=_l('Availability update'), form1=form_accept, form2=form_reject, librarian=librarian)
+    return render_template('account_availability.html', form1=form_accept, form2=form_reject, librarian=librarian)

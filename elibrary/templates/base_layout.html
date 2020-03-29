@@ -4,11 +4,7 @@
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 
-    {% if title %}
-        <title>{{ title }}</title>
-    {% else %}
-        <title>{{ gettext('e-Library') }}</title>
-    {% endif %}
+    <title>{{ gettext('e-Library') }}</title>
 
 </head>
 <body>
@@ -17,7 +13,7 @@
         <nav>
             <div>
                 <a href="{{ url_for('main.home') }}">{{ gettext('Home') }}</a>
-                <a href="{{ url_for('members.members_all') }}">{{ gettext('Members') }}</a>
+                <a href="{{ url_for('members.members_active') }}">{{ gettext('Members') }}</a>
                 <a href="{{ url_for('main.books') }}">{{ gettext('Books') }}</a>
                 <a href="{{ url_for('main.stats') }}">{{ gettext('Stats') }}</a>
                 {% if current_user.is_admin %}
