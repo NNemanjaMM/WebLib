@@ -42,7 +42,10 @@ class Librarian(db.Model, UserMixin):
     is_operational = db.Column(db.Boolean, default=True)
     change_password = db.Column(db.Boolean, default=False)
     change_username_value = db.Column(db.String(30), nullable=True)
-    change_username = db.Column(db.Boolean, default=False)
+
+    @property
+    def change_username(self):
+        return not self.change_username_value == None
 
     def __repr__(self):
 #        return f"User('{self.username}', '{self.is_active}', '{self.is_admin}')"

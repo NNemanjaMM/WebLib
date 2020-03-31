@@ -5,6 +5,7 @@ from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, HiddenField, DateField
 from wtforms.validators import ValidationError
 from elibrary.models import Librarian
+from elibrary.utils.numeric_defines import REGISTRATION_DATE_LIMIT
 from elibrary.utils.custom_validations import (required_cust, email_cust,
         phone_cust, string_cust, username_cust, equal_to_cust, length_cust, optional_cust)
 
@@ -41,11 +42,11 @@ class LibrarianCreateForm(LibrarianForm):
 
     def validate_date_registered(self, date_registered):
         if not date_registered.data:
-            raise ValidationError(_l('Date value is not valid') + '. ' + _l('Make sute if matches the following format "dd.mm.yyyy."') +'.')
+            raise ValidationError(_l('Date value is not valid') + '. ' + _l('Make sute if matches the following format') + ' "dd.mm.yyyy.".')
         elif date_registered.data > date.today():
             raise ValidationError(_l('Registration date can not be set in future') + '.')
-        elif date_registered.data < date.today() - timedelta(days=30):
-            raise ValidationError(_l('Registration date can not be set more than a 30 days in past') + '.')
+        elif date_registered.data < date.today() - timedelta(REGISTRATION_DATE_LIMIT):
+            raise ValidationError(_l('Registration date can be set in past for more than') + ' ' + str(REGISTRATION_DATE_LIMIT) + ' ' + _l('days') + '.')
 
 class LibrarianUpdateForm(LibrarianForm):
     username = StringField(_l('Username'), validators=[optional_cust(), length_cust(min=6, max=30), username_cust()])
@@ -64,9 +65,3 @@ class LibrarianChangePasswordForm(FlaskForm):
 
 class LibrarianUpdatePasswordForm(LibrarianChangePasswordForm):
     old_password = PasswordField(_l('Old password'), validators=[required_cust(), length_cust(min=6)])
-
-class AcceptForm(FlaskForm):
-    submit_accept = SubmitField(_l('Approve'))
-
-class RejectForm(FlaskForm):
-    submit_reject = SubmitField(_l('Reject'))
