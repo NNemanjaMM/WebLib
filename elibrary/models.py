@@ -11,7 +11,7 @@ class Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(20), nullable=False)
     last_name = db.Column(db.String(40), nullable=False)
-    birth_year = db.Column(db.Integer, nullable=True)
+    birth_date = db.Column(db.Date, nullable=False)
     email = db.Column(db.String(120), nullable=True)
     phone_1 = db.Column(db.String(15), nullable=False)
     phone_2 = db.Column(db.String(15), nullable=True)
@@ -32,7 +32,8 @@ class Member(db.Model):
 
     @property
     def age(self):
-        return int(date.today().year) - self.birth_year
+        today = date.today()
+        return int(today.year - self.birth_date.year - ((today.month, today.day) < (self.birth_date.month, self.birth_date.day)))
 
     @property
     def number_of_rented_books(self):
@@ -40,7 +41,7 @@ class Member(db.Model):
 
     def __repr__(self):
 #        return f"Member('{self.first_name}', '{self.last_name}', '{self.date_expiration}')" #dodati i broj knjiga
-        return f"Member('{self.id}', '{self.first_name}', '{self.last_name}', '{self.birth_year}',\
+        return f"Member('{self.id}', '{self.first_name}', '{self.last_name}', '{self.birth_date}',\
                       '{self.email}', '{self.mobile_phone}', '{self.home_phone}', '{self.address}',\
                       '{self.town}', '{self.date_registered}', '{self.date_expiration}')"
 

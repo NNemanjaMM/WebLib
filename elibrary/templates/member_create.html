@@ -89,12 +89,14 @@
                 {% endif %}
             </div>
             <div>
-                {{ form.birth_year.label }}
-                {{ form.birth_year }}
-                {% if form.birth_year.errors %}
+                {{ form.birth_date.label }}
+                {{ form.birth_date }}
+                {% if form.birth_date.errors %}
                     <div>
-                        {% for error in form.birth_year.errors %}
-                            <span>{{ error }}</span>
+                        {% for error in form.birth_date.errors %}
+                            {% if not error == "Not a valid date value" %}
+                                <span>{{ error }}</span>
+                            {% endif %}
                         {% endfor %}
                     </div>
                 {% endif %}

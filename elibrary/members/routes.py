@@ -4,7 +4,7 @@ from flask_login import current_user, login_required
 from flask_babel import gettext, lazy_gettext as _l
 from elibrary import db
 from elibrary.models import Member
-from elibrary.members.forms import MemberCreateForm, MemberUpdateForm
+from elibrary.members.forms import MemberCreateForm, MemberUpdateForm, UserExtensionForm
 from elibrary.utils.numeric_defines import MEMBERSHIP_EXTENSION_DAYS
 from elibrary.main.forms import AcceptForm, RejectForm
 
@@ -20,7 +20,6 @@ def members_all():
 @login_required
 def members_active():
     list = Member.query.filter(Member.date_expiration >= date.today()).order_by('first_name').all()
-    print('korisnika ' + str(len(list)))
     return render_template('members.html', members_list=list, include_expired=False)
 
 @members.route("/members/details/<int:member_id>")
@@ -38,7 +37,7 @@ def members_create():
         member = Member()
         member.first_name = form.first_name.data
         member.last_name = form.last_name.data
-        member.birth_year = form.birth_year.data
+        member.birth_date = form.birth_date.data
         member.email = form.email.data
         member.phone_1 = form.phone_1.data
         member.phone_2 = form.phone_2.data
@@ -61,7 +60,7 @@ def members_update(member_id):
     if form.validate_on_submit():
         member.first_name = form.first_name.data
         member.last_name = form.last_name.data
-        member.birth_year = form.birth_year.data
+        member.birth_date = form.birth_date.data
         member.email = form.email.data
         member.phone_1 = form.phone_1.data
         member.phone_2 = form.phone_2.data
@@ -73,7 +72,7 @@ def members_update(member_id):
     elif request.method == 'GET':
         form.first_name.data = member.first_name
         form.last_name.data = member.last_name
-        form.birth_year.data = member.birth_year
+        form.birth_date.data = member.birth_date
         form.email.data = member.email
         form.phone_1.data = member.phone_1
         form.phone_2.data = member.phone_2
@@ -88,21 +87,19 @@ def members_extend(member_id):
     if not member.is_membership_near_expired:
         abort(405)
 
-    form_accept = AcceptForm()
-    form_reject = RejectForm()
-    if not request.method == 'GET':
-        if form_reject.submit_reject.data and form_reject.validate():
-            flash(_l('Member\'s membership is not extended')+'.', 'info')
-        elif form_accept.submit_accept.data and form_accept.validate():
-            if member.is_membership_expired:
-                member.date_expiration = date.today() + timedelta(MEMBERSHIP_EXTENSION_DAYS)
-            else:
-                member.date_expiration = member.date_expiration + timedelta(MEMBERSHIP_EXTENSION_DAYS)
-            flash(_l('Member\'s membership is extended for')+' '+MEMBERSHIP_EXTENSION_DAYS+' '+_l('days')+'.', 'info')
-        db.session.commit()
-        return redirect(url_for('members.members_active'))
+    form = UserExtensionForm()
     if member.is_membership_expired:
         new_date_expiration = date.today() + timedelta(MEMBERSHIP_EXTENSION_DAYS)
     else:
         new_date_expiration = member.date_expiration + timedelta(MEMBERSHIP_EXTENSION_DAYS)
-    return render_template('member_extension.html', form1=form_accept, form2=form_reject, member=member, expiration_proposal=new_date_expiration)
+        form.fixed_value = True
+    form.maximum_date = new_date_expiration
+
+    if form.validate_on_submit():
+        member.date_expiration = form.extension_date.data
+        flash(_l('Member\'s membership is extended for')+' '+str(MEMBERSHIP_EXTENSION_DAYS)+' '+_l('days')+'.', 'info')
+        db.session.commit()
+        return redirect(url_for('members.members_details', member_id=member.id))
+
+    form.extension_date.data = new_date_expiration
+    return render_template('member_extension.html', form=form, member=member, expiration_proposal=new_date_expiration)

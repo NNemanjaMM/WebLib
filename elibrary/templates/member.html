@@ -23,9 +23,9 @@
     </p>
 
     <p>
-        {{ gettext('Age') }}
+        {{ gettext('Birth date') }}
         <strong>
-            {{ member.age }}
+            {{ member.birth_date.strftime('%d.%m.%Y.') }}
         </strong>
     </p>
 
