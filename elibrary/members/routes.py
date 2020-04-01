@@ -5,22 +5,17 @@ from flask_babel import gettext, lazy_gettext as _l
 from elibrary import db
 from elibrary.models import Member
 from elibrary.members.forms import MemberCreateForm, MemberUpdateForm, UserExtensionForm
-from elibrary.utils.numeric_defines import MEMBERSHIP_EXTENSION_DAYS
+from elibrary.utils.numeric_defines import MEMBERSHIP_EXTENSION_DAYS, PAGINATION
 from elibrary.main.forms import AcceptForm, RejectForm
 
 members = Blueprint('members', __name__)
 
-@members.route("/members/all")
+@members.route("/members")
 @login_required
-def members_all():
-    list = Member.query.order_by('first_name').all()
-
-    return render_template('members.html', members_list=list, include_expired=True)
-@members.route("/members/active")
-@login_required
-def members_active():
-    list = Member.query.filter(Member.date_expiration >= date.today()).order_by('first_name').all()
-    return render_template('members.html', members_list=list, include_expired=False)
+def memberss():
+    page = request.args.get('page', 1, type=int)
+    list = Member.query.order_by('first_name').paginate(page=page, per_page=PAGINATION)
+    return render_template('members.html', members_list=list)
 
 @members.route("/members/details/<int:member_id>")
 @login_required

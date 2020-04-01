@@ -13,7 +13,7 @@
         <nav>
             <div>
                 <a href="{{ url_for('main.home') }}">{{ gettext('Home') }}</a>
-                <a href="{{ url_for('members.members_active') }}">{{ gettext('Members') }}</a>
+                <a href="{{ url_for('members.memberss') }}">{{ gettext('Members') }}</a>
                 <a href="{{ url_for('main.books') }}">{{ gettext('Books') }}</a>
                 <a href="{{ url_for('main.stats') }}">{{ gettext('Stats') }}</a>
                 {% if current_user.is_admin %}

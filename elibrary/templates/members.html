@@ -4,18 +4,12 @@
 <h1>{{ gettext('Library members') }}</h1>
 
 <a href="{{ url_for('members.members_create') }}">{{ gettext('Add new library member') }}</a>
-<br/>
-{% if include_expired %}
-    <a href="{{ url_for('members.members_active') }}">{{ gettext('Do not include members with expired membership') }}</a>
-{% else %}
-    <a href="{{ url_for('members.members_all') }}">{{ gettext('Include members with expired membership') }}</a>
-{% endif %}
 
 <div>
     Ovde ce biti filteri
 </div>
 
-{% for member in members_list %}
+{% for member in members_list.items %}
     <p>
         <span>{{ member.first_name }} {{ member.last_name }} </span>
 
@@ -35,6 +29,18 @@
         </span>
 
     </p>
+{% endfor %}
+
+{% for page_num in members_list.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+    {% if page_num %}
+        {% if members_list.page == page_num %}
+            <a style="color: red" href="{{ url_for('members.memberss', page=page_num) }}">{{ page_num }}</a>
+        {% else %}
+            <a href="{{ url_for('members.memberss', page=page_num) }}">{{ page_num }}</a>
+        {% endif %}
+    {% else %}
+        ...
+    {% endif %}
 {% endfor %}
 
 {% endblock content %}
