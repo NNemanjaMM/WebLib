@@ -1,6 +1,5 @@
 from wtforms.validators import DataRequired, Email, Length, EqualTo, Regexp, optional
 from flask_babel import lazy_gettext as _l
-import re
 
 class required_cust(DataRequired):
     def __init__(self, text = _l('The field must be filled')+'.'):

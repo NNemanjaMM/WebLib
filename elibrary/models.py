@@ -36,8 +36,8 @@ class Member(db.Model):
         return int(today.year - self.birth_date.year - ((today.month, today.day) < (self.birth_date.month, self.birth_date.day)))
 
     @property
-    def number_of_rented_books(self):
-        return 1
+    def has_rented_books(self):
+        return true
 
     def __repr__(self):
 #        return f"Member('{self.first_name}', '{self.last_name}', '{self.date_expiration}')" #dodati i broj knjiga

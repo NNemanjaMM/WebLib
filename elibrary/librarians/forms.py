@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from flask_wtf import FlaskForm#, RecaptchaField
 from flask_babel import lazy_gettext as _l
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, HiddenField, DateField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField
 from wtforms.validators import ValidationError
 from elibrary.models import Librarian
 from elibrary.utils.numeric_defines import REGISTRATION_DATE_LIMIT

@@ -9,12 +9,40 @@
     Ovde ce biti filteri
 </div>
 
+<p>
+    <span>
+        {{ gettext('First name') }}
+        <a href="{{ url_for('members.memberss', page=page, sort_by='first_name', direction='up') }}"> &and; </a>
+        <a href="{{ url_for('members.memberss', page=page, sort_by='first_name', direction='down') }}"> &or;</a>
+    </span>
+    <span>
+        {{ gettext('Last name') }}
+        <a href="{{ url_for('members.memberss', page=page, sort_by='last_name', direction='up') }}"> &uarr; </a>
+        <a href="{{ url_for('members.memberss', page=page, sort_by='last_name', direction='down') }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Total rented books number') }}
+        <a href="{{ url_for('members.memberss', page=page, sort_by='total_books_rented', direction='up') }}"> &uarr; </a>
+        <a href="{{ url_for('members.memberss', page=page, sort_by='total_books_rented', direction='down') }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Registration date') }}
+        <a href="{{ url_for('members.memberss', page=page, sort_by='date_registered', direction='up') }}"> &uarr; </a>
+        <a href="{{ url_for('members.memberss', page=page, sort_by='date_registered', direction='down') }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Membership expiration date') }}
+        <a href="{{ url_for('members.memberss', page=page, sort_by='date_expiration', direction='up') }}"> &uarr; </a>
+        <a href="{{ url_for('members.memberss', page=page, sort_by='date_expiration', direction='down') }}"> &darr; </a>
+    </span>
+</p>
+
 {% for member in members_list.items %}
     <p>
         <span>{{ member.first_name }} {{ member.last_name }} </span>
 
         <span>{{ member.phone_1 }} </span>
-        <span><i>{{ member.number_of_rented_books }}</i></span>
+        <span>{{ member.total_books_rented }}</span>
         <span>{{ member.date_registered.strftime('%d.%m.%Y.') }} </span>
         <span>{{ member.date_expiration.strftime('%d.%m.%Y.') }} </span>
 
@@ -34,9 +62,9 @@
 {% for page_num in members_list.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
     {% if page_num %}
         {% if members_list.page == page_num %}
-            <a style="color: red" href="{{ url_for('members.memberss', page=page_num) }}">{{ page_num }}</a>
+            <a style="color: red" href="{{ url_for('members.memberss', page=page_num, sort_by=sort_by_val, direction=direction_val) }}">{{ page_num }}</a>
         {% else %}
-            <a href="{{ url_for('members.memberss', page=page_num) }}">{{ page_num }}</a>
+            <a href="{{ url_for('members.memberss', page=page_num, sort_by=sort_by_val, direction=direction_val) }}">{{ page_num }}</a>
         {% endif %}
     {% else %}
         ...
