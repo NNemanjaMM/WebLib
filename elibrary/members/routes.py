@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from sqlalchemy import desc
 from flask import render_template, url_for, redirect, request, flash, Blueprint, abort
 from flask_login import current_user, login_required
 from flask_babel import gettext, lazy_gettext as _l
@@ -98,29 +99,8 @@ def memberss():
     page = request.args.get('page', 1, type=int)
     sort_criteria = request.args.get('sort_by', 'first_name', type=str)
     sort_direction = request.args.get('direction', 'up', type=str)
-    if sort_criteria == 'first_name':
-        if sort_direction == 'up':
-            list = Member.query.order_by(Member.first_name).paginate(page=page, per_page=PAGINATION)
-        else:
-            list = Member.query.order_by(Member.first_name.desc()).paginate(page=page, per_page=PAGINATION)
-    elif sort_criteria == 'last_name':
-        if sort_direction == 'up':
-            list = Member.query.order_by(Member.last_name).paginate(page=page, per_page=PAGINATION)
-        else:
-            list = Member.query.order_by(Member.last_name.desc()).paginate(page=page, per_page=PAGINATION)
-    elif sort_criteria == 'total_books_rented':
-        if sort_direction == 'up':
-            list = Member.query.order_by(Member.total_books_rented).paginate(page=page, per_page=PAGINATION)
-        else:
-            list = Member.query.order_by(Member.total_books_rented.desc()).paginate(page=page, per_page=PAGINATION)
-    elif sort_criteria == 'date_registered':
-        if sort_direction == 'up':
-            list = Member.query.order_by(Member.date_registered).paginate(page=page, per_page=PAGINATION)
-        else:
-            list = Member.query.order_by(Member.date_registered.desc()).paginate(page=page, per_page=PAGINATION)
-    elif sort_criteria == 'date_expiration':
-        if sort_direction == 'up':
-            list = Member.query.order_by(Member.date_expiration).paginate(page=page, per_page=PAGINATION)
-        else:
-            list = Member.query.order_by(Member.date_expiration.desc()).paginate(page=page, per_page=PAGINATION)
+    if sort_direction == 'up':
+        list = Member.query.order_by(sort_criteria).paginate(page=page, per_page=PAGINATION)
+    else:
+        list = Member.query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     return render_template('members.html', members_list=list, sort_by_val=sort_criteria, direction_val=sort_direction)
