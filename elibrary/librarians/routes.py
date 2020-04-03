@@ -69,8 +69,8 @@ def account_change():
         current_user.first_name = form.first_name.data
         current_user.last_name = form.last_name.data
         current_user.email = form.email.data
-        current_user.phone_1 = form.phone_1.data
-        current_user.phone_2 = form.phone_2.data
+        current_user.phone_1 = form.phone_1.data.replace("/", "")
+        current_user.phone_2 = form.phone_2.data.replace("/", "")
         current_user.address = form.address.data
         current_user.town = form.town.data
         if not current_user.username == form.username.data:
@@ -84,8 +84,8 @@ def account_change():
         form.first_name.data = current_user.first_name
         form.last_name.data = current_user.last_name
         form.email.data = current_user.email
-        form.phone_1.data = current_user.phone_1
-        form.phone_2.data = current_user.phone_2
+        form.phone_1.data = current_user.phone_1_formated
+        form.phone_2.data = current_user.phone_2_formated
         form.address.data = current_user.address
         form.town.data = current_user.town
     return render_template('account_change.html', form=form, admin_is_editing=False)
@@ -142,8 +142,8 @@ def librarians_create():
         librarian.first_name = form.first_name.data
         librarian.last_name = form.last_name.data
         librarian.email = form.email.data
-        librarian.phone_1 = form.phone_1.data
-        librarian.phone_2 = form.phone_2.data
+        librarian.phone_1 = form.phone_1.data.replace("/", "")
+        librarian.phone_2 = form.phone_2.data.replace("/", "")
         librarian.address = form.address.data
         librarian.town = form.town.data
         librarian.date_registered = form.date_registered.data
@@ -169,8 +169,8 @@ def librarians_update(librarian_id):
         librarian.first_name = form.first_name.data
         librarian.last_name = form.last_name.data
         librarian.email = form.email.data
-        librarian.phone_1 = form.phone_1.data
-        librarian.phone_2 = form.phone_2.data
+        librarian.phone_1 = form.phone_1.data.replace("/", "")
+        librarian.phone_2 = form.phone_2.data.replace("/", "")
         librarian.address = form.address.data
         librarian.town = form.town.data
         db.session.commit()
@@ -180,8 +180,8 @@ def librarians_update(librarian_id):
         form.first_name.data = librarian.first_name
         form.last_name.data = librarian.last_name
         form.email.data = librarian.email
-        form.phone_1.data = librarian.phone_1
-        form.phone_2.data = librarian.phone_2
+        form.phone_1.data = librarian.phone_1_formated
+        form.phone_2.data = librarian.phone_2_formated
         form.address.data = librarian.address
         form.town.data = librarian.town
     return render_template('account_change.html', form=form, admin_is_editing=True)

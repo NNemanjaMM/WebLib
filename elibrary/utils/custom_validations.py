@@ -5,6 +5,10 @@ class required_cust(DataRequired):
     def __init__(self, text = _l('The field must be filled')+'.'):
         DataRequired.__init__(self, message = text)
 
+class required_cust_date(DataRequired):
+    def __init__(self, text = _l('Date value is not valid') + '. ' + _l('Make sute if matches the following format') + ' "dd.mm.yyyy.".'):
+        DataRequired.__init__(self, message = text)
+
 class optional_cust(optional):
     def __init__(self):
         optional.__init__(self)
@@ -15,8 +19,8 @@ class email_cust(Email):
 
 class phone_cust(Regexp):
     def __init__(self, text = _l('Phone number does not match expected format')+'. '+\
-                _l('E.g. 063/1128767, +381631128767, +381 63 1128767, 025/343565, +38125343565, +381 25 343565')+'.'):
-        Regexp.__init__(self, '^((\+\d{1,3} \d{2} )|(\+\d{1,3}\d{2})|(0\d{2}\/))\d{6,8}$', message = text)
+                _l('E.g. 063/1128767, 0631128767, +381631128767, 025/343565, 025343565, +38125343565')+'.'):
+        Regexp.__init__(self, '^((0\d{2}\/)|(0\d{2})|(\+\d{1,3}\d{2}))\d{6,8}$', message = text)
 
 class string_cust(Regexp):
     def __init__(self, text = _l('Only letters, numbers, spaces and hyphens are allowed')+'.'):

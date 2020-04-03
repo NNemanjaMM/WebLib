@@ -23,6 +23,23 @@ class Member(db.Model):
     #TODO lista knjiga koje su trenutno kod njega
 
     @property
+    def phone_1_formated(self):
+        if "+" in self.phone_1:
+            return self.phone_1
+        else:
+            return self.phone_1[:3] + '/' + self.phone_1[3:]
+
+    @property
+    def phone_2_formated(self):
+        if not self.phone_2 == "":
+            if "+" in self.phone_2:
+                return self.phone_2
+            else:
+                return self.phone_2[:3] + '/' + self.phone_2[3:]
+        else:
+            return ""
+
+    @property
     def is_membership_expired(self):
         return self.date_expiration < date.today()
 
@@ -62,6 +79,23 @@ class Librarian(db.Model, UserMixin):
     change_password = db.Column(db.Boolean, default=False)
     change_username_value = db.Column(db.String(30), nullable=True)
     change_username = db.Column(db.Boolean, default=False)
+
+    @property
+    def phone_1_formated(self):
+        if "+" in self.phone_1:
+            return self.phone_1
+        else:
+            return self.phone_1[:3] + '/' + self.phone_1[3:]
+
+    @property
+    def phone_2_formated(self):
+        if not self.phone_2 == "":
+            if "+" in self.phone_2:
+                return self.phone_2
+            else:
+                return self.phone_2[:3] + '/' + self.phone_2[3:]
+        else:
+            return ""
 
     def __repr__(self):
 #        return f"User('{self.username}', '{self.is_active}', '{self.is_admin}')"

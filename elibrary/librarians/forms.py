@@ -6,7 +6,7 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateF
 from wtforms.validators import ValidationError
 from elibrary.models import Librarian
 from elibrary.utils.numeric_defines import REGISTRATION_DATE_LIMIT
-from elibrary.utils.custom_validations import (required_cust, email_cust,
+from elibrary.utils.custom_validations import (required_cust, email_cust, required_cust_date,
         phone_cust, string_cust, username_cust, equal_to_cust, length_cust, optional_cust)
 
 
@@ -32,21 +32,18 @@ class LibrarianForm(LibrarianBaseForm):
             raise ValidationError(_l('That username is taken. Please choose a different one')+'.')
 
 class LibrarianCreateForm(LibrarianForm):
-    date_registered = DateField(_l('Registration date'), validators=[optional_cust()], format='%d.%m.%Y.', default=date.today)
+    date_registered = DateField(_l('Registration date'), validators=[required_cust_date()], format='%d.%m.%Y.', default=date.today)
     username = StringField(_l('Username'), validators=[required_cust(), length_cust(min=6, max=30), username_cust()])
     password = PasswordField(_l('Password'), validators=[required_cust(), length_cust(min=6)])
     confirm_password = PasswordField(_l('Confirm password'), validators=[required_cust(), equal_to_cust('password')])
     is_administrator = BooleanField(_l('This will be library administrator account'), validators=[optional_cust()])
     submit = SubmitField(_l('Add librarian'))
-#    recaptcha = RecaptchaField()
 
     def validate_date_registered(self, date_registered):
-        if not date_registered.data:
-            raise ValidationError(_l('Date value is not valid') + '. ' + _l('Make sute if matches the following format "dd.mm.yyyy."') +'.')
-        elif date_registered.data > date.today():
+        if date_registered.data > date.today():
             raise ValidationError(_l('Registration date can not be set in future') + '.')
         elif date_registered.data < date.today() - timedelta(REGISTRATION_DATE_LIMIT):
-            raise ValidationError(_l('Registration date can be set in past for more than') + ' ' + REGISTRATION_DATE_LIMIT + ' ' + _l('days') + '.')
+            raise ValidationError(_l('Registration date can be set in past for more than') + ' ' + str(REGISTRATION_DATE_LIMIT) + ' ' + _l('days') + '.')
 
 class LibrarianUpdateForm(LibrarianForm):
     username = StringField(_l('Username'), validators=[optional_cust(), length_cust(min=6, max=30), username_cust()])

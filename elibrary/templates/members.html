@@ -21,9 +21,9 @@
         <a href="{{ url_for('members.memberss', page=page, sort_by='last_name', direction='down') }}"> &darr; </a>
     </span>
     <span>
-        {{ gettext('Total rented books number') }}
-        <a href="{{ url_for('members.memberss', page=page, sort_by='total_books_rented', direction='up') }}"> &uarr; </a>
-        <a href="{{ url_for('members.memberss', page=page, sort_by='total_books_rented', direction='down') }}"> &darr; </a>
+        {{ gettext('Total books rented') }}
+        <a href="{{ url_for('members.memberss', page=page, sort_by='total_books_rented', direction='up') }}"> &and; </a>
+        <a href="{{ url_for('members.memberss', page=page, sort_by='total_books_rented', direction='down') }}"> &or; </a>
     </span>
     <span>
         {{ gettext('Registration date') }}
@@ -41,7 +41,7 @@
     <p>
         <span>{{ member.first_name }} {{ member.last_name }} </span>
 
-        <span>{{ member.phone_1 }} </span>
+        <span>{{ member.phone_1_formated }} </span>
         <span>{{ member.total_books_rented }}</span>
         <span>{{ member.date_registered.strftime('%d.%m.%Y.') }} </span>
         <span>{{ member.date_expiration.strftime('%d.%m.%Y.') }} </span>

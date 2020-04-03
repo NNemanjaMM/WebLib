@@ -28,8 +28,8 @@ def members_create():
         member.last_name = form.last_name.data
         member.birth_date = form.birth_date.data
         member.email = form.email.data
-        member.phone_1 = form.phone_1.data
-        member.phone_2 = form.phone_2.data
+        member.phone_1 = form.phone_1.data.replace("/", "")
+        member.phone_2 = form.phone_2.data.replace("/", "")
         member.address = form.address.data
         member.town = form.town.data
         member.date_registered = form.date_registered.data
@@ -37,7 +37,7 @@ def members_create():
         db.session.add(member)
         db.session.commit()
         flash(_l('New member has been added')+'.', 'success')
-        return redirect(url_for('members.members_all'))
+        return redirect(url_for('members.memberss'))
     return render_template('member_create.html', form=form, is_creating=True)
 
 @members.route("/members/update/<int:member_id>", methods=['GET', 'POST'])
@@ -51,8 +51,8 @@ def members_update(member_id):
         member.last_name = form.last_name.data
         member.birth_date = form.birth_date.data
         member.email = form.email.data
-        member.phone_1 = form.phone_1.data
-        member.phone_2 = form.phone_2.data
+        member.phone_1 = form.phone_1.data.replace("/", "")
+        member.phone_2 = form.phone_2.data.replace("/", "")
         member.address = form.address.data
         member.town = form.town.data
         db.session.commit()
@@ -63,8 +63,8 @@ def members_update(member_id):
         form.last_name.data = member.last_name
         form.birth_date.data = member.birth_date
         form.email.data = member.email
-        form.phone_1.data = member.phone_1
-        form.phone_2.data = member.phone_2
+        form.phone_1.data = member.phone_1_formated
+        form.phone_2.data = member.phone_2_formated
         form.address.data = member.address
         form.town.data = member.town
     return render_template('member_create.html', form=form, is_creating=False)
