@@ -31,7 +31,7 @@ class Member(db.Model):
 
     @property
     def phone_2_formated(self):
-        if not self.phone_2 == "":
+        if not (self.phone_2 == "" or self.phone_2 == None):
             if "+" in self.phone_2:
                 return self.phone_2
             else:
@@ -89,7 +89,7 @@ class Librarian(db.Model, UserMixin):
 
     @property
     def phone_2_formated(self):
-        if not self.phone_2 == "":
+        if not (self.phone_2 == "" or self.phone_2 == None):
             if "+" in self.phone_2:
                 return self.phone_2
             else:

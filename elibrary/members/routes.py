@@ -1,11 +1,12 @@
 from datetime import date, timedelta
-from sqlalchemy import desc
+from sqlalchemy import desc, or_
 from flask import render_template, url_for, redirect, request, flash, Blueprint, abort
 from flask_login import current_user, login_required
 from flask_babel import gettext, lazy_gettext as _l
 from elibrary import db
 from elibrary.models import Member
-from elibrary.members.forms import MemberCreateForm, MemberUpdateForm, UserExtensionForm
+from elibrary.members.forms import (MemberCreateForm, MemberUpdateForm,
+    UserExtensionForm, FilterForm, ShortFilterForm)
 from elibrary.utils.numeric_defines import MEMBERSHIP_EXTENSION_DAYS, PAGINATION
 from elibrary.main.forms import AcceptForm, RejectForm
 
@@ -99,8 +100,23 @@ def memberss():
     page = request.args.get('page', 1, type=int)
     sort_criteria = request.args.get('sort_by', 'first_name', type=str)
     sort_direction = request.args.get('direction', 'up', type=str)
+    args_sort = {'sort_by': sort_criteria, 'direction': sort_direction}
+
+    args_filter = {}
+    form = FilterForm()
+    form2 = ShortFilterForm()
+    my_query = db.session.query(Member)
+
+    tekst = request.args.get('name')
+    if not (tekst == None or tekst == ""):
+        form2.name.data = tekst
+        my_query = my_query.filter(or_(Member.first_name.like('%' + tekst + '%'), Member.last_name.like('%' + tekst + '%')))
+        args_filter['name'] = tekst
+
     if sort_direction == 'up':
-        list = Member.query.order_by(sort_criteria).paginate(page=page, per_page=PAGINATION)
+        list = my_query.order_by(sort_criteria).paginate(page=page, per_page=PAGINATION)
     else:
-        list = Member.query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
-    return render_template('members.html', members_list=list, sort_by_val=sort_criteria, direction_val=sort_direction)
+        list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
+
+    args_filter_and_sort = {**args_filter, **args_sort}
+    return render_template('members.html', form=form, form2=form2, members_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort)
