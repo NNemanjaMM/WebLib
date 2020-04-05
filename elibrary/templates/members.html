@@ -6,14 +6,14 @@
 <a href="{{ url_for('members.members_create') }}">{{ gettext('Add new library member') }}</a>
 
 <div>
-    <form method="GET" action="">
+    <form method="GET" action="{{ url_for('members.membersr') }}">
         <fieldset>
             <div>
-                {{ form2.name.label }}
-                {{ form2.name }}
-                {% if form2.name.errors %}
+                {{ form2.text.label }}
+                {{ form2.text }}
+                {% if form2.text.errors %}
                     <div>
-                        {% for error in form2.name.errors %}
+                        {% for error in form2.text.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
@@ -26,7 +26,7 @@
         </div>
     </form>
 
-    <form method="GET" action="">
+    <form method="GET" action="{{ url_for('members.membersf') }}">
         <fieldset>
             <div>
                 {{ form.first_name.label }}
