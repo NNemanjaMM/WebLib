@@ -11,6 +11,19 @@
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset>
+            {% if is_creating %}
+                <div>
+                    {{ form.label.label }}
+                    {{ form.label }}
+                    {% if form.label.errors %}
+                        <div>
+                            {% for error in form.label.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
             <div>
                 {{ form.first_name.label }}
                 {{ form.first_name }}

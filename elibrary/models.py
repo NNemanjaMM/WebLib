@@ -9,6 +9,7 @@ def load_user(user_id):
 
 class Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    label = db.Column(db.String(10), nullable=False, unique=True)   #TODO customize after consultation, auto increment if integer!
     first_name = db.Column(db.String(20), nullable=False)
     last_name = db.Column(db.String(40), nullable=False)
     birth_date = db.Column(db.Date, nullable=False)

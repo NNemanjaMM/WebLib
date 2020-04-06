@@ -6,6 +6,13 @@
 <div>
     {{ gettext('For a member') }}
     <div>
+        {{ gettext('Label') }}
+        <strong>
+            {{ member.label }}
+        </strong>
+    </div>
+
+    <div>
         {{ gettext('First name') }}
         <strong>
             {{ member.first_name }}

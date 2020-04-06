@@ -19,13 +19,13 @@ def members_details(member_id):
     member = Member.query.get_or_404(member_id)
     return render_template('member.html', member=member)
 
-
 @members.route("/members/create", methods=['GET', 'POST'])
 @login_required
 def members_create():
     form = MemberCreateForm()
     if form.validate_on_submit():
         member = Member()
+        member.label = form.label.data
         member.first_name = form.first_name.data
         member.last_name = form.last_name.data
         member.birth_date = form.birth_date.data
@@ -112,6 +112,7 @@ def memberss(filtering = False, searching = False):
     f_birth_date_to = request.args.get('birth_date_to')
     f_books_rented_from = request.args.get('books_rented_from')
     f_books_rented_to = request.args.get('books_rented_to')
+    f_label = request.args.get('label')
     f_first_name = request.args.get('first_name')
     f_last_name = request.args.get('last_name')
     f_has_rented_books = request.args.get('has_rented_books')
@@ -127,6 +128,7 @@ def memberss(filtering = False, searching = False):
         f_birth_date_to = None
         f_books_rented_from = None
         f_books_rented_to = None
+        f_label = None
         f_first_name = None
         f_last_name = None
         f_has_rented_books = None
@@ -141,7 +143,7 @@ def memberss(filtering = False, searching = False):
     if not (s_text == None or s_text == ""):
         form2.text.data = s_text
         if FieldValidator.validate_field(form2, form2.text, [string_cust]):
-            my_query = my_query.filter(or_(Member.first_name.like('%' + s_text + '%'), Member.last_name.like('%' + s_text + '%')))
+            my_query = my_query.filter(or_(Member.first_name.like('%' + s_text + '%'), Member.last_name.like('%' + s_text + '%'), Member.label.like('%' + s_text + '%')))
             args_filter['name'] = s_text
     else:
         my_query, args_filter, filter_has_errors = process_related_date_filters(my_query,
@@ -163,6 +165,14 @@ def memberss(filtering = False, searching = False):
             args_filter, filter_has_errors, form.books_rented_from,
             form.books_rented_to, f_books_rented_from, f_books_rented_to,
             'books_rented_from', 'books_rented_to', 'total_books_rented')
+
+        if not (f_label == None or f_label == ""):
+            form.label.data = f_label
+            if FieldValidator.validate_field(form, form.label, [string_cust, length_cust_max]):
+                my_query = my_query.filter(Member.label.like('%' + f_label + '%'))
+                args_filter['label'] = f_label
+            else:
+                filter_has_errors = True
 
         if not (f_first_name == None or f_first_name == ""):
             form.first_name.data = f_first_name

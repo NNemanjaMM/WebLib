@@ -29,6 +29,17 @@
     <form method="GET" action="{{ url_for('members.membersf') }}">
         <fieldset>
             <div>
+                {{ form.label.label }}
+                {{ form.label }}
+                {% if form.label.errors %}
+                    <div>
+                        {% for error in form.label.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
                 {{ form.first_name.label }}
                 {{ form.first_name }}
                 {% if form.first_name.errors %}
@@ -173,6 +184,11 @@
 
 <p>
     <span>
+        {{ gettext('Label') }}
+        <a href="{{ url_for('members.memberss', page=page, sort_by='label', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('members.memberss', page=page, sort_by='label', direction='down', **extra_filter_args) }}"> &or;</a>
+    </span>
+    <span>
         {{ gettext('First name') }}
         <a href="{{ url_for('members.memberss', page=page, sort_by='first_name', direction='up', **extra_filter_args) }}"> &and; </a>
         <a href="{{ url_for('members.memberss', page=page, sort_by='first_name', direction='down', **extra_filter_args) }}"> &or;</a>
@@ -201,6 +217,7 @@
 
 {% for member in members_list.items %}
     <p>
+        <span>{{ member.label }} </span>
         <span>{{ member.first_name }} {{ member.last_name }} </span>
 
         <span>{{ member.phone_1_formated }} </span>

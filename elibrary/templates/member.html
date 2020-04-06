@@ -9,6 +9,13 @@
     {% endif %}
 
     <p>
+        {{ gettext('Label') }}
+        <strong>
+            {{ member.label }}
+        </strong>
+    </p>
+
+    <p>
         {{ gettext('First name') }}
         <strong>
             {{ member.first_name }}

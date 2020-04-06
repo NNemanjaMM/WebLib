@@ -3,6 +3,7 @@ from flask_wtf import FlaskForm
 from flask_babel import lazy_gettext as _l
 from wtforms import StringField, SubmitField, SelectField, IntegerField, DateField
 from wtforms.validators import ValidationError
+from elibrary.models import Member
 from elibrary.utils.common import Common
 from elibrary.utils.numeric_defines import REGISTRATION_DATE_LIMIT, MAXIMUM_USER_YEARS, MINIMUM_USER_YEARS
 from elibrary.utils.custom_validations import (required_cust, email_cust, required_cust_date,
@@ -31,6 +32,7 @@ class UserForm(FlaskForm):
 
 
 class MemberCreateForm(UserForm):
+    label = StringField(_l('Label'), validators=[required_cust(), length_cust(max=15), string_cust()])
     date_registered = DateField(_l('Registration date'), validators=[required_cust_date()], format='%d.%m.%Y.', default=date.today)
     submit = SubmitField(_l('Add member'))
 
@@ -39,6 +41,11 @@ class MemberCreateForm(UserForm):
             raise ValidationError(_l('Registration date can not be set in future') + '.')
         elif date_registered.data < date.today() - timedelta(REGISTRATION_DATE_LIMIT):
             raise ValidationError(_l('Registration date can be set in past for more than') + ' ' + str(REGISTRATION_DATE_LIMIT) + ' ' + _l('days') + '.')
+
+    def validate_label(self, label):
+        member = Member.query.filter_by(label=label.data).first()
+        if member:
+            raise ValidationError(_l('That label is already in use. Please choose a different one')+'.')
 
 class MemberUpdateForm(UserForm):
     submit = SubmitField(_l('Update member'))
@@ -66,6 +73,7 @@ class FilterForm(FlaskForm):
     birth_date_to = StringField(_l('Birth date before'))
     books_rented_from = IntegerField(_l('Number of rented books, equan and above'))
     books_rented_to = IntegerField(_l('Number of rented books, equan and below'))
+    label = StringField(_l('Label'))
     first_name = StringField(_l('First name'))
     last_name = StringField(_l('Last name'))
     has_rented_books = SelectField(_l('Has currently rented books'), choices=[('no_option', '('+_l('Not selected')+')'), ('has_rented', _l('Yes')), ('does_not_have', _l('No'))])
