@@ -45,7 +45,7 @@ class Member(db.Model):
 
     @property
     def is_membership_near_expired(self):
-        return self.date_expiration - timedelta(EXPIRATION_EXTENSION_LIMIT) < date.today()
+        return self.date_expiration <= date.today() + timedelta(EXPIRATION_EXTENSION_LIMIT) and self.date_expiration >= date.today()
 
     @property
     def age(self):

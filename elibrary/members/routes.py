@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from sqlalchemy import desc, or_
+from sqlalchemy import desc, or_, and_
 from flask import render_template, url_for, redirect, request, flash, Blueprint, abort
 from flask_login import current_user, login_required
 from flask_babel import gettext, lazy_gettext as _l
@@ -7,7 +7,7 @@ from elibrary import db
 from elibrary.models import Member
 from elibrary.members.forms import (MemberCreateForm, MemberUpdateForm,
     UserExtensionForm, FilterForm, ShortFilterForm)
-from elibrary.utils.numeric_defines import MEMBERSHIP_EXTENSION_DAYS, PAGINATION
+from elibrary.utils.numeric_defines import MEMBERSHIP_EXTENSION_DAYS, EXPIRATION_EXTENSION_LIMIT, PAGINATION
 from elibrary.main.forms import AcceptForm, RejectForm
 from elibrary.utils.custom_validations import (string_cust, length_cust_max, FieldValidator)
 
@@ -180,6 +180,27 @@ def memberss(filtering = False, searching = False):
             else:
                 filter_has_errors = True
 
+        if not (f_has_rented_books == None or f_has_rented_books == ""):
+            form.has_rented_books.data = f_has_rented_books
+            if f_has_rented_books == 'has_rented':
+                #TODO iskodirati kada se knjige povezu
+                args_filter['has_rented_books'] = f_has_rented_books
+            elif f_has_rented_books == 'does_not_have':
+                #TODO iskodirati kada se knjige povezu
+                args_filter['has_rented_books'] = f_has_rented_books
+
+        if not (f_has_expired == None or f_has_expired == ""):
+            form.has_expired.data = f_has_expired
+            if f_has_expired == 'expired':
+                my_query = my_query.filter(Member.date_expiration < date.today().strftime('%Y-%m-%d'))
+                args_filter['has_expired'] = f_has_expired
+            elif f_has_expired == 'near_expiration':
+                compare_date = date.today() + timedelta(EXPIRATION_EXTENSION_LIMIT)
+                my_query = my_query.filter(and_(Member.date_expiration <= compare_date.strftime('%Y-%m-%d'), Member.date_expiration >= date.today().strftime('%Y-%m-%d')))
+                args_filter['has_expired'] = f_has_expired
+            elif f_has_expired == 'active':
+                my_query = my_query.filter(Member.date_expiration >= date.today().strftime('%Y-%m-%d'))
+                args_filter['has_expired'] = f_has_expired
 
     if filter_has_errors:
         flash(_l('There are filter values with errors')+'. '+_l('However, valid filter values are applied')+'.', 'warning')
