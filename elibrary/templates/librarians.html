@@ -12,9 +12,6 @@
     <a href="{{ url_for('librarians.librarians_all') }}">{{ gettext('Include inactive librarians') }}</a>
 {% endif %}
 
-
-
-
 {% for librarian in librarians_list %}
     <p>
         <span>{{ librarian.first_name }} {{ librarian.last_name }} </span>

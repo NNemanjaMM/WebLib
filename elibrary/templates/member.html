@@ -1,0 +1,112 @@
+{% extends "base_layout.html" %}
+{% block content %}
+    <h1>{{ gettext('Library member details') }}</h1>
+
+    {% if member.is_membership_expired %}
+        <strong>
+            {{ gettext('Membership expired') }}
+        </strong>
+    {% endif %}
+
+    <p>
+        {{ gettext('Label') }}
+        <strong>
+            {{ member.label }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('First name') }}
+        <strong>
+            {{ member.first_name }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Last name') }}
+        <strong>
+            {{ member.last_name }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Birth date') }}
+        <strong>
+            {{ member.birth_date.strftime('%d.%m.%Y.') }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('E-mail') }}
+        <strong>
+            {{ member.email }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Phone number') }}
+        <strong>
+            {{ member.phone_1_formated }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Second phone number') }}
+        <strong>
+            {{ member.phone_2_formated }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Address') }}
+        <strong>
+            {{ member.address }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Town') }}
+        <strong>
+            {{ member.town }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Registration date') }}
+        <strong>
+            {{ member.date_registered.strftime('%d.%m.%Y.') }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Membership expiration date') }}
+        <strong>
+            {{ member.date_expiration.strftime('%d.%m.%Y.') }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Total rented books number') }}
+        <strong>
+            {{ member.total_books_rented }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Currently rented') }}
+        <strong>
+            <i>to be defined</i>
+        </strong>
+    </p>
+
+    <hr/>
+
+    <p>
+        <a href="{{ url_for('members.members_update', member_id=member.id) }}">{{ gettext('Update member data') }}</a>
+        {% if member.is_membership_near_expired %}
+            <a href="{{ url_for('members.members_extend', member_id=member.id) }}">{{ gettext('Extend membership') }}</a>
+        {% endif %}
+    </p>
+
+
+{% endblock content %}

@@ -1,0 +1,91 @@
+{% extends "base_layout.html" %}
+{% block content %}
+
+<h1>{{ gettext('Member\'s membership extension') }}</h1>
+
+<div>
+    {{ gettext('For a member') }}
+    <div>
+        {{ gettext('Label') }}
+        <strong>
+            {{ member.label }}
+        </strong>
+    </div>
+
+    <div>
+        {{ gettext('First name') }}
+        <strong>
+            {{ member.first_name }}
+        </strong>
+    </div>
+
+    <div>
+        {{ gettext('Last name') }}
+        <strong>
+            {{ member.last_name }}
+        </strong>
+    </div>
+
+    <div>
+        {{ gettext('Last name') }}
+        <strong>
+            {{ member.last_name }}
+        </strong>
+    </div>
+
+    <div>
+        {{ gettext('Registration date') }}
+        <strong>
+            {{ member.date_registered.strftime('%d.%m.%Y.') }}
+        </strong>
+    </div>
+
+    <div>
+        {{ gettext('Expiration date') }}
+        <strong>
+            {{ member.date_expiration.strftime('%d.%m.%Y.') }}
+            {% if member.is_membership_expired %}
+                <span>{{ gettext('(Expired)') }}</span>
+            {% endif %}
+        </strong>
+    </div>
+<div>
+
+<div>
+    <fieldset>
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <div>
+                {{ gettext('Extend membership to the following date') }}
+                <strong>
+                    {% if form.fixed_value %}
+                            {{ form.extension_date(readonly=True) }}
+                    {% else %}
+                            {{ form.extension_date }}
+                    {% endif %}
+                </strong>
+
+                {% if form.extension_date.errors %}
+                    <div>
+                        {% for error in form.extension_date.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if form.fixed_value %}
+                    <i>
+                        {{ gettext('Membership extension date for this member can not be changed, as the current membership did not expire.') }}
+                    </i>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.submit }}
+            </div>
+        </form>
+        <div>
+            <a href="{{ url_for('members.members_details', member_id=member.id) }}"> {{ gettext('Cancel') }}</a>
+        </div>
+    </fieldset>
+</div>
+{% endblock content %}

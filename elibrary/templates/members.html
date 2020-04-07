@@ -1,0 +1,253 @@
+{% extends "base_layout.html" %}
+{% block content %}
+
+<h1>{{ gettext('Library members') }}</h1>
+
+<a href="{{ url_for('members.members_create') }}">{{ gettext('Add new library member') }}</a>
+
+<div>
+    <form method="GET" action="{{ url_for('members.membersr') }}">
+        <fieldset>
+            <div>
+                {{ form2.text.label }}
+                {{ form2.text }}
+                {% if form2.text.errors %}
+                    <div>
+                        {% for error in form2.text.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </fieldset>
+        <div>
+            {{ form2.submit }}
+            <a href="{{ url_for('members.memberss') }}">{{ gettext('Clear search') }}</a>
+        </div>
+    </form>
+
+    <form method="GET" action="{{ url_for('members.membersf') }}">
+        <fieldset>
+            <div>
+                {{ form.label.label }}
+                {{ form.label }}
+                {% if form.label.errors %}
+                    <div>
+                        {% for error in form.label.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.first_name.label }}
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <div>
+                        {% for error in form.first_name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.last_name.label }}
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <div>
+                        {% for error in form.last_name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div>
+                {{ form.has_rented_books.label }}
+                {{ form.has_rented_books }}
+            </div>
+            <div>
+                {{ form.has_expired.label }}
+                {{ form.has_expired }}
+            </div>
+
+            <hr/>
+
+            <div>
+                {{ form.registration_date_from.label }}
+                {{ form.registration_date_from }}
+                {% if form.registration_date_from.errors %}
+                    <div>
+                        {% for error in form.registration_date_from.errors %}
+                            {% if not error == "Not a valid date value" %}
+                                <span>{{ error }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.registration_date_to.label }}
+                {{ form.registration_date_to }}
+                {% if form.registration_date_to.errors %}
+                    <div>
+                        {% for error in form.registration_date_to.errors %}
+                            {% if not error == "Not a valid date value" %}
+                                <span>{{ error }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.expiration_date_from.label }}
+                {{ form.expiration_date_from }}
+                {% if form.expiration_date_from.errors %}
+                    <div>
+                        {% for error in form.expiration_date_from.errors %}
+                            {% if not error == "Not a valid date value" %}
+                                <span>{{ error }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.expiration_date_to.label }}
+                {{ form.expiration_date_to }}
+                {% if form.expiration_date_to.errors %}
+                    <div>
+                        {% for error in form.expiration_date_to.errors %}
+                            {% if not error == "Not a valid date value" %}
+                                <span>{{ error }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.birth_date_from.label }}
+                {{ form.birth_date_from }}
+                {% if form.birth_date_from.errors %}
+                    <div>
+                        {% for error in form.birth_date_from.errors %}
+                            {% if not error == "Not a valid date value" %}
+                                <span>{{ error }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.birth_date_to.label }}
+                {{ form.birth_date_to }}
+                {% if form.birth_date_to.errors %}
+                    <div>
+                        {% for error in form.birth_date_to.errors %}
+                            {% if not error == "Not a valid date value" %}
+                                <span>{{ error }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.books_rented_from.label }}
+                {{ form.books_rented_from }}
+                {% if form.books_rented_from.errors %}
+                    <div>
+                        {% for error in form.books_rented_from.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.books_rented_to.label }}
+                {{ form.books_rented_to }}
+                {% if form.books_rented_to.errors %}
+                    <div>
+                        {% for error in form.books_rented_to.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+        </fieldset>
+        <div>
+            {{ form.submit }}
+            <a href="{{ url_for('members.memberss') }}">{{ gettext('Clear search') }}</a>
+        </div>
+    </form>
+</div>
+
+<p>
+    <span>
+        {{ gettext('Label') }}
+        <a href="{{ url_for('members.memberss', page=page, sort_by='label', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('members.memberss', page=page, sort_by='label', direction='down', **extra_filter_args) }}"> &or;</a>
+    </span>
+    <span>
+        {{ gettext('First name') }}
+        <a href="{{ url_for('members.memberss', page=page, sort_by='first_name', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('members.memberss', page=page, sort_by='first_name', direction='down', **extra_filter_args) }}"> &or;</a>
+    </span>
+    <span>
+        {{ gettext('Last name') }}
+        <a href="{{ url_for('members.memberss', page=page, sort_by='last_name', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('members.memberss', page=page, sort_by='last_name', direction='down', **extra_filter_args) }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Total books rented') }}
+        <a href="{{ url_for('members.memberss', page=page, sort_by='total_books_rented', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('members.memberss', page=page, sort_by='total_books_rented', direction='down', **extra_filter_args) }}"> &or; </a>
+    </span>
+    <span>
+        {{ gettext('Registration date') }}
+        <a href="{{ url_for('members.memberss', page=page, sort_by='date_registered', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('members.memberss', page=page, sort_by='date_registered', direction='down', **extra_filter_args) }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Membership expiration date') }}
+        <a href="{{ url_for('members.memberss', page=page, sort_by='date_expiration', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('members.memberss', page=page, sort_by='date_expiration', direction='down', **extra_filter_args) }}"> &darr; </a>
+    </span>
+</p>
+
+{% for member in members_list.items %}
+    <p>
+        <span>{{ member.label }} </span>
+        <span>{{ member.first_name }} {{ member.last_name }} </span>
+
+        <span>{{ member.phone_1_formated }} </span>
+        <span>{{ member.total_books_rented }}</span>
+        <span>{{ member.date_registered.strftime('%d.%m.%Y.') }} </span>
+        <span>{{ member.date_expiration.strftime('%d.%m.%Y.') }} </span>
+
+        {% if member.is_membership_expired %}
+            <span>{{ gettext('Membership expired') }}</span>
+        {% elif member.is_membership_near_expired %}
+            <span>{{ gettext('Membership near expiration') }}</span>
+        {% endif %}
+
+        <span>
+            <a href="{{ url_for('members.members_details', member_id=member.id) }}">{{ gettext('More details') }}</a>
+        </span>
+
+    </p>
+{% endfor %}
+
+{% for page_num in members_list.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+    {% if page_num %}
+        {% if members_list.page == page_num %}
+            <a style="color: red" href="{{ url_for('members.memberss', page=page_num, **extra_sort_and_filter_args) }}">{{ page_num }}</a>
+        {% else %}
+            <a href="{{ url_for('members.memberss', page=page_num, **extra_sort_and_filter_args) }}">{{ page_num }}</a>
+        {% endif %}
+    {% else %}
+        ...
+    {% endif %}
+{% endfor %}
+
+{% endblock content %}
