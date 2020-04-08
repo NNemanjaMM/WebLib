@@ -99,7 +99,7 @@ def members_extend(member_id):
 @login_required
 def memberss(filtering = False, searching = False):
     page = request.args.get('page', 1, type=int)
-    sort_criteria = request.args.get('sort_by', 'first_name', type=str)
+    sort_criteria = request.args.get('sort_by', 'id', type=str)
     sort_direction = request.args.get('direction', 'up', type=str)
     args_sort = {'sort_by': sort_criteria, 'direction': sort_direction}
 

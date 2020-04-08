@@ -9,9 +9,9 @@
     {% endif %}
 
     <p>
-        {{ gettext('Label') }}
+        {{ gettext('Membership number') }}
         <strong>
-            {{ member.label }}
+            {{ member.id }}
         </strong>
     </p>
 
@@ -30,9 +30,16 @@
     </p>
 
     <p>
-        {{ gettext('Birth date') }}
+        {{ gettext('Father name') }}
         <strong>
-            {{ member.birth_date.strftime('%d.%m.%Y.') }}
+            {{ member.father_name }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Profession') }}
+        <strong>
+            {{ member.profession }}
         </strong>
     </p>
 
@@ -46,14 +53,7 @@
     <p>
         {{ gettext('Phone number') }}
         <strong>
-            {{ member.phone_1_formated }}
-        </strong>
-    </p>
-
-    <p>
-        {{ gettext('Second phone number') }}
-        <strong>
-            {{ member.phone_2_formated }}
+            {{ member.phone_formated }}
         </strong>
     </p>
 
@@ -61,13 +61,6 @@
         {{ gettext('Address') }}
         <strong>
             {{ member.address }}
-        </strong>
-    </p>
-
-    <p>
-        {{ gettext('Town') }}
-        <strong>
-            {{ member.town }}
         </strong>
     </p>
 
@@ -94,6 +87,20 @@
 
     <p>
         {{ gettext('Currently rented') }}
+        <strong>
+            <i>to be defined</i>
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Membership extensions') }}
+        <strong>
+            <i>to be defined</i>
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('All book rentals') }}
         <strong>
             <i>to be defined</i>
         </strong>

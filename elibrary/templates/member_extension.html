@@ -6,30 +6,16 @@
 <div>
     {{ gettext('For a member') }}
     <div>
-        {{ gettext('Label') }}
+        {{ gettext('Membership number') }}
         <strong>
-            {{ member.label }}
+            {{ member.id }}
         </strong>
     </div>
 
     <div>
-        {{ gettext('First name') }}
+        {{ gettext('Name') }}
         <strong>
-            {{ member.first_name }}
-        </strong>
-    </div>
-
-    <div>
-        {{ gettext('Last name') }}
-        <strong>
-            {{ member.last_name }}
-        </strong>
-    </div>
-
-    <div>
-        {{ gettext('Last name') }}
-        <strong>
-            {{ member.last_name }}
+            {{ member.first_name }} ({{ member.father_name }}) {{ member.last_name }}
         </strong>
     </div>
 

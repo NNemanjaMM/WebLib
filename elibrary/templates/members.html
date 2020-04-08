@@ -184,9 +184,9 @@
 
 <p>
     <span>
-        {{ gettext('Label') }}
-        <a href="{{ url_for('members.memberss', page=page, sort_by='label', direction='up', **extra_filter_args) }}"> &and; </a>
-        <a href="{{ url_for('members.memberss', page=page, sort_by='label', direction='down', **extra_filter_args) }}"> &or;</a>
+        {{ gettext('Membership number') }}
+        <a href="{{ url_for('members.memberss', page=page, sort_by='id', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('members.memberss', page=page, sort_by='id', direction='down', **extra_filter_args) }}"> &or;</a>
     </span>
     <span>
         {{ gettext('First name') }}
@@ -217,10 +217,17 @@
 
 {% for member in members_list.items %}
     <p>
-        <span>{{ member.label }} </span>
-        <span>{{ member.first_name }} {{ member.last_name }} </span>
+        <span>{{ member.id }} </span>
+        <span>{{ member.first_name }} ({{ member.father_name }}) {{ member.last_name }} </span>
 
-        <span>{{ member.phone_1_formated }} </span>
+        <span>{{ member.phone_formated }} </span>
+
+        {% if not member.number_of_rented_books == 0 %}
+            <span>{{ gettext('Yes') }}</span>
+        {% else %}
+            <span>{{ gettext('No') }}</span>
+        {% endif %}
+
         <span>{{ member.total_books_rented }}</span>
         <span>{{ member.date_registered.strftime('%d.%m.%Y.') }} </span>
         <span>{{ member.date_expiration.strftime('%d.%m.%Y.') }} </span>
