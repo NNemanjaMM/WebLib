@@ -41,22 +41,11 @@
                 {% endif %}
             </div>
             <div>
-                {{ form.phone_1.label }}
-                {{ form.phone_1 }}
-                {% if form.phone_1.errors %}
+                {{ form.phone.label }}
+                {{ form.phone }}
+                {% if form.phone.errors %}
                     <div>
-                        {% for error in form.phone_1.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div>
-                {{ form.phone_2.label }}
-                {{ form.phone_2 }}
-                {% if form.phone_2.errors %}
-                    <div>
-                        {% for error in form.phone_2.errors %}
+                        {% for error in form.phone.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
@@ -68,17 +57,6 @@
                 {% if form.address.errors %}
                     <div>
                         {% for error in form.address.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div>
-                {{ form.town.label }}
-                {{ form.town }}
-                {% if form.town.errors %}
-                    <div>
-                        {% for error in form.town.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>

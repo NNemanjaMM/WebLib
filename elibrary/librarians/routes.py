@@ -69,12 +69,9 @@ def account_change():
         current_user.first_name = form.first_name.data
         current_user.last_name = form.last_name.data
         current_user.email = form.email.data
-        current_user.phone_1 = form.phone_1.data.replace("/", "")
-        current_user.phone_2 = form.phone_2.data.replace("/", "")
+        current_user.phone = form.phone.data.replace("/", "")
         current_user.address = form.address.data
-        current_user.town = form.town.data
-        if not current_user.username == form.username.data:
-            current_user.change_username = True
+        if not (current_user.username == form.username.data or form.username.data==''):
             current_user.change_username_value = form.username.data
             flash(_l('A username change request has been created')+'.', 'success')
         db.session.commit()
@@ -84,10 +81,8 @@ def account_change():
         form.first_name.data = current_user.first_name
         form.last_name.data = current_user.last_name
         form.email.data = current_user.email
-        form.phone_1.data = current_user.phone_1_formated
-        form.phone_2.data = current_user.phone_2_formated
+        form.phone.data = current_user.phone_formated
         form.address.data = current_user.address
-        form.town.data = current_user.town
     return render_template('account_change.html', form=form, admin_is_editing=False)
 
 @librarians.route("/account/password", methods=['GET', 'POST'])
@@ -142,10 +137,8 @@ def librarians_create():
         librarian.first_name = form.first_name.data
         librarian.last_name = form.last_name.data
         librarian.email = form.email.data
-        librarian.phone_1 = form.phone_1.data.replace("/", "")
-        librarian.phone_2 = form.phone_2.data.replace("/", "")
+        librarian.phone = form.phone.data.replace("/", "")
         librarian.address = form.address.data
-        librarian.town = form.town.data
         librarian.date_registered = form.date_registered.data
         librarian.username = form.username.data
         librarian.password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -169,10 +162,8 @@ def librarians_update(librarian_id):
         librarian.first_name = form.first_name.data
         librarian.last_name = form.last_name.data
         librarian.email = form.email.data
-        librarian.phone_1 = form.phone_1.data.replace("/", "")
-        librarian.phone_2 = form.phone_2.data.replace("/", "")
+        librarian.phone = form.phone.data.replace("/", "")
         librarian.address = form.address.data
-        librarian.town = form.town.data
         db.session.commit()
         flash(_l('Account has been updated')+'.', 'success')
         return redirect(url_for('librarians.librarians_details',librarian_id=librarian.id))
@@ -180,10 +171,8 @@ def librarians_update(librarian_id):
         form.first_name.data = librarian.first_name
         form.last_name.data = librarian.last_name
         form.email.data = librarian.email
-        form.phone_1.data = librarian.phone_1_formated
-        form.phone_2.data = librarian.phone_2_formated
+        form.phone.data = librarian.phone_formated
         form.address.data = librarian.address
-        form.town.data = librarian.town
     return render_template('account_change.html', form=form, admin_is_editing=True)
 
 @librarians.route("/librarians/password/<int:librarian_id>", methods=['GET', 'POST'])
@@ -226,7 +215,6 @@ def librarians_username(librarian_id):
             else:
                 flash(_l('Username change has been rejected')+'.', 'info')
                 flash(_l('Requested username is already in use')+'.', 'info')
-        librarian.change_username = False
         librarian.change_username_value = None
         db.session.commit()
         return redirect(url_for('librarians.librarians_active'))

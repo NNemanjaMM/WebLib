@@ -25,15 +25,14 @@ def members_create():
     form = MemberCreateForm()
     if form.validate_on_submit():
         member = Member()
-        member.label = form.label.data
+        member.id = form.id.data
         member.first_name = form.first_name.data
         member.last_name = form.last_name.data
-        member.birth_date = form.birth_date.data
+        member.father_name = form.father_name.data
+        member.profession = form.profession.data
         member.email = form.email.data
-        member.phone_1 = form.phone_1.data.replace("/", "")
-        member.phone_2 = form.phone_2.data.replace("/", "")
+        member.phone = form.phone.data.replace("/", "")
         member.address = form.address.data
-        member.town = form.town.data
         member.date_registered = form.date_registered.data
         member.date_expiration = form.date_registered.data + timedelta(MEMBERSHIP_EXTENSION_DAYS)
         db.session.add(member)
@@ -51,24 +50,22 @@ def members_update(member_id):
     if form.validate_on_submit():
         member.first_name = form.first_name.data
         member.last_name = form.last_name.data
-        member.birth_date = form.birth_date.data
+        member.father_name = form.father_name.data
+        member.profession = form.profession.data
         member.email = form.email.data
-        member.phone_1 = form.phone_1.data.replace("/", "")
-        member.phone_2 = form.phone_2.data.replace("/", "")
+        member.phone = form.phone.data.replace("/", "")
         member.address = form.address.data
-        member.town = form.town.data
         db.session.commit()
         flash(_l('Member data has been updated')+'.', 'success')
         return redirect(url_for('members.members_details',member_id=member.id))
     elif request.method == 'GET':
         form.first_name.data = member.first_name
         form.last_name.data = member.last_name
-        form.birth_date.data = member.birth_date
+        form.father_name.data = member.father_name
+        form.profession.data = member.profession
         form.email.data = member.email
-        form.phone_1.data = member.phone_1_formated
-        form.phone_2.data = member.phone_2_formated
+        form.phone.data = member.phone_formated
         form.address.data = member.address
-        form.town.data = member.town
     return render_template('member_create.html', form=form, is_creating=False)
 
 @members.route("/members/extend/<int:member_id>", methods=['GET', 'POST'])
@@ -108,11 +105,9 @@ def memberss(filtering = False, searching = False):
     f_registration_date_to = request.args.get('registration_date_to')
     f_expiration_date_from = request.args.get('expiration_date_from')
     f_expiration_date_to = request.args.get('expiration_date_to')
-    f_birth_date_from = request.args.get('birth_date_from')
-    f_birth_date_to = request.args.get('birth_date_to')
     f_books_rented_from = request.args.get('books_rented_from')
     f_books_rented_to = request.args.get('books_rented_to')
-    f_label = request.args.get('label')
+    f_id = request.args.get('id')
     f_first_name = request.args.get('first_name')
     f_last_name = request.args.get('last_name')
     f_has_rented_books = request.args.get('has_rented_books')
@@ -124,11 +119,9 @@ def memberss(filtering = False, searching = False):
         f_registration_date_to = None
         f_expiration_date_from = None
         f_expiration_date_to = None
-        f_birth_date_from = None
-        f_birth_date_to = None
         f_books_rented_from = None
         f_books_rented_to = None
-        f_label = None
+        f_id = None
         f_first_name = None
         f_last_name = None
         f_has_rented_books = None
@@ -143,7 +136,7 @@ def memberss(filtering = False, searching = False):
     if not (s_text == None or s_text == ""):
         form2.text.data = s_text
         if FieldValidator.validate_field(form2, form2.text, [string_cust]):
-            my_query = my_query.filter(or_(Member.first_name.like('%' + s_text + '%'), Member.last_name.like('%' + s_text + '%'), Member.label.like('%' + s_text + '%')))
+            my_query = my_query.filter(or_(Member.first_name.like('%' + s_text + '%'), Member.last_name.like('%' + s_text + '%'), Member.id == s_text))
             args_filter['name'] = s_text
     else:
         my_query, args_filter, filter_has_errors = process_related_date_filters(my_query,
@@ -156,21 +149,16 @@ def memberss(filtering = False, searching = False):
             form.expiration_date_to, f_expiration_date_from, f_expiration_date_to,
             'expiration_date_from', 'expiration_date_to', 'date_expiration', False)
 
-        my_query, args_filter, filter_has_errors = process_related_date_filters(my_query,
-            args_filter, filter_has_errors, form.birth_date_from,
-            form.birth_date_to, f_birth_date_from, f_birth_date_to,
-            'birth_date_from', 'birth_date_to', 'birth_date', True)
-
         my_query, args_filter, filter_has_errors = process_related_number_filters(my_query,
             args_filter, filter_has_errors, form.books_rented_from,
             form.books_rented_to, f_books_rented_from, f_books_rented_to,
             'books_rented_from', 'books_rented_to', 'total_books_rented')
 
-        if not (f_label == None or f_label == ""):
-            form.label.data = f_label
-            if FieldValidator.validate_field(form, form.label, [string_cust, length_cust_max]):
-                my_query = my_query.filter(Member.label.like('%' + f_label + '%'))
-                args_filter['label'] = f_label
+        if not (f_id == None or f_id == ""):
+            form.id.data = f_id
+            if FieldValidator.validate_field(form, form.id, [string_cust, length_cust_max]):
+                my_query = my_query.filter(Member.id == f_id)
+                args_filter['id'] = f_id
             else:
                 filter_has_errors = True
 
@@ -193,10 +181,10 @@ def memberss(filtering = False, searching = False):
         if not (f_has_rented_books == None or f_has_rented_books == ""):
             form.has_rented_books.data = f_has_rented_books
             if f_has_rented_books == 'has_rented':
-                #TODO iskodirati kada se knjige povezu
+    #TODO iskodirati kada se knjige povezu
                 args_filter['has_rented_books'] = f_has_rented_books
             elif f_has_rented_books == 'does_not_have':
-                #TODO iskodirati kada se knjige povezu
+    #TODO iskodirati kada se knjige povezu
                 args_filter['has_rented_books'] = f_has_rented_books
 
         if not (f_has_expired == None or f_has_expired == ""):

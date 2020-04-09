@@ -29,11 +29,11 @@
     <form method="GET" action="{{ url_for('members.membersf') }}">
         <fieldset>
             <div>
-                {{ form.label.label }}
-                {{ form.label }}
-                {% if form.label.errors %}
+                {{ form.id.label }}
+                {{ form.id }}
+                {% if form.id.errors %}
                     <div>
-                        {% for error in form.label.errors %}
+                        {% for error in form.id.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
@@ -126,32 +126,6 @@
                 {% endif %}
             </div>
             <div>
-                {{ form.birth_date_from.label }}
-                {{ form.birth_date_from }}
-                {% if form.birth_date_from.errors %}
-                    <div>
-                        {% for error in form.birth_date_from.errors %}
-                            {% if not error == "Not a valid date value" %}
-                                <span>{{ error }}</span>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div>
-                {{ form.birth_date_to.label }}
-                {{ form.birth_date_to }}
-                {% if form.birth_date_to.errors %}
-                    <div>
-                        {% for error in form.birth_date_to.errors %}
-                            {% if not error == "Not a valid date value" %}
-                                <span>{{ error }}</span>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div>
                 {{ form.books_rented_from.label }}
                 {{ form.books_rented_from }}
                 {% if form.books_rented_from.errors %}
@@ -184,7 +158,7 @@
 
 <p>
     <span>
-        {{ gettext('Membership number') }}
+        {{ gettext('Member id') }}
         <a href="{{ url_for('members.memberss', page=page, sort_by='id', direction='up', **extra_filter_args) }}"> &and; </a>
         <a href="{{ url_for('members.memberss', page=page, sort_by='id', direction='down', **extra_filter_args) }}"> &or;</a>
     </span>

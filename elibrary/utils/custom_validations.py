@@ -25,8 +25,8 @@ class phone_cust(Regexp):
         Regexp.__init__(self, '^((0\d{2}\/)|(0\d{2})|(\+\d{1,3}\d{2}))\d{6,8}$', message = text)
 
 class string_cust(Regexp):
-    def __init__(self, text = _l('Only letters, numbers, spaces and hyphens are allowed')+'.'):
-        Regexp.__init__(self, '^[\w\- ]*$', message = text)
+    def __init__(self, text = _l('Only letters, numbers, spaces, dots, commas, and hyphens are allowed')+'.'):
+        Regexp.__init__(self, '^[\w\-\.\, ]*$', message = text)
 
 class username_cust(Regexp):
     def __init__(self, text = _l('Only letters, numbers, and following characters are allowed')+': - ! " # % & \' ( ) * + / \\ . ? @'):

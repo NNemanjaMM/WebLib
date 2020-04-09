@@ -13,11 +13,11 @@
         <fieldset>
             {% if is_creating %}
                 <div>
-                    {{ form.label.label }}
-                    {{ form.label }}
-                    {% if form.label.errors %}
+                    {{ form.id.label }}
+                    {{ form.id }}
+                    {% if form.id.errors %}
                         <div>
-                            {% for error in form.label.errors %}
+                            {% for error in form.id.errors %}
                                 <span>{{ error }}</span>
                             {% endfor %}
                         </div>
@@ -47,6 +47,28 @@
                 {% endif %}
             </div>
             <div>
+                {{ form.father_name.label }}
+                {{ form.father_name }}
+                {% if form.father_name.errors %}
+                    <div>
+                        {% for error in form.father_name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.profession.label }}
+                {{ form.profession }}
+                {% if form.profession.errors %}
+                    <div>
+                        {% for error in form.profession.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
                 {{ form.email.label }}
                 {{ form.email }}
                 {% if form.email.errors %}
@@ -58,22 +80,11 @@
                 {% endif %}
             </div>
             <div>
-                {{ form.phone_1.label }}
-                {{ form.phone_1 }}
-                {% if form.phone_1.errors %}
+                {{ form.phone.label }}
+                {{ form.phone }}
+                {% if form.phone.errors %}
                     <div>
-                        {% for error in form.phone_1.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div>
-                {{ form.phone_2.label }}
-                {{ form.phone_2 }}
-                {% if form.phone_2.errors %}
-                    <div>
-                        {% for error in form.phone_2.errors %}
+                        {% for error in form.phone.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
@@ -86,30 +97,6 @@
                     <div>
                         {% for error in form.address.errors %}
                             <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div>
-                {{ form.town.label }}
-                {{ form.town }}
-                {% if form.town.errors %}
-                    <div>
-                        {% for error in form.town.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div>
-                {{ form.birth_date.label }}
-                {{ form.birth_date }}
-                {% if form.birth_date.errors %}
-                    <div>
-                        {% for error in form.birth_date.errors %}
-                            {% if not error == "Not a valid date value" %}
-                                <span>{{ error }}</span>
-                            {% endif %}
                         {% endfor %}
                     </div>
                 {% endif %}
