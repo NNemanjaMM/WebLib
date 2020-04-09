@@ -7,10 +7,28 @@
 <br/>
 
 {% if include_disabled %}
-    <a href="{{ url_for('librarians.librarians_active') }}">{{ gettext('Do not include inactive librarians') }}</a>
+    <a href="{{ url_for('librarians.librarianss', include_inactive='False') }}">{{ gettext('Do not include inactive librarians') }}</a>
 {% else %}
-    <a href="{{ url_for('librarians.librarians_all') }}">{{ gettext('Include inactive librarians') }}</a>
+    <a href="{{ url_for('librarians.librarianss', include_inactive='True') }}">{{ gettext('Include inactive librarians') }}</a>
 {% endif %}
+
+<p>
+    <span>
+        {{ gettext('First name') }}
+        <a href="{{ url_for('librarians.librarianss', sort_by='first_name', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('librarians.librarianss', sort_by='first_name', direction='down', **extra_filter_args) }}"> &or;</a>
+    </span>
+    <span>
+        {{ gettext('Last name') }}
+        <a href="{{ url_for('librarians.librarianss', sort_by='last_name', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('librarians.librarianss', sort_by='last_name', direction='down', **extra_filter_args) }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Registration date') }}
+        <a href="{{ url_for('librarians.librarianss', sort_by='date_registered', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('librarians.librarianss', sort_by='date_registered', direction='down', **extra_filter_args) }}"> &darr; </a>
+    </span>
+</p>
 
 {% for librarian in librarians_list %}
     <p>

@@ -39,7 +39,7 @@ def members_create():
         db.session.commit()
         flash(_l('New member has been added')+'.', 'success')
         return redirect(url_for('members.memberss'))
-    return render_template('member_create.html', form=form, is_creating=True)
+    return render_template('member_cu.html', form=form, is_creating=True)
 
 @members.route("/members/update/<int:member_id>", methods=['GET', 'POST'])
 @login_required
@@ -66,7 +66,7 @@ def members_update(member_id):
         form.email.data = member.email
         form.phone.data = member.phone_formated
         form.address.data = member.address
-    return render_template('member_create.html', form=form, is_creating=False)
+    return render_template('member_cu.html', form=form, is_creating=False)
 
 @members.route("/members/extend/<int:member_id>", methods=['GET', 'POST'])
 @login_required

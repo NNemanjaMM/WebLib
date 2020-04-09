@@ -6,6 +6,7 @@ from elibrary.librarians.forms import (LibrarianCreateForm, LibrarianUpdateForm,
         LibrarianUpdatePasswordForm, LibrarianChangePasswordForm, LibrarianRequestChangePasswordForm)
 from elibrary.main.forms import AcceptForm, RejectForm
 from elibrary.models import Librarian
+from sqlalchemy import desc
 
 librarians = Blueprint('librarians', __name__)
 
@@ -83,7 +84,7 @@ def account_change():
         form.email.data = current_user.email
         form.phone.data = current_user.phone_formated
         form.address.data = current_user.address
-    return render_template('account_change.html', form=form, admin_is_editing=False)
+    return render_template('account_cu.html', form=form, admin_is_editing=False, is_creating=False)
 
 @librarians.route("/account/password", methods=['GET', 'POST'])
 @login_required
@@ -101,21 +102,26 @@ def account_password():
     return render_template('account_password_change.html', form=form)
 
 
-@librarians.route("/librarians/all")
+@librarians.route("/librarians")
 @login_required
-def librarians_all():
+def librarianss():
     if not current_user.is_admin:
         abort(403)
-    list = Librarian.query.order_by('first_name').all()
-    return render_template('librarians.html', librarians_list=list, include_disabled=True)
-
-@librarians.route("/librarians/active")
-@login_required
-def librarians_active():
-    if not current_user.is_admin:
-        abort(403)
-    list = Librarian.query.filter(Librarian.is_operational).order_by('first_name').all()
-    return render_template('librarians.html', librarians_list=list, include_disabled=False)
+    include_inactive = request.args.get('include_inactive', 'False', type=str)
+    sort_criteria = request.args.get('sort_by', 'first_name', type=str)
+    sort_direction = request.args.get('direction', 'up', type=str)
+    include_disabled_val=True
+    filter_args = {'include_inactive': 'True'}
+    my_query = db.session.query(Librarian)
+    if include_inactive == 'False':
+        my_query = my_query.filter(Librarian.is_operational)
+        include_disabled_val=False
+        filter_args['include_inactive']='False'
+    if sort_direction == 'up':
+        list = my_query.order_by(sort_criteria).all()
+    else:
+        list = my_query.order_by(desc(sort_criteria)).all()
+    return render_template('librarians.html', librarians_list=list, include_disabled=include_disabled_val, extra_filter_args=filter_args)
 
 @librarians.route("/librarians/details/<int:librarian_id>")
 @login_required
@@ -147,7 +153,7 @@ def librarians_create():
         db.session.commit()
         flash(_l('Account has been created')+'.', 'success')
         return redirect(url_for('librarians.librarians_active'))
-    return render_template('account_create.html', form=form)
+    return render_template('account_cu.html', form=form, is_creating=True)
 
 @librarians.route("/librarians/update/<int:librarian_id>", methods=['GET', 'POST'])
 @login_required
@@ -173,7 +179,7 @@ def librarians_update(librarian_id):
         form.email.data = librarian.email
         form.phone.data = librarian.phone_formated
         form.address.data = librarian.address
-    return render_template('account_change.html', form=form, admin_is_editing=True)
+    return render_template('account_cu.html', form=form, admin_is_editing=True, is_creating=False)
 
 @librarians.route("/librarians/password/<int:librarian_id>", methods=['GET', 'POST'])
 @login_required
