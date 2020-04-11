@@ -19,7 +19,6 @@ class UserForm(FlaskForm):
     address = StringField(_l('Address'), validators=[required_cust(), length_cust(max=60), string_cust()])
 
 class MemberCreateForm(UserForm):
-    id = IntegerField(_l('Member id'), validators=[required_cust()])
     date_registered = DateField(_l('Registration date'), validators=[required_cust_date()], format=DATE_FORMAT, default=date.today)
     submit = SubmitField(_l('Add member'))
 
@@ -28,11 +27,6 @@ class MemberCreateForm(UserForm):
             raise ValidationError(_l('Registration date can not be set in future') + '.')
         elif date_registered.data < date.today() - timedelta(REGISTRATION_DATE_LIMIT):
             raise ValidationError(_l('Registration date can be set in past for more than') + ' ' + str(REGISTRATION_DATE_LIMIT) + ' ' + _l('days') + '.')
-
-    def validate_id(self, id):
-        member = Member.query.filter_by(id=id.data).first()
-        if member:
-            raise ValidationError(_l('That member id is already in use. Please choose a different one')+'.')
 
 class MemberUpdateForm(UserForm):
     submit = SubmitField(_l('Update member'))

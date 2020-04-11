@@ -25,7 +25,6 @@ def members_create():
     form = MemberCreateForm()
     if form.validate_on_submit():
         member = Member()
-        member.id = form.id.data
         member.first_name = form.first_name.data
         member.last_name = form.last_name.data
         member.father_name = form.father_name.data
@@ -38,7 +37,7 @@ def members_create():
         db.session.add(member)
         db.session.commit()
         flash(_l('New member has been added')+'.', 'success')
-        return redirect(url_for('members.memberss'))
+        return redirect(url_for('members.members_details', member_id=member.id))
     return render_template('member_cu.html', form=form, is_creating=True)
 
 @members.route("/members/update/<int:member_id>", methods=['GET', 'POST'])
