@@ -194,7 +194,7 @@
         <span>{{ member.id }} </span>
         <span>{{ member.first_name }} ({{ member.father_name }}) {{ member.last_name }} </span>
 
-        <span>{{ member.phone_formated }} </span>
+        <span>{{ member.phone_print }} </span>
 
         {% if not member.number_of_rented_books == 0 %}
             <span>{{ gettext('Yes') }}</span>
@@ -203,8 +203,8 @@
         {% endif %}
 
         <span>{{ member.total_books_rented }}</span>
-        <span>{{ member.date_registered.strftime('%d.%m.%Y.') }} </span>
-        <span>{{ member.date_expiration.strftime('%d.%m.%Y.') }} </span>
+        <span>{{ member.date_registered_print }} </span>
+        <span>{{ member.date_expiration_print }} </span>
 
         {% if member.is_membership_expired %}
             <span>{{ gettext('Membership expired') }}</span>

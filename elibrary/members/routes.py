@@ -7,7 +7,7 @@ from elibrary import db
 from elibrary.models import Member
 from elibrary.members.forms import (MemberCreateForm, MemberUpdateForm,
     UserExtensionForm, FilterForm, ShortFilterForm)
-from elibrary.utils.numeric_defines import MEMBERSHIP_EXTENSION_DAYS, EXPIRATION_EXTENSION_LIMIT, PAGINATION
+from elibrary.utils.defines import MEMBERSHIP_EXTENSION_DAYS, EXPIRATION_EXTENSION_LIMIT, PAGINATION, DATE_FORMAT
 from elibrary.main.forms import AcceptForm, RejectForm
 from elibrary.utils.custom_validations import (string_cust, length_cust_max, FieldValidator)
 
@@ -64,7 +64,7 @@ def members_update(member_id):
         form.father_name.data = member.father_name
         form.profession.data = member.profession
         form.email.data = member.email
-        form.phone.data = member.phone_formated
+        form.phone.data = member.phone_print
         form.address.data = member.address
     return render_template('member_cu.html', form=form, is_creating=False)
 

@@ -4,6 +4,7 @@ from flask_babel import gettext, lazy_gettext as _l
 from elibrary import bcrypt, db
 from elibrary.librarians.forms import (LibrarianCreateForm, LibrarianUpdateForm, LoginForm,
         LibrarianUpdatePasswordForm, LibrarianChangePasswordForm, LibrarianRequestChangePasswordForm)
+from elibrary.utils.defines import DATE_FORMAT
 from elibrary.main.forms import AcceptForm, RejectForm
 from elibrary.models import Librarian
 from sqlalchemy import desc
@@ -82,7 +83,7 @@ def account_change():
         form.first_name.data = current_user.first_name
         form.last_name.data = current_user.last_name
         form.email.data = current_user.email
-        form.phone.data = current_user.phone_formated
+        form.phone.data = current_user.phone_print
         form.address.data = current_user.address
     return render_template('account_cu.html', form=form, admin_is_editing=False, is_creating=False)
 
@@ -177,7 +178,7 @@ def librarians_update(librarian_id):
         form.first_name.data = librarian.first_name
         form.last_name.data = librarian.last_name
         form.email.data = librarian.email
-        form.phone.data = librarian.phone_formated
+        form.phone.data = librarian.phone_print
         form.address.data = librarian.address
     return render_template('account_cu.html', form=form, admin_is_editing=True, is_creating=False)
 

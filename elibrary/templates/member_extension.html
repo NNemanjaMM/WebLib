@@ -22,14 +22,14 @@
     <div>
         {{ gettext('Registration date') }}
         <strong>
-            {{ member.date_registered.strftime('%d.%m.%Y.') }}
+            {{ member.date_registered_print }}
         </strong>
     </div>
 
     <div>
         {{ gettext('Expiration date') }}
         <strong>
-            {{ member.date_expiration.strftime('%d.%m.%Y.') }}
+            {{ member.date_expiration_print }}
             {% if member.is_membership_expired %}
                 <span>{{ gettext('(Expired)') }}</span>
             {% endif %}

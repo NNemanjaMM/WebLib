@@ -53,7 +53,7 @@
     <p>
         {{ gettext('Phone number') }}
         <strong>
-            {{ member.phone_formated }}
+            {{ member.phone_print }}
         </strong>
     </p>
 
@@ -67,14 +67,14 @@
     <p>
         {{ gettext('Registration date') }}
         <strong>
-            {{ member.date_registered.strftime('%d.%m.%Y.') }}
+            {{ member.date_registered_print }}
         </strong>
     </p>
 
     <p>
         {{ gettext('Membership expiration date') }}
         <strong>
-            {{ member.date_expiration.strftime('%d.%m.%Y.') }}
+            {{ member.date_expiration_print }}
         </strong>
     </p>
 

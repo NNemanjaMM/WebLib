@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from flask_login import UserMixin
 from elibrary import db, login_manager
-from elibrary.utils.numeric_defines import MEMBERSHIP_EXTENSION_DAYS, EXPIRATION_EXTENSION_LIMIT
+from elibrary.utils.defines import MEMBERSHIP_EXTENSION_DAYS, EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -29,13 +29,6 @@ class Member(db.Model):
     membership_extensions = db.relationship("Extension", backref='member', lazy=True)
 
     @property
-    def phone_formated(self):
-        if "+" in self.phone:
-            return self.phone
-        else:
-            return self.phone[:3] + '/' + self.phone[3:]
-
-    @property
     def is_membership_expired(self):
         return self.date_expiration < date.today()
 
@@ -47,9 +40,23 @@ class Member(db.Model):
     def number_of_rented_books(self):
         return 0#len(self.rented_books)
 
+    @property
+    def phone_print(self):
+        if "+" in self.phone:
+            return self.phone
+        else:
+            return self.phone[:3] + '/' + self.phone[3:]
+    @property
+    def date_registered_print(self):
+        return self.date_registered.strftime(DATE_FORMAT)
+
+    @property
+    def date_expiration_print(self):
+        return self.date_registered.strftime(DATE_FORMAT)
+
     def __repr__(self):
         return f"Member('{self.id}', '{self.first_name}', '{self.last_name}', '{self.father_name}', \
-                      '{self.profession}', '{self.email}', '{self.phone_formated}', '{self.address}',\
+                      '{self.profession}', '{self.email}', '{self.phone_print}', '{self.address}',\
                       '{self.total_books_rented}', '{self.date_registered}', '{self.date_expiration}')"
 
 class Librarian(db.Model, UserMixin):
@@ -73,15 +80,19 @@ class Librarian(db.Model, UserMixin):
         return not self.change_username_value == None
 
     @property
-    def phone_formated(self):
+    def phone_print(self):
         if "+" in self.phone:
             return self.phone
         else:
             return self.phone[:3] + '/' + self.phone[3:]
 
+    @property
+    def date_registered_print(self):
+        return self.date_registered.strftime(DATE_FORMAT)
+
     def __repr__(self):
         return f"User('{self.id}', '{self.first_name}', '{self.last_name}', '{self.username}', '{self.email}', \
-                      '{self.phone_formated}', '{self.address}', '{self.date_registered}', '{self.is_admin}', \
+                      '{self.phone_print}', '{self.address}', '{self.date_registered}', '{self.is_admin}', \
                       '{self.is_operational}', '{self.change_password}', '{self.change_username}')"
 
 class Extension(db.Model):

@@ -33,7 +33,7 @@
     <p>
         {{ gettext('Phone number') }}
         <strong>
-            {{ account.phone_formated }}
+            {{ account.phone_print }}
         </strong>
     </p>
 
@@ -47,7 +47,7 @@
     <p>
         {{ gettext('Registration date') }}
         <strong>
-            {{ account.date_registered.strftime('%d.%m.%Y.') }}
+            {{ account.date_registered_print }}
         </strong>
     </p>
 

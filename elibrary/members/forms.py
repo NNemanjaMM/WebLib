@@ -5,7 +5,7 @@ from wtforms import StringField, SubmitField, SelectField, IntegerField, DateFie
 from wtforms.validators import ValidationError
 from elibrary.models import Member
 from elibrary.utils.common import Common
-from elibrary.utils.numeric_defines import REGISTRATION_DATE_LIMIT
+from elibrary.utils.defines import REGISTRATION_DATE_LIMIT, DATE_FORMAT
 from elibrary.utils.custom_validations import (required_cust, email_cust, required_cust_date,
         phone_cust, string_cust, username_cust, equal_to_cust, length_cust, optional_cust)
 
@@ -20,7 +20,7 @@ class UserForm(FlaskForm):
 
 class MemberCreateForm(UserForm):
     id = IntegerField(_l('Member id'), validators=[required_cust()])
-    date_registered = DateField(_l('Registration date'), validators=[required_cust_date()], format='%d.%m.%Y.', default=date.today)
+    date_registered = DateField(_l('Registration date'), validators=[required_cust_date()], format=DATE_FORMAT, default=date.today)
     submit = SubmitField(_l('Add member'))
 
     def validate_date_registered(self, date_registered):
@@ -38,18 +38,18 @@ class MemberUpdateForm(UserForm):
     submit = SubmitField(_l('Update member'))
 
 class UserExtensionForm(FlaskForm):
-    extension_date = DateField(_l('Extend membership to the following date'), validators=[required_cust_date()], format='%d.%m.%Y.')
+    extension_date = DateField(_l('Extend membership to the following date'), validators=[required_cust_date()], format=DATE_FORMAT)
     submit = SubmitField(_l('Extend membership'))
     maximum_date = date.today()
     fixed_value = False
 
     def validate_extension_date(self, extension_date):
         if self.fixed_value and not extension_date.data == self.maximum_date:
-            raise ValidationError(_l('This user membership extension date must be set to') + ' ' + self.maximum_date.strftime('%d.%m.%Y.'))
+            raise ValidationError(_l('This user membership extension date must be set to') + ' ' + self.maximum_date.strftime(DATE_FORMAT))
         elif extension_date.data > self.maximum_date:
-            raise ValidationError(_l('Membership for this user can not be set after the') + ' ' + self.maximum_date.strftime('%d.%m.%Y.'))
+            raise ValidationError(_l('Membership for this user can not be set after the') + ' ' + self.maximum_date.strftime(DATE_FORMAT))
         elif extension_date.data < self.maximum_date - timedelta(REGISTRATION_DATE_LIMIT):
-            raise ValidationError(_l('Membership for this user can not be set before the') + ' ' + (self.maximum_date - timedelta(REGISTRATION_DATE_LIMIT)).strftime('%d.%m.%Y.'))
+            raise ValidationError(_l('Membership for this user can not be set before the') + ' ' + (self.maximum_date - timedelta(REGISTRATION_DATE_LIMIT)).strftime(DATE_FORMAT))
 
 class FilterForm(FlaskForm):
     registration_date_from = StringField(_l('Registered after'))

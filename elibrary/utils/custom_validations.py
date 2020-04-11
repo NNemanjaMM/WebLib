@@ -1,14 +1,14 @@
 from wtforms.validators import DataRequired, Email, Length, EqualTo, Regexp, optional
 from flask_babel import lazy_gettext as _l
 from datetime import datetime, date
-from elibrary.utils.numeric_defines import MINIMUM_DATE, MAXIMUM_NUMBER
+from elibrary.utils.defines import MINIMUM_DATE, MAXIMUM_NUMBER, DATE_FORMAT
 
 class required_cust(DataRequired):
     def __init__(self, text = _l('The field must be filled')+'.'):
         DataRequired.__init__(self, message = text)
 
 class required_cust_date(DataRequired):
-    def __init__(self, text = _l('Date value is not valid') + '. ' + _l('Make sute if matches the following format') + ' "dd.mm.yyyy.".'):
+    def __init__(self, text = _l('Date value is not valid') + '. ' + _l('Make sute if matches the following format') + ' ' + _l('"dd.mm.yyyy."') + '.'):
         DataRequired.__init__(self, message = text)
 
 class optional_cust(optional):
@@ -70,7 +70,7 @@ class FieldValidator():
         try:
             value = datetime.strptime(field.data, "%d.%m.%Y.").date()
         except ValueError:
-            field.errors.append(_l('Date value is not valid') + '. ' + _l('Make sute if matches the following format') + ' "dd.mm.yyyy.".')
+            field.errors.append(_l('Date value is not valid') + '. ' + _l('Make sute if matches the following format') + ' ' + _l('"dd.mm.yyyy."') + '.')
         if not value == None:
             if value < datetime.strptime(MINIMUM_DATE, "%d.%m.%Y.").date():
                 field.errors.append(_l('Date can not be set before') + ' "' + str(MINIMUM_DATE) + '".')
