@@ -1,9 +1,10 @@
 from datetime import date, timedelta
 from flask_wtf import FlaskForm
 from flask_babel import lazy_gettext as _l
-from wtforms import StringField, SubmitField, SelectField, IntegerField, DateField
+from wtforms import StringField, SubmitField, SelectField, IntegerField, DateField, TextAreaField
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import ValidationError
-from elibrary.models import Member
+from elibrary.models import Member, ExtensionPrice
 from elibrary.utils.common import Common
 from elibrary.utils.defines import REGISTRATION_DATE_LIMIT, DATE_FORMAT
 from elibrary.utils.custom_validations import (required_cust, email_cust, required_cust_date,
@@ -19,31 +20,35 @@ class UserForm(FlaskForm):
     address = StringField(_l('Address'), validators=[required_cust(), length_cust(max=60), string_cust()])
 
 class MemberCreateForm(UserForm):
-    date_registered = DateField(_l('Registration date'), validators=[required_cust_date()], format=DATE_FORMAT, default=date.today)
+    date_registered = DateField(_l('Registration date'), validators=[required_cust_date()], format=DATE_FORMAT, default=date.today())
     submit = SubmitField(_l('Add member'))
 
     def validate_date_registered(self, date_registered):
         if date_registered.data > date.today():
-            raise ValidationError(_l('Registration date can not be set in future') + '.')
+            raise ValidationError(_l('Registration date') + ' '+ _l('cannot be set in future') + '.')
         elif date_registered.data < date.today() - timedelta(REGISTRATION_DATE_LIMIT):
-            raise ValidationError(_l('Registration date can be set in past for more than') + ' ' + str(REGISTRATION_DATE_LIMIT) + ' ' + _l('days') + '.')
+            raise ValidationError(_l('Registration date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(REGISTRATION_DATE_LIMIT) + ' ' + _l('days') + '.')
 
 class MemberUpdateForm(UserForm):
     submit = SubmitField(_l('Update member'))
 
-class UserExtensionForm(FlaskForm):
-    extension_date = DateField(_l('Extend membership to the following date'), validators=[required_cust_date()], format=DATE_FORMAT)
+class MemberExtensionForm(FlaskForm):
+    price = QuerySelectField(_l('Price'), query_factory=lambda: ExtensionPrice.query.all())
+    note = TextAreaField(_l('Note'), validators=[optional_cust(), string_cust(), length_cust(max=150)])
+    date_performed = DateField(_l('Extension date'), validators=[required_cust_date()], format=DATE_FORMAT, default=date.today())
     submit = SubmitField(_l('Extend membership'))
-    maximum_date = date.today()
-    fixed_value = False
 
-    def validate_extension_date(self, extension_date):
-        if self.fixed_value and not extension_date.data == self.maximum_date:
-            raise ValidationError(_l('This user membership extension date must be set to') + ' ' + self.maximum_date.strftime(DATE_FORMAT))
-        elif extension_date.data > self.maximum_date:
-            raise ValidationError(_l('Membership for this user can not be set after the') + ' ' + self.maximum_date.strftime(DATE_FORMAT))
-        elif extension_date.data < self.maximum_date - timedelta(REGISTRATION_DATE_LIMIT):
-            raise ValidationError(_l('Membership for this user can not be set before the') + ' ' + (self.maximum_date - timedelta(REGISTRATION_DATE_LIMIT)).strftime(DATE_FORMAT))
+    def validate_date_performed(self, date_performed):
+        if date_performed.data > date.today():
+            raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set in future') + '.')
+        elif date_performed.data < date.today() - timedelta(REGISTRATION_DATE_LIMIT):
+            raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(REGISTRATION_DATE_LIMIT) + ' ' + _l('days') + '.')
+
+    def validate_price(self, price):
+        if not price.data == None:
+            found = ExtensionPrice.query.filter_by(id=price.data.id).first()
+            if not found:
+                raise ValidationError(_l('Price value is not valid') + '.')
 
 class FilterForm(FlaskForm):
     registration_date_from = StringField(_l('Registered after'))

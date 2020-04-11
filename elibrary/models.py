@@ -1,13 +1,13 @@
 from datetime import date, timedelta
 from flask_login import UserMixin
 from elibrary import db, login_manager
-from elibrary.utils.defines import MEMBERSHIP_EXTENSION_DAYS, EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT
+from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT
 
 @login_manager.user_loader
 def load_user(user_id):
     return Librarian.query.get(int(user_id))
 
-class Book(db.Model):     #za knjigu signatura (10 cifara, ima i tacke i povlake), inventarni broj (broj, 50000), naslov, autor
+class Book(db.Model):     #za knjigu signatura (10 cifara, ima i tacke i povlake), inventarni broj (broj, 50000)
     id = db.Column(db.Integer, primary_key=True)
     signature = db.Column(db.String(16), nullable=False)
     inv_number = db.Column(db.Integer, nullable=False)
@@ -52,7 +52,7 @@ class Member(db.Model):
 
     @property
     def date_expiration_print(self):
-        return self.date_registered.strftime(DATE_FORMAT)
+        return self.date_expiration.strftime(DATE_FORMAT)
 
     def __repr__(self):
         return f"Member('{self.id}', '{self.first_name}', '{self.last_name}', '{self.father_name}', \
@@ -97,8 +97,8 @@ class Librarian(db.Model, UserMixin):
 
 class Extension(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    is_paid = db.Column(db.Boolean, default=False)
-    price = db.Column(db.Integer, nullable=True)
+    note = db.Column(db.String(150), nullable=True)
+    price = db.Column(db.Integer, nullable=False)
     date_performed = db.Column(db.Date, nullable=False, default=date.today())
     date_extended = db.Column(db.Date, nullable=False, default=date.today())
     member_id = db.Column(db.Integer, db.ForeignKey('member.id'), nullable=False)
@@ -109,3 +109,10 @@ class Rental(db.Model): # povezati sa knjigom, clanom, ko je odobrio, i ko je pr
     date_performed = db.Column(db.Date, nullable=False, default=date.today())
     date_termination = db.Column(db.Date, nullable=False, default=date.today() + timedelta(EXPIRATION_EXTENSION_LIMIT))
     is_terminated = db.Column(db.Boolean, default=False)
+
+class ExtensionPrice(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    price_value = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return str(self.price_value)

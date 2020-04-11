@@ -38,9 +38,9 @@ class LibrarianCreateForm(LibrarianForm):
 
     def validate_date_registered(self, date_registered):
         if date_registered.data > date.today():
-            raise ValidationError(_l('Registration date can not be set in future') + '.')
+            raise ValidationError(_l('Registration date') + ' '+ _l('cannot be set in future') + '.')
         elif date_registered.data < date.today() - timedelta(REGISTRATION_DATE_LIMIT):
-            raise ValidationError(_l('Registration date can be set in past for more than') + ' ' + str(REGISTRATION_DATE_LIMIT) + ' ' + _l('days') + '.')
+            raise ValidationError(_l('Registration date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(REGISTRATION_DATE_LIMIT) + ' ' + _l('days') + '.')
 
 class LibrarianUpdateForm(LibrarianForm):
     username = StringField(_l('Username'), validators=[optional_cust(), length_cust(min=6, max=30), username_cust()])

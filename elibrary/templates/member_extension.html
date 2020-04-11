@@ -38,40 +38,52 @@
 <div>
 
 <div>
-    <fieldset>
-        <form method="POST" action="">
-            {{ form.hidden_tag() }}
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset>
             <div>
-                {{ gettext('Extend membership to the following date') }}
-                <strong>
-                    {% if form.fixed_value %}
-                            {{ form.extension_date(readonly=True) }}
-                    {% else %}
-                            {{ form.extension_date }}
-                    {% endif %}
-                </strong>
-
-                {% if form.extension_date.errors %}
+                {{ form.price.label }}
+                {{ form.price }}
+                {{ currrency }}
+            </div>
+            <div>
+                {{ form.note.label }}
+                {{ form.note }}
+                {% if form.note.errors %}
                     <div>
-                        {% for error in form.extension_date.errors %}
+                        {% for error in form.note.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
                 {% endif %}
-
-                {% if form.fixed_value %}
-                    <i>
-                        {{ gettext('Membership extension date for this member can not be changed, as the current membership did not expire.') }}
-                    </i>
+            </div>
+            <div>
+                {{ form.date_performed.label }}
+                {{ form.date_performed }}
+                {% if form.date_performed.errors %}
+                    <div>
+                        {% for error in form.date_performed.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
                 {% endif %}
             </div>
+            <br/>
+            <div>
+                {% if member.is_membership_expired %}
+                    <b>{{ gettext('Membership expiration date will be set a year after the current membership expiration') }}</b>
+                {% else %}
+                    <b>{{ gettext('Membership expiration date will be set a year after the membership extension date') }}</b>
+                {% endif %}
+            </div>
+            <br/>
             <div>
                 {{ form.submit }}
             </div>
-        </form>
-        <div>
-            <a href="{{ url_for('members.members_details', member_id=member.id) }}"> {{ gettext('Cancel') }}</a>
-        </div>
-    </fieldset>
+            <div>
+                <a href="{{ url_for('members.members_details', member_id=member.id) }}"> {{ gettext('Cancel') }}</a>
+            </div>
+        </fieldset>
+    </form>
 </div>
 {% endblock content %}

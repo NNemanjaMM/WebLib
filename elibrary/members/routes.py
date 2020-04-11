@@ -4,12 +4,13 @@ from flask import render_template, url_for, redirect, request, flash, Blueprint,
 from flask_login import current_user, login_required
 from flask_babel import gettext, lazy_gettext as _l
 from elibrary import db
-from elibrary.models import Member
-from elibrary.members.forms import (MemberCreateForm, MemberUpdateForm,
-    UserExtensionForm, FilterForm, ShortFilterForm)
-from elibrary.utils.defines import MEMBERSHIP_EXTENSION_DAYS, EXPIRATION_EXTENSION_LIMIT, PAGINATION, DATE_FORMAT
-from elibrary.main.forms import AcceptForm, RejectForm
+from elibrary.models import Member, Extension
 from elibrary.utils.custom_validations import (string_cust, length_cust_max, FieldValidator)
+from elibrary.members.forms import (MemberCreateForm, MemberUpdateForm,
+    MemberExtensionForm, FilterForm, ShortFilterForm)
+from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, PAGINATION, DATE_FORMAT, CURRENCY
+from elibrary.utils.common import Common
+from elibrary.main.forms import AcceptForm, RejectForm
 
 members = Blueprint('members', __name__)
 
@@ -33,7 +34,7 @@ def members_create():
         member.phone = form.phone.data.replace("/", "")
         member.address = form.address.data
         member.date_registered = form.date_registered.data
-        member.date_expiration = form.date_registered.data + timedelta(MEMBERSHIP_EXTENSION_DAYS)
+        member.date_expiration = form.date_registered.data
         db.session.add(member)
         db.session.commit()
         flash(_l('New member has been added')+'.', 'success')
@@ -71,25 +72,22 @@ def members_update(member_id):
 @login_required
 def members_extend(member_id):
     member = Member.query.get_or_404(member_id)
-    if not member.is_membership_near_expired:
+    if not (member.is_membership_near_expired or member.is_membership_expired):
         abort(405)
-
-    form = UserExtensionForm()
-    if member.is_membership_expired:
-        new_date_expiration = date.today() + timedelta(MEMBERSHIP_EXTENSION_DAYS)
-    else:
-        new_date_expiration = member.date_expiration + timedelta(MEMBERSHIP_EXTENSION_DAYS)
-        form.fixed_value = True
-    form.maximum_date = new_date_expiration
-
+    form = MemberExtensionForm()
     if form.validate_on_submit():
-        member.date_expiration = form.extension_date.data
-        flash(_l('Member\'s membership is extended for')+' '+str(MEMBERSHIP_EXTENSION_DAYS)+' '+_l('days')+'.', 'info')
+        extension = Extension()
+        extension.note = form.note.data
+        extension.price = form.price.data.price_value
+        extension.date_performed = form.date_performed.data
+        extension.date_extended = Common.add_year(extension.date_performed) if member.is_membership_expired else Common.add_year(member.date_expiration)
+        extension.member_id = member_id
+        extension.librarian_id = current_user.id
+        member.date_expiration = extension.date_extended
         db.session.commit()
+        flash(_l('Member\'s membership is successfuly extended to') + ' ' + member.date_expiration_print, 'info')
         return redirect(url_for('members.members_details', member_id=member.id))
-
-    form.extension_date.data = new_date_expiration
-    return render_template('member_extension.html', form=form, member=member, expiration_proposal=new_date_expiration)
+    return render_template('member_extension.html', form=form, member=member, currrency=CURRENCY)
 
 @members.route("/members")
 @login_required
