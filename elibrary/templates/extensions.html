@@ -1,0 +1,164 @@
+{% extends "base_layout.html" %}
+{% block content %}
+
+<h1>{{ gettext('Membership extensions') }}</h1>
+
+{% if current_user.is_admin %}
+    <a href="{{ url_for('extensions.prices') }}">{{ gettext('Review prices') }}</a>
+    <a href="{{ url_for('extensions.prices_add') }}">{{ gettext('Add price') }}</a>
+{% endif %}
+
+<div>
+    <form method="GET" action="{{ url_for('extensions.extensionss') }}">
+        <fieldset>
+            <div>
+                {{ form.member_id.label }}
+                {{ form.member_id }}
+                {% if form.member_id.errors %}
+                    <div>
+                        {% for error in form.member_id.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+                <div>
+                    {{ form.librarian_id.label }}
+                    {{ form.librarian_id }}
+                    {% if form.librarian_id.errors %}
+                        <div>
+                            {% for error in form.librarian_id.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            <div>
+                {{ form.price.label }}
+                {{ form.price }}
+            </div>
+            <div>
+                {{ form.date_performed_from.label }}
+                {{ form.date_performed_from }}
+                {% if form.date_performed_from.errors %}
+                    <div>
+                        {% for error in form.date_performed_from.errors %}
+                            {% if not error == "Not a valid date value" %}
+                                <span>{{ error }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.date_performed_to.label }}
+                {{ form.date_performed_to }}
+                {% if form.date_performed_to.errors %}
+                    <div>
+                        {% for error in form.date_performed_to.errors %}
+                            {% if not error == "Not a valid date value" %}
+                                <span>{{ error }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.date_extended_from.label }}
+                {{ form.date_extended_from }}
+                {% if form.date_extended_from.errors %}
+                    <div>
+                        {% for error in form.date_extended_from.errors %}
+                            {% if not error == "Not a valid date value" %}
+                                <span>{{ error }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.date_extended_to.label }}
+                {{ form.date_extended_to }}
+                {% if form.date_extended_to.errors %}
+                    <div>
+                        {% for error in form.date_extended_to.errors %}
+                            {% if not error == "Not a valid date value" %}
+                                <span>{{ error }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </fieldset>
+        <div>
+            {{ form.submit }}
+            <a href="{{ url_for('extensions.extensionss') }}">{{ gettext('Clear filter') }}</a>
+        </div>
+    </form>
+</div>
+
+<p>
+    <span>
+        {{ gettext('Extension id') }}
+        <a href="{{ url_for('extensions.extensionss', sort_by='id', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('extensions.extensionss', sort_by='id', direction='down', **extra_filter_args) }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Date performed') }}
+        <a href="{{ url_for('extensions.extensionss', sort_by='date_performed', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('extensions.extensionss', sort_by='date_performed', direction='down', **extra_filter_args) }}"> &or;</a>
+    </span>
+    <span>
+        {{ gettext('Member id') }}
+        <a href="{{ url_for('extensions.extensionss', sort_by='member_id', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('extensions.extensionss', sort_by='member_id', direction='down', **extra_filter_args) }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Membership expires') }}
+        <a href="{{ url_for('extensions.extensionss', sort_by='date_extended', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('extensions.extensionss', sort_by='date_extended', direction='down', **extra_filter_args) }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Price') }}
+        <a href="{{ url_for('extensions.extensionss', sort_by='price', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('extensions.extensionss', sort_by='price', direction='down', **extra_filter_args) }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Librarian id') }}
+        <a href="{{ url_for('extensions.extensionss', sort_by='librarian_id', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('extensions.extensionss', sort_by='librarian_id', direction='down', **extra_filter_args) }}"> &or; </a>
+    </span>
+</p>
+{% for extension in extensions_list.items %}
+    <p>
+        <span>{{ extension.id }}</span>
+        <span>{{ extension.date_performed_print }}</span>
+
+        <span>{{ extension.member_id }}</span>
+        <span>{{ extension.member.first_name }} ({{ extension.member.father_name }}) {{ extension.member.last_name }}</span>
+        <span>{{ extension.date_extended_print }}</span>
+
+        <span>{{ extension.price_print }}</span>
+        <span>{{ extension.note }}</span>
+        <span>{{ extension.librarian.username }}</span>
+    </p>
+{% endfor %}
+
+{% for page_num in extensions_list.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+    {% if page_num %}
+        {% if extensions_list.page == page_num %}
+            <a style="color: red" href="{{ url_for('extensions.extensionss', page=page_num, **extra_sort_and_filter_args) }}">{{ page_num }}</a>
+        {% else %}
+            <a href="{{ url_for('extensions.extensionss', page=page_num, **extra_sort_and_filter_args) }}">{{ page_num }}</a>
+        {% endif %}
+    {% else %}
+        ...
+    {% endif %}
+{% endfor %}
+
+<br/>
+<i>Ukoliko treba moze se promeniti raspored kolona</i>
+<br/>
+<i>Filtriranje po ceni članarine može da bude i na principu veće od - manje od. Samo reći da promenim.</i>
+
+{% endblock content %}

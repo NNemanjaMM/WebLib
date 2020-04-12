@@ -1,0 +1,78 @@
+{% extends "base_layout.html" %}
+{% block content %}
+
+<h1>{{ gettext('Price update') }}</h1>
+
+<div>
+    {{ gettext('For a price') }}
+    <div>
+        {{ gettext('Price id') }}
+        <strong>
+            {{ price.id }}
+        </strong>
+    </div>
+    <div>
+        {{ gettext('Value') }}
+        <strong>
+            {{ price.price_value_print }}
+        </strong>
+    </div>
+    <div>
+        {{ gettext('Currency') }}
+        <strong>
+            {{ price.currency }}
+        </strong>
+    </div>
+    <div>
+        {{ gettext('Date of establishment') }}
+        <strong>
+            {{ price.date_established_print }}
+        </strong>
+    </div>
+    <div>
+        {% if price.is_enabled %}
+            <strong>{{ gettext('This price is currently') }} {{ gettext('Enabled')}}</strong>
+        {% else %}
+            <strong>{{ gettext('This price is currently') }} {{ gettext('Disabled')}}</strong>
+        {% endif %}
+    </div>
+<div>
+
+<div>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset>
+            <div>
+                {{ form.note.label }}
+                {{ form.note }}
+                {% if form.note.errors %}
+                    <div>
+                        {% for error in form.note.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div>
+                <br/>
+                {% if price.is_enabled %}
+                    <b>{{ gettext('This price will be disabled, and the comment will be updated') }}</b>
+                {% else %}
+                    <b>{{ gettext('This price will be Enabled, and the comment will be updated') }}</b>
+                {% endif %}
+                <br/>
+                <br/>
+                {{ gettext('Please confirm or cancel action') }}
+            </div>
+            <br/>
+            <div>
+                {{ form.submit }}
+            </div>
+            <div>
+                <a href="{{ url_for('extensions.prices') }}"> {{ gettext('Cancel') }}</a>
+            </div>
+        </fieldset>
+    </form>
+</div>
+{% endblock content %}

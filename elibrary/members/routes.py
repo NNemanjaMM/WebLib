@@ -8,7 +8,7 @@ from elibrary.models import Member, Extension
 from elibrary.utils.custom_validations import (string_cust, length_cust_max, FieldValidator)
 from elibrary.members.forms import (MemberCreateForm, MemberUpdateForm,
     MemberExtensionForm, FilterForm, ShortFilterForm)
-from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, PAGINATION, DATE_FORMAT, CURRENCY
+from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, PAGINATION, DATE_FORMAT
 from elibrary.utils.common import Common
 from elibrary.main.forms import AcceptForm, RejectForm
 
@@ -83,11 +83,13 @@ def members_extend(member_id):
         extension.date_extended = Common.add_year(extension.date_performed) if member.is_membership_expired else Common.add_year(member.date_expiration)
         extension.member_id = member_id
         extension.librarian_id = current_user.id
+        extension.price_id = form.price.data.id
+        db.session.add(extension)
         member.date_expiration = extension.date_extended
         db.session.commit()
         flash(_l('Member\'s membership is successfuly extended to') + ' ' + member.date_expiration_print, 'info')
         return redirect(url_for('members.members_details', member_id=member.id))
-    return render_template('member_extension.html', form=form, member=member, currrency=CURRENCY)
+    return render_template('member_extension.html', form=form, member=member)
 
 @members.route("/members")
 @login_required
@@ -133,7 +135,7 @@ def memberss(filtering = False, searching = False):
     if not (s_text == None or s_text == ""):
         form2.text.data = s_text
         if FieldValidator.validate_field(form2, form2.text, [string_cust]):
-            my_query = my_query.filter(or_(Member.first_name.like('%' + s_text + '%'), Member.last_name.like('%' + s_text + '%'), Member.id == s_text))
+            my_query = my_query.filter(or_(Member.first_name.like('%' + s_text + '%'), Member.last_name.like('%' + s_text + '%'), Member.father_name.like('%' + s_text + '%'), Member.id == s_text))
             args_filter['name'] = s_text
     else:
         my_query, args_filter, filter_has_errors = process_related_date_filters(my_query,
@@ -153,9 +155,10 @@ def memberss(filtering = False, searching = False):
 
         if not (f_id == None or f_id == ""):
             form.id.data = f_id
-            if FieldValidator.validate_field(form, form.id, [string_cust, length_cust_max]):
-                my_query = my_query.filter(Member.id == f_id)
-                args_filter['id'] = f_id
+            from_value = FieldValidator.convert_and_validate_number(form.id)
+            if not from_value == None:
+                my_query = my_query.filter(Member.id == from_value)
+                args_filter['id'] = from_value
             else:
                 filter_has_errors = True
 

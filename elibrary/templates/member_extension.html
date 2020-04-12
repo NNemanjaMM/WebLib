@@ -44,7 +44,6 @@
             <div>
                 {{ form.price.label }}
                 {{ form.price }}
-                {{ currrency }}
             </div>
             <div>
                 {{ form.note.label }}
@@ -71,9 +70,9 @@
             <br/>
             <div>
                 {% if member.is_membership_expired %}
-                    <b>{{ gettext('Membership expiration date will be set a year after the current membership expiration') }}</b>
+                    <b>{{ gettext('Membership expiration date will be set a year after the date of membership extension') }}</b>
                 {% else %}
-                    <b>{{ gettext('Membership expiration date will be set a year after the membership extension date') }}</b>
+                    <b>{{ gettext('Membership expiration date will be set a year after the current membership expiration') }}</b>
                 {% endif %}
             </div>
             <br/>

@@ -33,9 +33,9 @@ class MemberUpdateForm(UserForm):
     submit = SubmitField(_l('Update member'))
 
 class MemberExtensionForm(FlaskForm):
-    price = QuerySelectField(_l('Price'), query_factory=lambda: ExtensionPrice.query.all())
+    price = QuerySelectField(_l('Price'), query_factory=lambda: ExtensionPrice.query.filter_by(is_enabled=True).order_by(ExtensionPrice.price_value))
     note = TextAreaField(_l('Note'), validators=[optional_cust(), string_cust(), length_cust(max=150)])
-    date_performed = DateField(_l('Extension date'), validators=[required_cust_date()], format=DATE_FORMAT, default=date.today())
+    date_performed = DateField(_l('Extension performed on'), validators=[required_cust_date()], format=DATE_FORMAT, default=date.today())
     submit = SubmitField(_l('Extend membership'))
 
     def validate_date_performed(self, date_performed):

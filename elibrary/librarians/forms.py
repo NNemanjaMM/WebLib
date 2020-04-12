@@ -33,7 +33,7 @@ class LibrarianCreateForm(LibrarianForm):
     username = StringField(_l('Username'), validators=[required_cust(), length_cust(min=6, max=30), username_cust()])
     password = PasswordField(_l('Password'), validators=[required_cust(), length_cust(min=6)])
     confirm_password = PasswordField(_l('Confirm password'), validators=[required_cust(), equal_to_cust('password')])
-    is_administrator = BooleanField(_l('This will be library administrator account'), validators=[optional_cust()])
+    is_administrator = BooleanField(_l('This will be library administrator account'))
     submit = SubmitField(_l('Add librarian'))
 
     def validate_date_registered(self, date_registered):

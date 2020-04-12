@@ -151,7 +151,7 @@
         </fieldset>
         <div>
             {{ form.submit }}
-            <a href="{{ url_for('members.memberss') }}">{{ gettext('Clear search') }}</a>
+            <a href="{{ url_for('members.memberss') }}">{{ gettext('Clear filter') }}</a>
         </div>
     </form>
 </div>
@@ -159,33 +159,33 @@
 <p>
     <span>
         {{ gettext('Member id') }}
-        <a href="{{ url_for('members.memberss', page=page, sort_by='id', direction='up', **extra_filter_args) }}"> &and; </a>
-        <a href="{{ url_for('members.memberss', page=page, sort_by='id', direction='down', **extra_filter_args) }}"> &or;</a>
+        <a href="{{ url_for('members.memberss', sort_by='id', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('members.memberss', sort_by='id', direction='down', **extra_filter_args) }}"> &or;</a>
     </span>
     <span>
         {{ gettext('First name') }}
-        <a href="{{ url_for('members.memberss', page=page, sort_by='first_name', direction='up', **extra_filter_args) }}"> &and; </a>
-        <a href="{{ url_for('members.memberss', page=page, sort_by='first_name', direction='down', **extra_filter_args) }}"> &or;</a>
+        <a href="{{ url_for('members.memberss', sort_by='first_name', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('members.memberss', sort_by='first_name', direction='down', **extra_filter_args) }}"> &or;</a>
     </span>
     <span>
         {{ gettext('Last name') }}
-        <a href="{{ url_for('members.memberss', page=page, sort_by='last_name', direction='up', **extra_filter_args) }}"> &uarr; </a>
-        <a href="{{ url_for('members.memberss', page=page, sort_by='last_name', direction='down', **extra_filter_args) }}"> &darr; </a>
+        <a href="{{ url_for('members.memberss', sort_by='last_name', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('members.memberss', sort_by='last_name', direction='down', **extra_filter_args) }}"> &darr; </a>
     </span>
     <span>
         {{ gettext('Total books rented') }}
-        <a href="{{ url_for('members.memberss', page=page, sort_by='total_books_rented', direction='up', **extra_filter_args) }}"> &and; </a>
-        <a href="{{ url_for('members.memberss', page=page, sort_by='total_books_rented', direction='down', **extra_filter_args) }}"> &or; </a>
+        <a href="{{ url_for('members.memberss', sort_by='total_books_rented', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('members.memberss', sort_by='total_books_rented', direction='down', **extra_filter_args) }}"> &or; </a>
     </span>
     <span>
         {{ gettext('Registration date') }}
-        <a href="{{ url_for('members.memberss', page=page, sort_by='date_registered', direction='up', **extra_filter_args) }}"> &uarr; </a>
-        <a href="{{ url_for('members.memberss', page=page, sort_by='date_registered', direction='down', **extra_filter_args) }}"> &darr; </a>
+        <a href="{{ url_for('members.memberss', sort_by='date_registered', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('members.memberss', sort_by='date_registered', direction='down', **extra_filter_args) }}"> &darr; </a>
     </span>
     <span>
         {{ gettext('Membership expiration date') }}
-        <a href="{{ url_for('members.memberss', page=page, sort_by='date_expiration', direction='up', **extra_filter_args) }}"> &uarr; </a>
-        <a href="{{ url_for('members.memberss', page=page, sort_by='date_expiration', direction='down', **extra_filter_args) }}"> &darr; </a>
+        <a href="{{ url_for('members.memberss', sort_by='date_expiration', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('members.memberss', sort_by='date_expiration', direction='down', **extra_filter_args) }}"> &darr; </a>
     </span>
 </p>
 
@@ -232,5 +232,7 @@
         ...
     {% endif %}
 {% endfor %}
+<br/>
+<i>Ukoliko postoje kombinacije viltera koje se često koriste, mogu se napraviti "link"-ovi za brže filtriranje po tim kriterijumima</i>
 
 {% endblock content %}

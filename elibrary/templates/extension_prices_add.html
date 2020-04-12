@@ -1,0 +1,54 @@
+{% extends "base_layout.html" %}
+{% block content %}
+
+<h1>{{ gettext('Add price') }}</h1>
+
+<div>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset>
+            <div>
+                {{ form.price_value.label }}
+                {{ form.price_value }}
+                {% if form.price_value.errors %}
+                    <div>
+                        {% for error in form.price_value.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.currency.label }}
+                {{ form.currency }}
+                {% if form.currency.errors %}
+                    <div>
+                        {% for error in form.currency.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.note.label }}
+                {{ form.note }}
+                {% if form.note.errors %}
+                    <div>
+                        {% for error in form.note.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.is_enabled.label }}
+                {{ form.is_enabled }}
+            </div>
+        </fieldset>
+        <div>
+            {{ form.submit }}
+        </div>
+    </form>
+</div>
+
+{% endblock content %}

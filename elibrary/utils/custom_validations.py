@@ -11,6 +11,10 @@ class required_cust_date(DataRequired):
     def __init__(self, text = _l('Date value is not valid') + '. ' + _l('Make sute if matches the following format') + ' ' + _l('"dd.mm.yyyy."') + '.'):
         DataRequired.__init__(self, message = text)
 
+class required_cust_decimal(DataRequired):
+    def __init__(self, text = _l('Date value is not valid') + '. ' + _l('Make sure it is a decimal number and uses dot as decimal point') + '.'):
+        DataRequired.__init__(self, message = text)
+
 class optional_cust(optional):
     def __init__(self):
         optional.__init__(self)
@@ -27,6 +31,10 @@ class phone_cust(Regexp):
 class string_cust(Regexp):
     def __init__(self, text = _l('Only letters, numbers, spaces, dots, commas, and hyphens are allowed')+'.'):
         Regexp.__init__(self, '^[\w\-\.\, ]*$', message = text)
+
+class char_cust(Regexp):
+    def __init__(self, text = _l('Only upper case letters are allowed')+'.'):
+        Regexp.__init__(self, '^[A-Z]*$', message = text)
 
 class username_cust(Regexp):
     def __init__(self, text = _l('Only letters, numbers, and following characters are allowed')+': - ! " # % & \' ( ) * + / \\ . ? @'):

@@ -24,7 +24,7 @@ class Member(db.Model):
     phone = db.Column(db.String(15), nullable=False)
     address = db.Column(db.String(60), nullable=False)
     date_registered = db.Column(db.Date, nullable=False, default=date.today())
-    date_expiration = db.Column(db.Date, nullable=True)
+    date_expiration = db.Column(db.Date, nullable=True, default=date.today())
     total_books_rented = db.Column(db.Integer, nullable=False, default=0)
     membership_extensions = db.relationship("Extension", backref='member', lazy=True)
 
@@ -98,11 +98,24 @@ class Librarian(db.Model, UserMixin):
 class Extension(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     note = db.Column(db.String(150), nullable=True)
-    price = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Numeric, nullable=False)
     date_performed = db.Column(db.Date, nullable=False, default=date.today())
     date_extended = db.Column(db.Date, nullable=False, default=date.today())
+    price_id = db.Column(db.Integer, db.ForeignKey('extension_price.id'), nullable=False)
     member_id = db.Column(db.Integer, db.ForeignKey('member.id'), nullable=False)
     librarian_id = db.Column(db.Integer, db.ForeignKey('librarian.id'), nullable=False)
+
+    @property
+    def date_performed_print(self):
+        return self.date_performed.strftime(DATE_FORMAT)
+
+    @property
+    def date_extended_print(self):
+        return self.date_extended.strftime(DATE_FORMAT)
+
+    @property
+    def price_print(self):
+        return "{:.2f}".format(self.price)
 
 class Rental(db.Model): # povezati sa knjigom, clanom, ko je odobrio, i ko je preuzeo knjigu nazad
     id = db.Column(db.Integer, primary_key=True)
@@ -112,7 +125,20 @@ class Rental(db.Model): # povezati sa knjigom, clanom, ko je odobrio, i ko je pr
 
 class ExtensionPrice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    price_value = db.Column(db.Integer, nullable=False)
+    price_value = db.Column(db.Numeric(scale=2, precision=4, asdecimal=True), nullable=False)
+    currency = db.Column(db.String(3), nullable=False)
+    note = db.Column(db.String(150), nullable=True)
+    is_enabled = db.Column(db.Boolean, nullable=False, default=True)
+    date_established = db.Column(db.Date, nullable=False, default=date.today())
+    extensions_with_this_price = db.relationship("Extension")
+
+    @property
+    def price_value_print(self):
+        return "{:.2f}".format(self.price_value)
+
+    @property
+    def date_established_print(self):
+        return self.date_established.strftime(DATE_FORMAT)
 
     def __repr__(self):
-        return str(self.price_value)
+        return "{:.2f}".format(self.price_value) + ' ' + self.currency

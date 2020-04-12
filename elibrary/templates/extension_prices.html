@@ -1,0 +1,61 @@
+{% extends "base_layout.html" %}
+{% block content %}
+
+<h1>{{ gettext('Defined prices') }}</h1>
+
+{% if current_user.is_admin %}
+    <a href="{{ url_for('extensions.prices_add') }}">{{ gettext('Add price') }}</a>
+{% endif %}
+
+<p>
+    <span>
+        {{ gettext('Price id') }}
+        <a href="{{ url_for('extensions.prices', sort_by='id', direction='up') }}"> &uarr; </a>
+        <a href="{{ url_for('extensions.prices', sort_by='id', direction='down') }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Price value') }}
+        <a href="{{ url_for('extensions.prices', sort_by='price_value', direction='up') }}"> &and; </a>
+        <a href="{{ url_for('extensions.prices', sort_by='price_value', direction='down') }}"> &or;</a>
+    </span>
+    <span>
+        {{ gettext('Currency') }}
+        <a href="{{ url_for('extensions.prices', sort_by='currency', direction='up') }}"> &uarr; </a>
+        <a href="{{ url_for('extensions.prices', sort_by='currency', direction='down') }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Price is enabled') }}
+        <a href="{{ url_for('extensions.prices', sort_by='is_enabled', direction='up') }}"> &uarr; </a>
+        <a href="{{ url_for('extensions.prices', sort_by='is_enabled', direction='down') }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Date of establishment') }}
+        <a href="{{ url_for('extensions.prices', sort_by='date_established', direction='up') }}"> &uarr; </a>
+        <a href="{{ url_for('extensions.prices', sort_by='date_established', direction='down') }}"> &darr; </a>
+    </span>
+</p>
+
+{% for price in prices_list %}
+    <p>
+        <span>{{ price.id }}</span>
+        <span>{{ price.price_value_print }}</span>
+        <span>{{ price.currency }}</span>
+        {% if price.note == None or price.note == "" %}
+            <span>{{ gettext('(no note inserted)') }}</span>
+        {% else %}
+            <span>{{ price.note }}</span>
+        {% endif %}
+        {% if price.is_enabled %}
+            <span>{{ gettext('Yes') }}</span>
+        {% else %}
+            <span>{{ gettext('No') }}</span>
+        {% endif %}
+        <span>{{ price.date_established_print }}</span>
+        <span><a href="{{ url_for('extensions.prices_update', price_id=price.id) }}">{{ gettext('Enable')}}/{{gettext('Disable') }}</a></span>
+    </p>
+{% endfor %}
+
+<br/>
+<i>Ukoliko treba moze se promeniti raspored kolona</i>
+
+{% endblock content %}
