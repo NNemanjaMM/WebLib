@@ -115,5 +115,17 @@
         {% endif %}
     </p>
 
+<h3>Membership extensions</h3>
+
+{% for extension in extensions %}
+    <p>
+        <span>{{ extension.date_performed_print }}</span>
+        <span>{{ extension.date_extended_print }}</span>
+        <span>{{ extension.price_details.price_value }}</span>
+        <span>{{ extension.price_details.currency }}</span>
+        <span>{{ extension.note }}</span>
+        <span>{{ extension.librarian.username }}</span>
+    </p>
+{% endfor %}
 
 {% endblock content %}

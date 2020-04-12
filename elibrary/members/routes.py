@@ -18,7 +18,10 @@ members = Blueprint('members', __name__)
 @login_required
 def members_details(member_id):
     member = Member.query.get_or_404(member_id)
-    return render_template('member.html', member=member)
+
+    extensions = Extension.query.filter_by(member_id=member_id).order_by(desc('date_performed'))
+
+    return render_template('member.html', member=member, extensions=extensions)
 
 @members.route("/members/create", methods=['GET', 'POST'])
 @login_required

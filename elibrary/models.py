@@ -130,7 +130,7 @@ class ExtensionPrice(db.Model):
     note = db.Column(db.String(150), nullable=True)
     is_enabled = db.Column(db.Boolean, nullable=False, default=True)
     date_established = db.Column(db.Date, nullable=False, default=date.today())
-    extensions_with_this_price = db.relationship("Extension")
+    extensions_with_this_price = db.relationship("Extension", backref='price_details', lazy=True)
 
     @property
     def price_value_print(self):
