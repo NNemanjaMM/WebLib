@@ -9,8 +9,8 @@ def load_user(user_id):
 
 class Book(db.Model):     #za knjigu signatura (10 cifara, ima i tacke i povlake), inventarni broj (broj, 50000)
     id = db.Column(db.Integer, primary_key=True)
+    inv_number = db.Column(db.String(6), nullable=False)
     signature = db.Column(db.String(16), nullable=False)
-    inv_number = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(60), nullable=False)
     author = db.Column(db.String(70), nullable=False)
 

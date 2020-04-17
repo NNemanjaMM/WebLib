@@ -40,6 +40,14 @@ class username_cust(Regexp):
     def __init__(self, text = _l('Only letters, numbers, and following characters are allowed')+': - ! " # % & \' ( ) * + / \\ . ? @'):
         Regexp.__init__(self, '^[\w\-\!\"\#\%\&\'\(\)\*\+\/\\\.\?\@]*$', message = text)
 
+class signature_cust(Regexp):
+    def __init__(self, text = _l('Only numbers, dots, and hyphens are allowed')+'.'):
+        Regexp.__init__(self, '^[\d\.\-]*$', message = text)
+
+class numeric_cust(Regexp):
+    def __init__(self, text = _l('Only digits are allowed')+'.'):
+        Regexp.__init__(self, '^[\d]*$', message = text)
+
 class equal_to_cust(EqualTo):
     def __init__(self, field, text = _l('Confirm password')+' '+_l('does not match the')+' '+_l('Password')+'.'):
         EqualTo.__init__(self, field, message = text)

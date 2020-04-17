@@ -1,0 +1,127 @@
+{% extends "base_layout.html" %}
+{% block content %}
+
+<h1>{{ gettext('Books') }}</h1>
+
+<div>
+    <form method="GET" action="{{ url_for('books.booksr') }}">
+        <fieldset>
+            <div>
+                {{ form2.text.label }}
+                {{ form2.text }}
+                {% if form2.text.errors %}
+                    <div>
+                        {% for error in form2.text.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </fieldset>
+        <div>
+            {{ form2.submit }}
+            <a href="{{ url_for('books.bookss') }}">{{ gettext('Clear search') }}</a>
+        </div>
+    </form>
+
+    <form method="GET" action="{{ url_for('books.booksf') }}">
+        <fieldset>
+            <div>
+                {{ form.inv_number.label }}
+                {{ form.inv_number }}
+                {% if form.inv_number.errors %}
+                    <div>
+                        {% for error in form.inv_number.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.signature.label }}
+                {{ form.signature }}
+                {% if form.signature.errors %}
+                    <div>
+                        {% for error in form.signature.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.title.label }}
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <div>
+                        {% for error in form.title.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.author.label }}
+                {{ form.author }}
+                {% if form.author.errors %}
+                    <div>
+                        {% for error in form.author.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </fieldset>
+        <div>
+            {{ form.submit }}
+            <a href="{{ url_for('books.bookss') }}">{{ gettext('Clear filter') }}</a>
+        </div>
+    </form>
+</div>
+
+<p>
+    <span>
+        {{ gettext('Inventory number') }}
+        <a href="{{ url_for('books.bookss', sort_by='inv_number', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('books.bookss', sort_by='inv_number', direction='down', **extra_filter_args) }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Signature') }}
+        <a href="{{ url_for('books.bookss', sort_by='signature', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('books.bookss', sort_by='signature', direction='down', **extra_filter_args) }}"> &or;</a>
+    </span>
+    <span>
+        {{ gettext('Title') }}
+        <a href="{{ url_for('books.bookss', sort_by='title', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('books.bookss', sort_by='title', direction='down', **extra_filter_args) }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Author') }}
+        <a href="{{ url_for('books.bookss', sort_by='author', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('books.bookss', sort_by='author', direction='down', **extra_filter_args) }}"> &darr; </a>
+    </span>
+</p>
+
+{% for book in books_list.items %}
+    <p>
+        <span>{{ book.inv_number }}</span>
+        <span>{{ book.signature }}</span>
+        <span>{{ book.title }}</span>
+        <span>{{ book.author }}</span>
+
+        <span><a href="{{ url_for('books.books_update', book_id=book.id) }}">{{ gettext('Update book') }}</a></span>
+    </p>
+{% endfor %}
+
+{% for page_num in books_list.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+    {% if page_num %}
+        {% if books_list.page == page_num %}
+            <a style="color: red" href="{{ url_for('books.bookss', page=page_num, **extra_sort_and_filter_args) }}">{{ page_num }}</a>
+        {% else %}
+            <a href="{{ url_for('books.bookss', page=page_num, **extra_sort_and_filter_args) }}">{{ page_num }}</a>
+        {% endif %}
+    {% else %}
+        ...
+    {% endif %}
+{% endfor %}
+
+{% endblock content %}
