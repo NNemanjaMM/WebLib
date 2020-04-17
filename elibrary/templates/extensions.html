@@ -1,7 +1,8 @@
 {% extends "base_layout.html" %}
 {% block content %}
 
-<h1>{{ gettext('Membership extensions') }}</h1>
+<h1>{{ gettext('Memberships') }}</h1>
+<i>Da li svi bibliotekari da vide ovu stranicu?</i><br/><br/>
 
 {% if current_user.is_admin %}
     <a href="{{ url_for('extensions.prices') }}">{{ gettext('Review prices') }}</a>
@@ -99,11 +100,6 @@
 
 <p>
     <span>
-        {{ gettext('Extension id') }}
-        <a href="{{ url_for('extensions.extensionss', sort_by='id', direction='up', **extra_filter_args) }}"> &uarr; </a>
-        <a href="{{ url_for('extensions.extensionss', sort_by='id', direction='down', **extra_filter_args) }}"> &darr; </a>
-    </span>
-    <span>
         {{ gettext('Date performed') }}
         <a href="{{ url_for('extensions.extensionss', sort_by='date_performed', direction='up', **extra_filter_args) }}"> &and; </a>
         <a href="{{ url_for('extensions.extensionss', sort_by='date_performed', direction='down', **extra_filter_args) }}"> &or;</a>
@@ -131,7 +127,6 @@
 </p>
 {% for extension in extensions_list.items %}
     <p>
-        <span>{{ extension.id }}</span>
         <span>{{ extension.date_performed_print }}</span>
 
         <span>{{ extension.member_id }}</span>
