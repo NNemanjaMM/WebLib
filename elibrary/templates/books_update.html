@@ -1,0 +1,61 @@
+{% extends "base_layout.html" %}
+{% block content %}
+
+<h1>{{ gettext('Book update') }}</h1>
+
+<div>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset>
+            <div>
+                {{ form.inv_number.label }}
+                {{ form.inv_number }}
+                {% if form.inv_number.errors %}
+                    <div>
+                        {% for error in form.inv_number.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.signature.label }}
+                {{ form.signature }}
+                {% if form.signature.errors %}
+                    <div>
+                        {% for error in form.signature.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.title.label }}
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <div>
+                        {% for error in form.title.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.author.label }}
+                {{ form.author }}
+                {% if form.author.errors %}
+                    <div>
+                        {% for error in form.author.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <br/>
+            <div>
+                {{ form.submit }}
+            </div>
+        </fieldset>
+    </form>
+</div>
+{% endblock content %}

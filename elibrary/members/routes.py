@@ -139,7 +139,7 @@ def memberss(filtering = False, searching = False):
         form2.text.data = s_text
         if FieldValidator.validate_field(form2, form2.text, [string_cust]):
             my_query = my_query.filter(or_(Member.first_name.like('%' + s_text + '%'), Member.last_name.like('%' + s_text + '%'), Member.father_name.like('%' + s_text + '%'), Member.id == s_text))
-            args_filter['name'] = s_text
+            args_filter['text'] = s_text
     else:
         my_query, args_filter, filter_has_errors = process_related_date_filters(my_query,
             args_filter, filter_has_errors, form.registration_date_from,
