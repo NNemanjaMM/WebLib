@@ -74,26 +74,24 @@
     </p>
 
     <p>
-        {{ gettext('Requested password reset') }}
-        <strong>
-            {% if account.change_password %}
-                {{ gettext('Yes') }}
-            {% else %}
-                {{ gettext('No') }}
-            {% endif %}
-        </strong>
-    </p>
-
-    {% if account.change_username %}
-        <hr/>
-        <p>
-            {{ gettext('Requested username change') }}
+        {% if account.change_password %}
             <strong>
-                {{ account.change_username_value }}
+                {{ gettext('Password change is requested') }}
             </strong>
-        </p>
-    {% endif %}
+        {% endif %}
 
+        {% if account.change_username %}
+            <strong>
+                {{ gettext('Username change is requested') }}
+            </strong>
+        {% endif %}
+
+        {% if account.change_admin %}
+            <strong>
+                {{ gettext('Removal from administrators requsted') }}
+            </strong>
+        {% endif %}
+    </p>
     <hr/>
 
     {% if admin_is_editing %}
@@ -104,7 +102,17 @@
             {% if account.change_username %}
                 <a href="{{ url_for('librarians.librarians_username', librarian_id=account.id) }}">{{ gettext('Update username') }}</a>
             {% endif %}
+
+            {% if account.is_operational and not current_user.id == account.id %}
+                {% if not account.is_admin %}
+                    <a href="{{ url_for('librarians.librarians_administrate', librarian_id=account.id) }}">{{ gettext('Set as admin') }}</a>
+                {% elif not account.change_admin %}
+                    <a href="{{ url_for('librarians.librarians_administrate', librarian_id=account.id) }}">{{ gettext('Remove from admins') }}</a>
+                {% endif %}
+            {% endif %}
+
             <br/>
+
             <a href="{{ url_for('librarians.librarians_update', librarian_id=account.id) }}">{{ gettext('Update account') }}</a>
 
             {% if not current_user.id == account.id %}
@@ -115,11 +123,15 @@
                 {% endif %}
             {% endif %}
 
+
         </p>
     {% else %}
         <p>
             <a href="{{ url_for('librarians.account_change') }}">{{ gettext('Update account') }}</a>
             <a href="{{ url_for('librarians.account_password') }}">{{ gettext('Update password') }}</a>
+            {% if account.change_admin %}
+                <a href="{{ url_for('librarians.librarians_administrate', librarian_id=account.id) }}">{{ gettext('Remove from admins') }}</a>
+            {% endif %}
         </p>
     {% endif %}
 
