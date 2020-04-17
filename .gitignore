@@ -1,4 +1,3 @@
-db_init.py
 elibrary/site.db
 elibrary/config.py
 elibrary/translations/
