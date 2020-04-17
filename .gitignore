@@ -1,6 +1,4 @@
 db_init.py
-setup.txt
-messages_backup.txt
 elibrary/site.db
 elibrary/config.py
 elibrary/translations/
