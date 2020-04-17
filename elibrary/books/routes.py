@@ -1,12 +1,11 @@
-from flask import render_template, url_for, request, flash, Blueprint#, redirect, abort
-from flask_login import login_required#, login_user, current_user, logout_user
+from flask import render_template, url_for, request, flash, redirect, Blueprint
+from flask_login import login_required
 from flask_babel import gettext, lazy_gettext as _l
 from elibrary import db
-#from elibrary.books.forms import
 from elibrary.models import Book
 from elibrary.utils.defines import PAGINATION
-from elibrary.utils.custom_validations import (string_cust, length_cust_max, numeric_cust, signature_cust, FieldValidator)
-from elibrary.books.forms import FilterForm, SearchForm#, PriceUpdate, PriceAdd
+from elibrary.utils.custom_validations import string_cust, length_cust_max, numeric_cust, signature_cust, FieldValidator
+from elibrary.books.forms import FilterForm, SearchForm, BookUpdateForm
 from sqlalchemy import desc, or_
 
 books = Blueprint('books', __name__)
@@ -101,4 +100,19 @@ def booksf():
 @books.route("/books/update/<int:book_id>", methods=['GET', 'POST'])
 @login_required
 def books_update(book_id):
-    return render_template('books_update.html')
+    form = BookUpdateForm()
+    book = Book.query.get_or_404(book_id)
+    if form.validate_on_submit():
+        book.inv_number = form.inv_number.data
+        book.signature = form.signature.data
+        book.title = form.title.data
+        book.author = form.author.data
+        db.session.commit()
+        flash(_l('Book is successfuly updated')+'.', 'success')
+        return redirect(url_for('books.bookss'))
+    elif request.method == 'GET':
+        form.inv_number.data = book.inv_number
+        form.signature.data = book.signature
+        form.title.data = book.title
+        form.author.data = book.author
+    return render_template('books_update.html', form=form)
