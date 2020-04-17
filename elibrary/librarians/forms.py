@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from flask_wtf import FlaskForm#, RecaptchaField
+from flask_wtf import FlaskForm
 from flask_babel import lazy_gettext as _l
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField

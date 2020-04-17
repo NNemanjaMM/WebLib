@@ -1,15 +1,13 @@
-from datetime import date#, timedelta
-from sqlalchemy import desc, func, or_#, and_
-from flask import render_template, url_for, Blueprint, request, flash, redirect#, abort
+from datetime import date
+from sqlalchemy import desc, func, or_
+from flask import render_template, url_for, Blueprint, request, flash, redirect
 from flask_login import login_required,current_user
 from flask_babel import gettext, lazy_gettext as _l
 from elibrary import db
-from elibrary.models import Extension, ExtensionPrice#, Member
+from elibrary.models import Extension, ExtensionPrice
 from elibrary.utils.custom_validations import FieldValidator, string_cust, length_cust_max
 from elibrary.extensions.forms import FilterForm, PriceUpdate, PriceAdd
-from elibrary.utils.defines import PAGINATION#, EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT, CURRENCY
-#from elibrary.utils.common import Common
-#from elibrary.main.forms import AcceptForm, RejectForm
+from elibrary.utils.defines import PAGINATION
 
 extensions = Blueprint('extensions', __name__)
 
