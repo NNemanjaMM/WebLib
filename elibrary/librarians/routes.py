@@ -111,6 +111,9 @@ def librarianss():
     include_inactive = request.args.get('include_inactive', 'False', type=str)
     sort_criteria = request.args.get('sort_by', 'first_name', type=str)
     sort_direction = request.args.get('direction', 'up', type=str)
+    if not (sort_criteria == 'first_name' or sort_criteria == 'last_name' or sort_criteria == 'date_registered'):
+        sort_criteria = 'first_name'
+
     include_disabled_val=True
     filter_args = {'include_inactive': 'True'}
     my_query = db.session.query(Librarian)

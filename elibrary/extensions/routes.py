@@ -18,6 +18,8 @@ def extensionss():
     sort_criteria = request.args.get('sort_by', 'id', type=str)
     sort_direction = request.args.get('direction', 'down', type=str)
     args_sort = {'sort_by': sort_criteria, 'direction': sort_direction}
+    if not (sort_criteria == 'date_performed' or sort_criteria == 'member_id' or sort_criteria == 'date_extended' or sort_criteria == 'price' or sort_criteria == 'librarian_id'):
+        sort_criteria = 'id'
 
     f_date_performed_from = request.args.get('date_performed_from')
     f_date_performed_to = request.args.get('date_performed_to')

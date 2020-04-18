@@ -101,6 +101,9 @@ def memberss(filtering = False, searching = False):
     sort_criteria = request.args.get('sort_by', 'id', type=str)
     sort_direction = request.args.get('direction', 'up', type=str)
     args_sort = {'sort_by': sort_criteria, 'direction': sort_direction}
+    if not (sort_criteria == 'id' or sort_criteria == 'first_name' or sort_criteria == 'last_name' or
+            sort_criteria == 'total_books_rented' or sort_criteria == 'date_registered' or sort_criteria == 'date_expiration'):
+        sort_criteria = 'id'
 
     s_text = request.args.get('text')
     f_registration_date_from = request.args.get('registration_date_from')
