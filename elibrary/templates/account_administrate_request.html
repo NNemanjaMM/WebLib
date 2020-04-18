@@ -1,0 +1,56 @@
+{% extends "base_layout.html" %}
+{% block content %}
+
+<h1>{{ title }}</h1>
+
+<div>
+    <strong>{{ gettext('For a librarian') }}</strong>
+    <div>
+        {{ gettext('First name') }}
+        <strong>
+            {{ librarian.first_name }}
+        </strong>
+    </div>
+
+    <div>
+        {{ gettext('Last name') }}
+        <strong>
+            {{ librarian.last_name }}
+        </strong>
+    </div>
+
+    <div>
+        {{ gettext('Current username') }}
+        <strong>
+            {{ librarian.username }}
+        </strong>
+    </div>
+
+    <div>
+        {{ gettext('Registration date') }}
+        <strong>
+            {{ librarian.date_registered }}
+        </strong>
+    </div>
+<div>
+
+<div>
+    <fieldset>
+        <p>
+            {{ text }}
+        </p>
+        <form method="POST" action="">
+            {{ form1.hidden_tag() }}
+            <div>
+                {{ form1.submit_accept }}
+            </div>
+        </form>
+        <form method="POST" action="">
+            {{ form2.hidden_tag() }}
+            <div>
+                {{ form2.submit_reject }}
+            </div>
+        </form>
+    </fieldset>
+</div>
+{% endblock content %}

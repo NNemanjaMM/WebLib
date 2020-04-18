@@ -153,7 +153,7 @@ def librarians_create():
         db.session.add(librarian)
         db.session.commit()
         flash(_l('Account has been created')+'.', 'success')
-        return redirect(url_for('librarians.librarians_active'))
+        return redirect(url_for('librarians.librarianss'))
     return render_template('account_cu.html', form=form, is_creating=True)
 
 @librarians.route("/librarians/update/<int:librarian_id>", methods=['GET', 'POST'])
@@ -224,7 +224,7 @@ def librarians_username(librarian_id):
                 flash(_l('Requested username is already in use')+'.', 'info')
         librarian.change_username_value = None
         db.session.commit()
-        return redirect(url_for('librarians.librarians_active'))
+        return redirect(url_for('librarians.librarianss'))
     return render_template('account_username_change_request.html', form1=form_accept, form2=form_reject, librarian=librarian)
 
 @librarians.route("/librarians/availability/<int:librarian_id>", methods=['GET', 'POST'])
@@ -244,5 +244,74 @@ def librarians_availability(librarian_id):
             librarian.is_operational = not librarian.is_operational
             flash(_l('Account availability is changed')+'.', 'info')
         db.session.commit()
-        return redirect(url_for('librarians.librarians_active'))
+        return redirect(url_for('librarians.librarianss'))
     return render_template('account_availability.html', form1=form_accept, form2=form_reject, librarian=librarian)
+
+@librarians.route("/librarians/administrate/<int:librarian_id>", methods=['GET', 'POST'])
+@login_required
+def librarians_administrate(librarian_id):
+    if not current_user.is_admin:
+        abort(403)
+    librarian = Librarian.query.get_or_404(librarian_id)
+    if not librarian.is_operational:
+        abort(405)
+    if current_user.id == librarian_id: # da li admin menja sam sebe
+        if not current_user.change_admin:   # ukoliko admin menja sebe, mora imati
+            abort(405)                      # zahtev da treba prestati da bude admin
+    elif librarian.change_admin:    # za ovog administratora vec postoji zahtev da se izbaci
+        abort(405)
+
+    form_accept = AcceptForm()
+    form_reject = RejectForm()
+    response = False
+    success = False
+    ch_regular_to_admin = False
+    ch_admin_disable_req = False
+    ch_admin_disable_resp = False
+    msg_title = ''
+    msg_approve = ''
+
+    if not librarian.is_admin:  # treba da postane administrator
+        print('treba da postane administrator')
+        ch_regular_to_admin = True
+        msg_title = _l('Add librarian as administrator')
+        msg_approve = _l('Do you approve setting this librarian as the administrator')+'?'
+    elif librarian.is_admin and not current_user.id == librarian_id: # trazimo da se iskljuci admin
+        print('trazimo da se iskljuci admin')
+        ch_admin_disable_req = True
+        msg_title = _l('Request librarian removal from administrators')
+        msg_approve = _l('Approve your request to remove this librarian from administrators')+'?'
+    elif librarian.is_admin and current_user.id == librarian_id and librarian.change_admin: # odlucuje da li ce prestati da bude admin
+        print('odlucuje da li ce prestati da bude admin')
+        ch_admin_disable_resp = True
+        msg_title = _l('Confirm your removal from administrators')
+        msg_approve = _l('Approve your removal from administrators')+'?'
+
+    if request.method == 'GET':
+        return render_template('account_administrate_request.html', form1=form_accept, form2=form_reject, librarian=librarian, title=msg_title, text=msg_approve)
+    elif request.method == 'POST':
+        if form_reject.submit_reject.data and form_reject.validate():
+            print('potvrdio nece')
+            response = False
+            success = True
+        elif form_accept.submit_accept.data and form_accept.validate():
+            print('potvrdio hoce')
+            response = True
+            success = True
+    if success:
+        print('uspesno')
+        if ch_regular_to_admin and response:
+            librarian.is_admin = True
+            flash(_l('You successfuly promoted librarian to the administrator')+'.', 'info')
+        elif ch_admin_disable_req and response:
+            librarian.change_admin = True
+            flash(_l('You successfuly created a request to remove librarian from the administrators')+'.', 'info')
+        elif ch_admin_disable_resp and response:
+            librarian.is_admin = False
+            librarian.change_admin = False
+            flash(_l('You are successfuly removed from the administrators')+'.', 'info')
+        elif ch_admin_disable_resp and not response:
+            librarian.change_admin = False
+            flash(_l('You successfuly rejected request to be removed from the administrators')+'.', 'info')
+        db.session.commit()
+    return redirect(url_for('librarians.librarianss'))

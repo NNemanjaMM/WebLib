@@ -71,6 +71,7 @@ class Librarian(db.Model, UserMixin):
     date_registered = db.Column(db.Date, nullable=False, default=date.today())
     is_admin = db.Column(db.Boolean, default=False)
     is_operational = db.Column(db.Boolean, default=True)
+    change_admin = db.Column(db.Boolean, default=False)
     change_password = db.Column(db.Boolean, default=False)
     change_username_value = db.Column(db.String(30), nullable=True)
     memberships_extended = db.relationship("Extension", backref='librarian', lazy=True)
