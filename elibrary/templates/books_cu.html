@@ -1,7 +1,7 @@
 {% extends "base_layout.html" %}
 {% block content %}
 
-<h1>{{ gettext('Book update') }}</h1>
+<h1>{{ title }}</h1>
 
 <div>
     <form method="POST" action="">
@@ -51,7 +51,6 @@
                     </div>
                 {% endif %}
             </div>
-            <br/>
             <div>
                 {{ form.submit }}
             </div>

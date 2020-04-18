@@ -5,7 +5,7 @@ from elibrary import db
 from elibrary.models import Book
 from elibrary.utils.defines import PAGINATION
 from elibrary.utils.custom_validations import string_cust, length_cust_max, numeric_cust, signature_cust, FieldValidator
-from elibrary.books.forms import FilterForm, SearchForm, BookUpdateForm
+from elibrary.books.forms import FilterForm, SearchForm, BookCreateUpdateForm
 from sqlalchemy import desc, or_
 
 books = Blueprint('books', __name__)
@@ -42,7 +42,7 @@ def bookss(filtering = False, searching = False):
     if not (s_text == None or s_text == ""):
         form2.text.data = s_text
         if FieldValidator.validate_field(form2, form2.text, [string_cust, length_cust_max]):
-            my_query = my_query.filter(or_(Book.inv_number.like('%' + s_text + '%'), Book.signature.like('%' + s_text + '%'),
+            my_query = my_query.filter(or_(Book.inv_number == s_text, Book.signature.like('%' + s_text + '%'),
                 Book.title.like('%' + s_text + '%'), Book.author.like('%' + s_text + '%')))
             args_filter['text'] = s_text
     else:
@@ -100,7 +100,7 @@ def booksf():
 @books.route("/books/update/<int:book_id>", methods=['GET', 'POST'])
 @login_required
 def books_update(book_id):
-    form = BookUpdateForm()
+    form = BookCreateUpdateForm()
     book = Book.query.get_or_404(book_id)
     if form.validate_on_submit():
         book.inv_number = form.inv_number.data
@@ -115,4 +115,23 @@ def books_update(book_id):
         form.signature.data = book.signature
         form.title.data = book.title
         form.author.data = book.author
-    return render_template('books_update.html', form=form)
+    return render_template('books_cu.html', form=form, title=_l('Update book'))
+
+@books.route("/books/add", methods=['GET', 'POST'])
+@login_required
+def books_add():
+    form = BookCreateUpdateForm()
+    if form.validate_on_submit():
+        book = Book()
+        book_duplicate = Book.query.filter(Book.inv_number==form.inv_number.data).first()
+        book.inv_number = form.inv_number.data
+        book.signature = form.signature.data
+        book.title = form.title.data
+        book.author = form.author.data
+        db.session.add(book)
+        db.session.commit()
+        flash(_l('Book is successfuly added')+'.', 'success')
+        if book_duplicate:
+            flash(_l('Book with the same inventory number already exists')+'!', 'warning')
+        return redirect(url_for('books.bookss'))
+    return render_template('books_cu.html', form=form, title=_l('Add book'))

@@ -3,6 +3,8 @@
 
 <h1>{{ gettext('Books') }}</h1>
 
+<a href="{{ url_for('books.books_add') }}">{{ gettext('Add book') }}</a>
+
 <div>
     <form method="GET" action="{{ url_for('books.booksr') }}">
         <fieldset>
