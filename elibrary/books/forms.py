@@ -8,11 +8,11 @@ class FilterForm(FlaskForm):
     signature = StringField(_l('Signature'))
     title = StringField(_l('Title'))
     author = StringField(_l('Author'))
-    submit = SubmitField(_l('Submit'))
+    submit = SubmitField(_l('Filter'))
 
 class SearchForm(FlaskForm):
     text = StringField(_l('Search for'), validators=[optional_cust(), string_cust(), length_cust(max=50)])
-    submit = SubmitField(_l('Submit'))
+    submit = SubmitField(_l('Search'))
 
 class BookCreateUpdateForm(FlaskForm):
     inv_number = StringField(_l('Inventory number'), validators=[required_cust(), numeric_cust(), length_cust(max=6)])
@@ -20,3 +20,12 @@ class BookCreateUpdateForm(FlaskForm):
     title = StringField(_l('Title'), validators=[required_cust(), string_cust(), length_cust(max=50)])
     author = StringField(_l('Author'), validators=[required_cust(), string_cust(), length_cust(max=50)])
     submit = SubmitField(_l('Submit'))
+
+class BookRentForm(FlaskForm):
+    date_rented = StringField(_l('Rent date'))
+    inv_number = StringField(_l('Inventory number'))
+    signature = StringField(_l('Signature'))
+    title = StringField(_l('Title'))
+    author = StringField(_l('Author'))
+    submit = SubmitField(_l('Submit'))
+    search = SubmitField(_l('Search'))

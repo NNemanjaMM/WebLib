@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from flask_login import UserMixin
 from elibrary import db, login_manager
-from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT
+from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT, BOOK_RENT_TIME
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -13,6 +13,9 @@ class Book(db.Model):     #za knjigu signatura (10 cifara, ima i tacke i povlake
     signature = db.Column(db.String(16), nullable=False)
     title = db.Column(db.String(60), nullable=False)
     author = db.Column(db.String(70), nullable=False)
+    is_rented = db.Column(db.Boolean, default=False)
+    has_error = db.Column(db.Boolean, default=False)
+    rentals = db.relationship("Rental", backref='book', lazy=True)
 
 class Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -25,8 +28,10 @@ class Member(db.Model):
     address = db.Column(db.String(60), nullable=False)
     date_registered = db.Column(db.Date, nullable=False, default=date.today())
     date_expiration = db.Column(db.Date, nullable=True, default=date.today())
-    total_books_rented = db.Column(db.Integer, nullable=False, default=0)
+    total_books_rented = db.Column(db.Integer, nullable=False, default=0)       #povezati
+    number_of_rented_books = db.Column(db.Integer, nullable=False, default=0)   #povezati
     membership_extensions = db.relationship("Extension", backref='member', lazy=True)
+    rented_books = db.relationship("Rental", backref='member', lazy=True)
 
     @property
     def is_membership_expired(self):
@@ -35,10 +40,6 @@ class Member(db.Model):
     @property
     def is_membership_near_expired(self):
         return self.date_expiration <= date.today() + timedelta(EXPIRATION_EXTENSION_LIMIT) and self.date_expiration >= date.today()
-
-    @property
-    def number_of_rented_books(self):
-        return 0#len(self.rented_books)
 
     @property
     def phone_print(self):
@@ -75,6 +76,7 @@ class Librarian(db.Model, UserMixin):
     change_password = db.Column(db.Boolean, default=False)
     change_username_value = db.Column(db.String(30), nullable=True)
     memberships_extended = db.relationship("Extension", backref='librarian', lazy=True)
+    rented_books = db.relationship("Rental", backref='librarian', lazy=True)
 
     @property
     def change_username(self):
@@ -121,8 +123,12 @@ class Extension(db.Model):
 class Rental(db.Model): # povezati sa knjigom, clanom, ko je odobrio, i ko je preuzeo knjigu nazad
     id = db.Column(db.Integer, primary_key=True)
     date_performed = db.Column(db.Date, nullable=False, default=date.today())
-    date_termination = db.Column(db.Date, nullable=False, default=date.today() + timedelta(EXPIRATION_EXTENSION_LIMIT))
+    date_termination = db.Column(db.Date, nullable=True)
+    date_deadline = db.Column(db.Date, nullable=False, default=date.today() + timedelta(BOOK_RENT_TIME))
     is_terminated = db.Column(db.Boolean, default=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'), nullable=False)
+    librarian_id = db.Column(db.Integer, db.ForeignKey('librarian.id'), nullable=False)
 
 class ExtensionPrice(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -6,6 +6,10 @@
         <strong>
             {{ gettext('Membership expired') }}
         </strong>
+    {% elif member.is_membership_near_expired %}
+        <strong>
+            {{ gettext('Membership near expiration') }}
+        </strong>
     {% endif %}
 
     <p>
@@ -88,7 +92,7 @@
     <p>
         {{ gettext('Currently rented') }}
         <strong>
-            <i>to be defined</i>
+            {{ member.number_of_rented_books }}
         </strong>
     </p>
 
@@ -112,6 +116,14 @@
         <a href="{{ url_for('members.members_update', member_id=member.id) }}">{{ gettext('Update member data') }}</a>
         {% if member.is_membership_near_expired or member.is_membership_expired %}
             <a href="{{ url_for('members.members_extend', member_id=member.id) }}">{{ gettext('Extend membership') }}</a>
+        {% endif %}
+        <br/>
+        {% if member.is_membership_expired %}
+            <strong>{{ gettext('Members with expired membership can not rent a book') }}</strong>
+        {% elif member.number_of_rented_books >= max_books %}
+            <strong>{{ gettext('Members can not rent more than') }} {{ max_books }} {{ gettext('books') }}</strong>
+        {% else %}
+            <a href="{{ url_for('books.book_rent', member_id=member.id) }}">{{ gettext('Rent a book') }}</a>
         {% endif %}
     </p>
 
