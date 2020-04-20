@@ -6,7 +6,7 @@ from elibrary import db
 from elibrary.models import Book, Member, Rental
 from elibrary.utils.defines import PAGINATION, MAX_RENTED_BOOKS, RENTAL_DATE_LIMIT, DATE_FORMAT
 from elibrary.utils.custom_validations import string_cust, length_cust_max, numeric_cust, signature_cust, length_cust_max_15, FieldValidator
-from elibrary.books.forms import FilterForm, SearchForm, BookCreateUpdateForm, BookRentForm
+from elibrary.books.forms import FilterForm, SearchForm, BookCreateUpdateForm, BookRentForm, BookRentTerminationForm
 from sqlalchemy import desc, or_, and_, func
 
 books = Blueprint('books', __name__)
@@ -194,11 +194,50 @@ def book_rent(member_id):
             rental.date_performed = date_value
             rental.book_id = book_id
             rental.member_id = member_id
-            rental.librarian_id = current_user.id
+            rental.librarian_rent_id = current_user.id
             db.session.add(rental)
             member.number_of_rented_books = db.session.query(func.count(Rental.id)).filter(and_(Rental.member_id == member_id, Rental.is_terminated == False)).scalar()
             member.total_books_rented = db.session.query(func.count(Rental.id)).filter(Rental.member_id == member_id).scalar()
             db.session.commit()
             flash(_l('Book is successfuly rented')+'.', 'info')
             return redirect(url_for('members.members_details', member_id=member_id))
-    return render_template('books_rent.html', form=form, message=message, is_renting=True)
+    return render_template('renting.html', form=form, message=message)
+
+@books.route("/books/rents")
+@login_required
+def book_rents():
+    page = request.args.get('page', 1, type=int)
+    sort_criteria = request.args.get('sort_by', 'id', type=str)
+    sort_direction = request.args.get('direction', 'up', type=str)
+    args_sort = {'sort_by': sort_criteria, 'direction': sort_direction}
+
+    filter_has_errors = False
+    args_filter = {}
+    form = FilterForm()
+    form2 = SearchForm()
+    my_query = db.session.query(Rental)
+
+    if filter_has_errors:
+        flash(_l('There are filter values with errors')+'. '+_l('However, valid filter values are applied')+'.', 'warning')
+    if sort_direction == 'up':
+        list = my_query.order_by(sort_criteria).paginate(page=page, per_page=PAGINATION)
+    else:
+        list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
+    args_filter_and_sort = {**args_filter, **args_sort}
+    return render_template('rents.html', form=form, form2=form2, rents_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort)
+
+
+@books.route("/books/rents/<int:rent_id>", methods=['GET', 'POST'])
+@login_required
+def book_rents_details(rent_id):
+    rent = Rental.query.get_or_404(rent_id)
+    member = Member.query.get_or_404(rent.member_id)
+    form = BookRentTerminationForm()
+    form.date_rented = rent.date_performed
+    if not rent.is_terminated and form.validate_on_submit():
+        rent.is_terminated = True
+        rent.date_termination = form.date_returned.data
+        rent.librarian_return_id = current_user.id
+        member.number_of_rented_books = db.session.query(func.count(Rental.id)).filter(and_(Rental.member_id == member.id, Rental.is_terminated == False)).scalar()
+        db.session.commit()
+    return render_template('rent.html', form=form, rent=rent)

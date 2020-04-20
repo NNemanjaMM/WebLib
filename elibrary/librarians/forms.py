@@ -5,7 +5,7 @@ from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField
 from wtforms.validators import ValidationError
 from elibrary.models import Librarian
-from elibrary.utils.defines import REGISTRATION_DATE_LIMIT, DATE_FORMAT
+from elibrary.utils.defines import BACKWARD_INPUT_LIMIT, DATE_FORMAT
 from elibrary.utils.custom_validations import (required_cust, email_cust, required_cust_date,
         phone_cust, string_cust, username_cust, equal_to_cust, length_cust, optional_cust)
 
@@ -39,8 +39,8 @@ class LibrarianCreateForm(LibrarianForm):
     def validate_date_registered(self, date_registered):
         if date_registered.data > date.today():
             raise ValidationError(_l('Registration date') + ' '+ _l('cannot be set in future') + '.')
-        elif date_registered.data < date.today() - timedelta(REGISTRATION_DATE_LIMIT):
-            raise ValidationError(_l('Registration date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(REGISTRATION_DATE_LIMIT) + ' ' + _l('days') + '.')
+        elif date_registered.data < date.today() - timedelta(BACKWARD_INPUT_LIMIT):
+            raise ValidationError(_l('Registration date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days') + '.')
 
 class LibrarianUpdateForm(LibrarianForm):
     username = StringField(_l('Username'), validators=[optional_cust(), length_cust(min=6, max=30), username_cust()])
