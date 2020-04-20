@@ -4,10 +4,12 @@ from flask_login import login_required, current_user
 from flask_babel import gettext, lazy_gettext as _l
 from elibrary import db
 from elibrary.models import Book, Member, Rental
-from elibrary.utils.defines import PAGINATION, MAX_RENTED_BOOKS, RENTAL_DATE_LIMIT, DATE_FORMAT
+from elibrary.utils.common import Common
+from elibrary.utils.defines import PAGINATION, MAX_RENTED_BOOKS, RENTAL_DATE_LIMIT, DATE_FORMAT, BOOK_RENT_PERIOD
 from elibrary.utils.custom_validations import string_cust, length_cust_max, numeric_cust, signature_cust, length_cust_max_15, FieldValidator
-from elibrary.books.forms import FilterForm, SearchForm, BookCreateUpdateForm, BookRentForm, BookRentTerminationForm
+from elibrary.books.forms import FilterForm, SearchForm, BookCreateUpdateForm, RentForm, RentTerminationForm, RentFilterForm
 from sqlalchemy import desc, or_, and_, func
+from sqlalchemy.sql.operators import is_
 
 books = Blueprint('books', __name__)
 
@@ -47,37 +49,17 @@ def bookss(filtering = False, searching = False):
                 Book.title.like('%' + s_text + '%'), Book.author.like('%' + s_text + '%')))
             args_filter['text'] = s_text
     else:
-        if not (f_inv_number == None or f_inv_number == ""):
-            form.inv_number.data = f_inv_number
-            if FieldValidator.validate_field(form, form.inv_number, [numeric_cust, length_cust_max]):
-                my_query = my_query.filter(Book.inv_number.like('%' + f_inv_number + '%'))
-                args_filter['inv_number'] = f_inv_number
-            else:
-                filter_has_errors = True
+        my_query, args_filter, filter_has_errors = Common.process_like_filter(my_query, args_filter,
+            filter_has_errors, form, form.inv_number, f_inv_number, 'inv_number', [numeric_cust, length_cust_max], Book, 'inv_number')
 
-        if not (f_signature == None or f_signature == ""):
-            form.signature.data = f_signature
-            if FieldValidator.validate_field(form, form.signature, [signature_cust, length_cust_max]):
-                my_query = my_query.filter(Book.signature.like('%' + f_signature + '%'))
-                args_filter['signature'] = f_signature
-            else:
-                filter_has_errors = True
+        my_query, args_filter, filter_has_errors = Common.process_like_filter(my_query, args_filter,
+            filter_has_errors, form, form.signature, f_signature, 'signature', [string_cust, length_cust_max], Book, 'signature')
 
-        if not (f_title == None or f_title == ""):
-            form.title.data = f_title
-            if FieldValidator.validate_field(form, form.title, [string_cust, length_cust_max]):
-                my_query = my_query.filter(Book.title.like('%' + f_title + '%'))
-                args_filter['title'] = f_title
-            else:
-                filter_has_errors = True
+        my_query, args_filter, filter_has_errors = Common.process_like_filter(my_query, args_filter,
+            filter_has_errors, form, form.title, f_title, 'title', [string_cust, length_cust_max], Book, 'title')
 
-        if not (f_author == None or f_author == ""):
-            form.author.data = f_author
-            if FieldValidator.validate_field(form, form.author, [string_cust, length_cust_max]):
-                my_query = my_query.filter(Book.author.like('%' + f_author + '%'))
-                args_filter['author'] = f_author
-            else:
-                filter_has_errors = True
+        my_query, args_filter, filter_has_errors = Common.process_like_filter(my_query, args_filter,
+            filter_has_errors, form, form.author, f_author, 'author', [string_cust, length_cust_max], Book, 'author')
 
     if filter_has_errors:
         flash(_l('There are filter values with errors')+'. '+_l('However, valid filter values are applied')+'.', 'warning')
@@ -144,7 +126,7 @@ def book_rent(member_id):
     if member.is_membership_expired or member.number_of_rented_books >= MAX_RENTED_BOOKS:
         abort(405)
     message = None
-    form = BookRentForm()
+    form = RentForm()
     if form.search.data and form.validate():
         book_inv = to_value = FieldValidator.convert_and_validate_number(form.inv_number)
         if book_inv:
@@ -192,6 +174,7 @@ def book_rent(member_id):
 
             rental = Rental()
             rental.date_performed = date_value
+            rental.date_deadline = date_value + timedelta(BOOK_RENT_PERIOD)
             rental.book_id = book_id
             rental.member_id = member_id
             rental.librarian_rent_id = current_user.id
@@ -208,14 +191,76 @@ def book_rent(member_id):
 def book_rents():
     page = request.args.get('page', 1, type=int)
     sort_criteria = request.args.get('sort_by', 'id', type=str)
-    sort_direction = request.args.get('direction', 'up', type=str)
+    sort_direction = request.args.get('direction', 'down', type=str)
     args_sort = {'sort_by': sort_criteria, 'direction': sort_direction}
+    if not (sort_criteria == 'date_performed' or sort_criteria == 'date_deadline' or sort_criteria == 'date_termination' or sort_criteria == 'is_terminated'):
+        sort_criteria = 'date_performed'
 
     filter_has_errors = False
     args_filter = {}
-    form = FilterForm()
-    form2 = SearchForm()
+    form = RentFilterForm()
     my_query = db.session.query(Rental)
+
+    f_date_performed_from = request.args.get('date_performed_from')
+    f_date_performed_to = request.args.get('date_performed_to')
+    f_date_deadline_from = request.args.get('date_deadline_from')
+    f_date_deadline_to = request.args.get('date_deadline_to')
+    f_date_terminated_from = request.args.get('date_terminated_from')
+    f_date_terminated_to = request.args.get('date_terminated_to')
+    f_is_terminated = request.args.get('is_terminated')
+    f_is_deadlime_passed = request.args.get('is_deadlime_passed')
+    f_book_id = request.args.get('book_id')
+    f_member_id = request.args.get('member_id')
+    f_librarian_rent_id = request.args.get('librarian_rent_id')
+    f_librarian_return_id = request.args.get('librarian_return_id')
+
+    my_query, args_filter, filter_has_errors = Common.process_related_date_filters(my_query,
+        args_filter, filter_has_errors, form.date_performed_from,
+        form.date_performed_to, f_date_performed_from, f_date_performed_to,
+        'date_performed_from', 'date_performed_to', Rental, 'date_performed', False)
+
+    my_query, args_filter, filter_has_errors = Common.process_related_date_filters(my_query,
+        args_filter, filter_has_errors, form.date_deadline_from,
+        form.date_deadline_to, f_date_deadline_from, f_date_deadline_to,
+        'date_deadline_from', 'date_deadline_to', Rental, 'date_deadline', False)
+
+    my_query, args_filter, filter_has_errors = Common.process_related_date_filters(my_query,
+        args_filter, filter_has_errors, form.date_terminated_from,
+        form.date_terminated_to, f_date_terminated_from, f_date_terminated_to,
+        'date_terminated_from', 'date_terminated_to', Rental, 'date_termination', False)
+
+    if not (f_is_terminated == None or f_is_terminated == ""):
+        form.is_terminated.data = f_is_terminated
+        if f_is_terminated == 'yes':
+            my_query = my_query.filter(Rental.is_terminated == True)
+            args_filter['is_terminated'] = f_is_terminated
+        elif f_is_terminated == 'no':
+            my_query = my_query.filter(Rental.is_terminated == False)
+            args_filter['is_terminated'] = f_is_terminated
+
+    if not (f_is_deadlime_passed == None or f_is_deadlime_passed == ""):
+        form.is_deadlime_passed.data = f_is_deadlime_passed
+        print('value '+f_is_terminated)
+        print('first '+str(f_is_deadlime_passed == 'yes'))
+        print('second '+str(f_is_deadlime_passed == 'no'))
+        if f_is_deadlime_passed == 'yes':
+            my_query = my_query.filter(and_(date.today() > Rental.date_deadline, Rental.is_terminated == False))
+            args_filter['is_deadlime_passed'] = f_is_deadlime_passed
+        elif f_is_deadlime_passed == 'no':
+            my_query = my_query.filter(and_(date.today() <= Rental.date_deadline, Rental.is_terminated == False))
+            args_filter['is_deadlime_passed'] = f_is_deadlime_passed
+
+    my_query, args_filter, filter_has_errors = Common.process_equal_number_filter(my_query, args_filter,
+        filter_has_errors, form.book_id, f_book_id, 'book_id', Rental, 'book_id')
+
+    my_query, args_filter, filter_has_errors = Common.process_equal_number_filter(my_query, args_filter,
+        filter_has_errors, form.member_id, f_member_id, 'member_id', Rental, 'member_id')
+
+    my_query, args_filter, filter_has_errors = Common.process_equal_number_filter(my_query, args_filter,
+        filter_has_errors, form.librarian_rent_id, f_librarian_rent_id, 'librarian_rent_id', Rental, 'librarian_rent_id')
+
+    my_query, args_filter, filter_has_errors = Common.process_equal_number_filter(my_query, args_filter,
+        filter_has_errors, form.librarian_return_id, f_librarian_return_id, 'librarian_return_id', Rental, 'librarian_return_id')
 
     if filter_has_errors:
         flash(_l('There are filter values with errors')+'. '+_l('However, valid filter values are applied')+'.', 'warning')
@@ -224,15 +269,14 @@ def book_rents():
     else:
         list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     args_filter_and_sort = {**args_filter, **args_sort}
-    return render_template('rents.html', form=form, form2=form2, rents_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort)
-
+    return render_template('rents.html', form=form, rents_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort)
 
 @books.route("/books/rents/<int:rent_id>", methods=['GET', 'POST'])
 @login_required
 def book_rents_details(rent_id):
     rent = Rental.query.get_or_404(rent_id)
     member = Member.query.get_or_404(rent.member_id)
-    form = BookRentTerminationForm()
+    form = RentTerminationForm()
     form.date_rented = rent.date_performed
     if not rent.is_terminated and form.validate_on_submit():
         rent.is_terminated = True

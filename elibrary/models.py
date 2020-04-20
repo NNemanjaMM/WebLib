@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from flask_login import UserMixin
 from elibrary import db, login_manager
-from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT, BOOK_RENT_TIME
+from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT, BOOK_RENT_PERIOD
 from flask_babel import gettext, lazy_gettext as _l
 
 @login_manager.user_loader
@@ -123,7 +123,7 @@ class Extension(db.Model):
 class Rental(db.Model): # povezati sa knjigom, clanom, ko je odobrio, i ko je preuzeo knjigu nazad
     id = db.Column(db.Integer, primary_key=True)
     date_performed = db.Column(db.Date, nullable=False, default=date.today())
-    date_deadline = db.Column(db.Date, nullable=False, default=date.today() + timedelta(BOOK_RENT_TIME))
+    date_deadline = db.Column(db.Date, nullable=False, default=date.today() + timedelta(BOOK_RENT_PERIOD))
     date_termination = db.Column(db.Date, nullable=True)
     is_terminated = db.Column(db.Boolean, default=False)
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)

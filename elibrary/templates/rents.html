@@ -3,144 +3,125 @@
 
 <h1>{{ gettext('Rents') }}</h1>
 
-{#<!--
 <div>
-    <form method="GET" action="{{ url_for('members.membersr') }}">
+    <form method="GET" action="{{ url_for('books.book_rents') }}">
         <fieldset>
             <div>
-                {{ form2.text.label }}
-                {{ form2.text }}
-                {% if form2.text.errors %}
+                {{ form.book_id.label }}
+                {{ form.book_id }}
+                {% if form.book_id.errors %}
                     <div>
-                        {% for error in form2.text.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-        </fieldset>
-        <div>
-            {{ form2.submit }}
-            <a href="{{ url_for('members.memberss') }}">{{ gettext('Clear search') }}</a>
-        </div>
-    </form>
-
-    <form method="GET" action="{{ url_for('members.membersf') }}">
-        <fieldset>
-            <div>
-                {{ form.id.label }}
-                {{ form.id }}
-                {% if form.id.errors %}
-                    <div>
-                        {% for error in form.id.errors %}
+                        {% for error in form.book_id.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
                 {% endif %}
             </div>
             <div>
-                {{ form.first_name.label }}
-                {{ form.first_name }}
-                {% if form.first_name.errors %}
+                {{ form.member_id.label }}
+                {{ form.member_id }}
+                {% if form.member_id.errors %}
                     <div>
-                        {% for error in form.first_name.errors %}
+                        {% for error in form.member_id.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
                 {% endif %}
             </div>
             <div>
-                {{ form.last_name.label }}
-                {{ form.last_name }}
-                {% if form.last_name.errors %}
+                {{ form.librarian_rent_id.label }}
+                {{ form.librarian_rent_id }}
+                {% if form.librarian_rent_id.errors %}
                     <div>
-                        {% for error in form.last_name.errors %}
+                        {% for error in form.librarian_rent_id.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
                 {% endif %}
             </div>
-
             <div>
-                {{ form.has_rented_books.label }}
-                {{ form.has_rented_books }}
+                {{ form.librarian_return_id.label }}
+                {{ form.librarian_return_id }}
+                {% if form.librarian_return_id.errors %}
+                    <div>
+                        {% for error in form.librarian_return_id.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
             <div>
-                {{ form.has_expired.label }}
-                {{ form.has_expired }}
+                {{ form.is_terminated.label }}
+                {{ form.is_terminated }}
+            </div>
+            <div>
+                {{ form.is_deadlime_passed.label }}
+                {{ form.is_deadlime_passed }}
             </div>
 
             <hr/>
 
             <div>
-                {{ form.registration_date_from.label }}
-                {{ form.registration_date_from }}
-                {% if form.registration_date_from.errors %}
+                {{ form.date_performed_from.label }}
+                {{ form.date_performed_from }}
+                {% if form.date_performed_from.errors %}
                     <div>
-                        {% for error in form.registration_date_from.errors %}
-                            {% if not error == "Not a valid date value" %}
-                                <span>{{ error }}</span>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div>
-                {{ form.registration_date_to.label }}
-                {{ form.registration_date_to }}
-                {% if form.registration_date_to.errors %}
-                    <div>
-                        {% for error in form.registration_date_to.errors %}
-                            {% if not error == "Not a valid date value" %}
-                                <span>{{ error }}</span>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div>
-                {{ form.expiration_date_from.label }}
-                {{ form.expiration_date_from }}
-                {% if form.expiration_date_from.errors %}
-                    <div>
-                        {% for error in form.expiration_date_from.errors %}
-                            {% if not error == "Not a valid date value" %}
-                                <span>{{ error }}</span>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div>
-                {{ form.expiration_date_to.label }}
-                {{ form.expiration_date_to }}
-                {% if form.expiration_date_to.errors %}
-                    <div>
-                        {% for error in form.expiration_date_to.errors %}
-                            {% if not error == "Not a valid date value" %}
-                                <span>{{ error }}</span>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div>
-                {{ form.books_rented_from.label }}
-                {{ form.books_rented_from }}
-                {% if form.books_rented_from.errors %}
-                    <div>
-                        {% for error in form.books_rented_from.errors %}
+                        {% for error in form.date_performed_from.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
                 {% endif %}
             </div>
             <div>
-                {{ form.books_rented_to.label }}
-                {{ form.books_rented_to }}
-                {% if form.books_rented_to.errors %}
+                {{ form.date_performed_to.label }}
+                {{ form.date_performed_to }}
+                {% if form.date_performed_to.errors %}
                     <div>
-                        {% for error in form.books_rented_to.errors %}
+                        {% for error in form.date_performed_to.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.date_deadline_from.label }}
+                {{ form.date_deadline_from }}
+                {% if form.date_deadline_from.errors %}
+                    <div>
+                        {% for error in form.date_deadline_from.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.date_deadline_to.label }}
+                {{ form.date_deadline_to }}
+                {% if form.date_deadline_to.errors %}
+                    <div>
+                        {% for error in form.date_deadline_to.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.date_terminated_from.label }}
+                {{ form.date_terminated_from }}
+                {% if form.date_terminated_from.errors %}
+                    <div>
+                        {% for error in form.date_terminated_from.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.date_terminated_to.label }}
+                {{ form.date_terminated_to }}
+                {% if form.date_terminated_to.errors %}
+                    <div>
+                        {% for error in form.date_terminated_to.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
@@ -150,44 +131,33 @@
         </fieldset>
         <div>
             {{ form.submit }}
-            <a href="{{ url_for('members.memberss') }}">{{ gettext('Clear filter') }}</a>
+            <a href="{{ url_for('books.book_rents') }}">{{ gettext('Clear filter') }}</a>
         </div>
     </form>
 </div>
 
 <p>
     <span>
-        {{ gettext('Member id') }}
-        <a href="{{ url_for('members.memberss', sort_by='id', direction='up', **extra_filter_args) }}"> &and; </a>
-        <a href="{{ url_for('members.memberss', sort_by='id', direction='down', **extra_filter_args) }}"> &or;</a>
+        {{ gettext('Date rented') }}
+        <a href="{{ url_for('books.book_rents', sort_by='date_performed', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('books.book_rents', sort_by='date_performed', direction='down', **extra_filter_args) }}"> &or;</a>
     </span>
     <span>
-        {{ gettext('First name') }}
-        <a href="{{ url_for('members.memberss', sort_by='first_name', direction='up', **extra_filter_args) }}"> &and; </a>
-        <a href="{{ url_for('members.memberss', sort_by='first_name', direction='down', **extra_filter_args) }}"> &or;</a>
+        {{ gettext('Return deadline') }}
+        <a href="{{ url_for('books.book_rents', sort_by='date_deadline', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('books.book_rents', sort_by='date_deadline', direction='down', **extra_filter_args) }}"> &or;</a>
     </span>
     <span>
-        {{ gettext('Last name') }}
-        <a href="{{ url_for('members.memberss', sort_by='last_name', direction='up', **extra_filter_args) }}"> &uarr; </a>
-        <a href="{{ url_for('members.memberss', sort_by='last_name', direction='down', **extra_filter_args) }}"> &darr; </a>
+        {{ gettext('Is returned') }}
+        <a href="{{ url_for('books.book_rents', sort_by='is_terminated', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('books.book_rents', sort_by='is_terminated', direction='down', **extra_filter_args) }}"> &or; </a>
     </span>
     <span>
-        {{ gettext('Total books rented') }}
-        <a href="{{ url_for('members.memberss', sort_by='total_books_rented', direction='up', **extra_filter_args) }}"> &and; </a>
-        <a href="{{ url_for('members.memberss', sort_by='total_books_rented', direction='down', **extra_filter_args) }}"> &or; </a>
-    </span>
-    <span>
-        {{ gettext('Registration date') }}
-        <a href="{{ url_for('members.memberss', sort_by='date_registered', direction='up', **extra_filter_args) }}"> &uarr; </a>
-        <a href="{{ url_for('members.memberss', sort_by='date_registered', direction='down', **extra_filter_args) }}"> &darr; </a>
-    </span>
-    <span>
-        {{ gettext('Membership expiration date') }}
-        <a href="{{ url_for('members.memberss', sort_by='date_expiration', direction='up', **extra_filter_args) }}"> &uarr; </a>
-        <a href="{{ url_for('members.memberss', sort_by='date_expiration', direction='down', **extra_filter_args) }}"> &darr; </a>
+        {{ gettext('Date returned') }}
+        <a href="{{ url_for('books.book_rents', sort_by='date_termination', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('books.book_rents', sort_by='date_termination', direction='down', **extra_filter_args) }}"> &darr; </a>
     </span>
 </p>
--->#}
 
 {% for rent in rents_list.items %}
     <p>

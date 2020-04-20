@@ -145,6 +145,8 @@
     {% endfor %}
 {% endif %}
 
+<a href="{{ url_for('books.book_rents', member_id=member.id) }}">{{ gettext('All rented books') }}</a>
+
 <h3>Membership extensions</h3>
 
 {% for extension in extensions %}
