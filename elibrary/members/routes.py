@@ -4,7 +4,7 @@ from flask import render_template, url_for, redirect, request, flash, Blueprint,
 from flask_login import current_user, login_required
 from flask_babel import gettext, lazy_gettext as _l
 from elibrary import db
-from elibrary.models import Member, Extension
+from elibrary.models import Member, Extension, Rental
 from elibrary.utils.custom_validations import (string_cust, length_cust_max, FieldValidator)
 from elibrary.members.forms import (MemberCreateForm, MemberUpdateForm,
     MemberExtensionForm, FilterForm, ShortFilterForm)
@@ -18,7 +18,8 @@ members = Blueprint('members', __name__)
 def members_details(member_id):
     member = Member.query.get_or_404(member_id)
     extensions = Extension.query.filter_by(member_id=member_id).order_by(desc('date_performed'))
-    return render_template('member.html', member=member, extensions=extensions, max_books=MAX_RENTED_BOOKS)
+    rents = Rental.query.filter(and_(Rental.member_id==member_id, Rental.is_terminated==False)).order_by(desc('date_deadline'))
+    return render_template('member.html', member=member, extensions=extensions, book_rentals=rents, max_books=MAX_RENTED_BOOKS)
 
 @members.route("/members/create", methods=['GET', 'POST'])
 @login_required

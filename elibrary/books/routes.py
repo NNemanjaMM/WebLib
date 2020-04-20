@@ -240,4 +240,6 @@ def book_rents_details(rent_id):
         rent.librarian_return_id = current_user.id
         member.number_of_rented_books = db.session.query(func.count(Rental.id)).filter(and_(Rental.member_id == member.id, Rental.is_terminated == False)).scalar()
         db.session.commit()
+        flash(_l('Book is successfuly returned')+'.', 'info')
+        return redirect(url_for('books.book_rents'))
     return render_template('rent.html', form=form, rent=rent)

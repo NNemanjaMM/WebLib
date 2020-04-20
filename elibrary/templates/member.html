@@ -127,6 +127,24 @@
         {% endif %}
     </p>
 
+{% if member.number_of_rented_books > 0 %}
+    <h3>{{ gettext('Currently rented') }}</h3>
+    {% for rent in book_rentals %}
+        <p>
+            <span>{{ rent.book.title }}, {{ rent.book.author }} ({{ rent.book.inv_number }})</span>
+            <span>{{ rent.date_performed_print }}</span>
+            <span>{{ rent.date_deadline_print }}</span>
+            {% if rent.date_deadline_passed %}
+                <span>{{ gettext('Deadline passed') }}</span>
+            {% endif %}
+
+            <span>
+                <a href="{{ url_for('books.book_rents_details', rent_id=rent.id) }}">{{ gettext('More details') }}</a>
+            </span>
+        </p>
+    {% endfor %}
+{% endif %}
+
 <h3>Membership extensions</h3>
 
 {% for extension in extensions %}

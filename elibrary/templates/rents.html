@@ -197,7 +197,6 @@
         {% if rent.date_deadline_passed %}
             <span>{{ gettext('Deadline passed') }}</span>
         {% endif %}
-        <span>{{ rent.date_deadline_passed_print }}</span>
 
         <span>{{ rent.book_id }} - {{ rent.book.title }}, {{ rent.book.author }}</span>
         <span>{{ rent.member_id }} - {{ rent.member.first_name }} ({{ rent.member.father_name }}) {{ rent.member.last_name }}</span>
