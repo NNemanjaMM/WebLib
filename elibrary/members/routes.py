@@ -140,45 +140,29 @@ def memberss(filtering = False, searching = False):
             my_query = my_query.filter(or_(Member.first_name.like('%' + s_text + '%'), Member.last_name.like('%' + s_text + '%'), Member.father_name.like('%' + s_text + '%'), Member.id == s_text))
             args_filter['text'] = s_text
     else:
-        my_query, args_filter, filter_has_errors = process_related_date_filters(my_query,
+        my_query, args_filter, filter_has_errors = Common.process_related_date_filters(my_query,
             args_filter, filter_has_errors, form.registration_date_from,
             form.registration_date_to, f_registration_date_from, f_registration_date_to,
-            'registration_date_from', 'registration_date_to', 'date_registered', True)
+            'registration_date_from', 'registration_date_to', Member, 'date_registered', True)
 
-        my_query, args_filter, filter_has_errors = process_related_date_filters(my_query,
+        my_query, args_filter, filter_has_errors = Common.process_related_date_filters(my_query,
             args_filter, filter_has_errors, form.expiration_date_from,
             form.expiration_date_to, f_expiration_date_from, f_expiration_date_to,
-            'expiration_date_from', 'expiration_date_to', 'date_expiration', False)
+            'expiration_date_from', 'expiration_date_to', Member, 'date_expiration', False)
 
-        my_query, args_filter, filter_has_errors = process_related_number_filters(my_query,
+        my_query, args_filter, filter_has_errors = Common.process_related_number_filters(my_query,
             args_filter, filter_has_errors, form.books_rented_from,
             form.books_rented_to, f_books_rented_from, f_books_rented_to,
-            'books_rented_from', 'books_rented_to', 'total_books_rented')
+            'books_rented_from', 'books_rented_to', Member, 'total_books_rented')
 
-        if not (f_id == None or f_id == ""):
-            form.id.data = f_id
-            from_value = FieldValidator.convert_and_validate_number(form.id)
-            if not from_value == None:
-                my_query = my_query.filter(Member.id == from_value)
-                args_filter['id'] = from_value
-            else:
-                filter_has_errors = True
+        my_query, args_filter, filter_has_errors = Common.process_equal_number_filter(my_query, args_filter,
+            filter_has_errors, form.id, f_id, 'id', Member, 'id')
 
-        if not (f_first_name == None or f_first_name == ""):
-            form.first_name.data = f_first_name
-            if FieldValidator.validate_field(form, form.first_name, [string_cust, length_cust_max]):
-                my_query = my_query.filter(Member.first_name.like('%' + f_first_name + '%'))
-                args_filter['first_name'] = f_first_name
-            else:
-                filter_has_errors = True
+        my_query, args_filter, filter_has_errors = Common.process_like_filter(my_query, args_filter, filter_has_errors,
+            form, form.first_name, f_first_name, 'first_name', [string_cust, length_cust_max], Member, 'first_name')
 
-        if not (f_last_name == None or f_last_name == ""):
-            form.last_name.data = f_last_name
-            if FieldValidator.validate_field(form, form.last_name, [string_cust, length_cust_max]):
-                my_query = my_query.filter(Member.last_name.like('%' + f_last_name + '%'))
-                args_filter['last_name'] = f_last_name
-            else:
-                filter_has_errors = True
+        my_query, args_filter, filter_has_errors = Common.process_like_filter(my_query, args_filter, filter_has_errors,
+            form, form.last_name, f_last_name, 'last_name', [string_cust, length_cust_max], Member, 'last_name')
 
         if not (f_has_rented_books == None or f_has_rented_books == ""):
             form.has_rented_books.data = f_has_rented_books
@@ -220,57 +204,3 @@ def membersr():
 @login_required
 def membersf():
     return memberss(True, False)
-
-def process_related_date_filters(my_query, args_filter, filter_has_errors, from_field, to_field, f_from, f_to, field_from_name, field_to_name, db_column_name, validate_future_date):
-    from_value = None
-    if not (f_from == None or f_from == ""):
-        from_field.data = f_from
-        from_value = FieldValidator.convert_and_validate_date(from_field, validate_future_date)
-        if not from_value == None:
-            my_query = my_query.filter(getattr(Member, db_column_name) >= from_value.strftime('%Y-%m-%d'))
-            args_filter[field_from_name] = f_from
-        else:
-            filter_has_errors = True
-    if not (f_to == None or f_to == ""):
-        to_field.data = f_to
-        to_value = FieldValidator.convert_and_validate_date(to_field, validate_future_date)
-        if not to_value == None:
-            if not from_value == None:
-                if FieldValidator.validate_date_order(from_value, to_value, to_field):
-                    my_query = my_query.filter(getattr(Member, db_column_name) <= to_value.strftime('%Y-%m-%d'))
-                    args_filter[field_to_name] = f_to
-                else:
-                    filter_has_errors = True
-            else:
-                my_query = my_query.filter(getattr(Member, db_column_name) <= to_value.strftime('%Y-%m-%d'))
-                args_filter[field_to_name] = f_to
-        else:
-            filter_has_errors = True
-    return my_query, args_filter, filter_has_errors
-
-def process_related_number_filters(my_query, args_filter, filter_has_errors, from_field, to_field, f_from, f_to, field_from_name, field_to_name, db_column_name):
-    from_value = None
-    if not (f_from == None or f_from == ""):
-        from_field.data = f_from
-        from_value = FieldValidator.convert_and_validate_number(from_field)
-        if not from_value == None:
-            my_query = my_query.filter(getattr(Member, db_column_name) >= from_value)
-            args_filter[field_from_name] = f_from
-        else:
-            filter_has_errors = True
-    if not (f_to == None or f_to == ""):
-        to_field.data = f_to
-        to_value = FieldValidator.convert_and_validate_number(to_field)
-        if not to_value == None:
-            if not from_value == None:
-                if FieldValidator.validate_number_order(from_value, to_value, to_field):
-                    my_query = my_query.filter(getattr(Member, db_column_name) <= to_value)
-                    args_filter[field_to_name] = f_to
-                else:
-                    filter_has_errors = True
-            else:
-                my_query = my_query.filter(getattr(Member, db_column_name) <= to_value)
-                args_filter[field_to_name] = f_to
-        else:
-            filter_has_errors = True
-    return my_query, args_filter, filter_has_errors

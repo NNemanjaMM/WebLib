@@ -8,8 +8,8 @@ from elibrary.models import ExtensionPrice
 from elibrary.utils.custom_validations import (optional_cust, string_cust, length_cust, required_cust, char_cust, required_cust_decimal)
 
 class FilterForm(FlaskForm):
-    date_performed_from = StringField(_l('Performed after'))
-    date_performed_to = StringField(_l('Performed before'))
+    date_performed_from = StringField(_l('Expanded after'))
+    date_performed_to = StringField(_l('Expanded before'))
     date_extended_from = StringField(_l('Membership expires after'))
     date_extended_to = StringField(_l('Membership expires before'))
     price = QuerySelectField(_l('Price'), query_factory=lambda: ExtensionPrice.query.order_by(ExtensionPrice.price_value), allow_blank=True, blank_text=_l('Not selected'))

@@ -8,6 +8,7 @@ from elibrary.models import Extension, ExtensionPrice
 from elibrary.utils.custom_validations import FieldValidator, string_cust, length_cust_max
 from elibrary.extensions.forms import FilterForm, PriceUpdate, PriceAdd
 from elibrary.utils.defines import PAGINATION
+from elibrary.utils.common import Common
 
 extensions = Blueprint('extensions', __name__)
 sort_extensions_values = ['date_performed', 'member_id', 'date_extended', 'price']
@@ -35,15 +36,15 @@ def extensionss():
     form = FilterForm()
     my_query = db.session.query(Extension)
 
-    my_query, args_filter, filter_has_errors = process_related_date_filters(my_query,
+    my_query, args_filter, filter_has_errors = Common.process_related_date_filters(my_query,
             args_filter, filter_has_errors, form.date_performed_from,
             form.date_performed_to, f_date_performed_from, f_date_performed_to,
-            'date_performed_from', 'date_performed_to', 'date_performed', True)
+            'date_performed_from', 'date_performed_to', Extension, 'date_performed', True)
 
-    my_query, args_filter, filter_has_errors = process_related_date_filters(my_query,
+    my_query, args_filter, filter_has_errors = Common.process_related_date_filters(my_query,
             args_filter, filter_has_errors, form.date_extended_from,
             form.date_extended_to, f_date_extended_from, f_date_extended_to,
-            'date_extended_from', 'date_extended_to', 'date_extended', True)
+            'date_extended_from', 'date_extended_to', Extension, 'date_extended', True)
 
     if not (f_price == None or f_price == ""):
         if not f_price == '__None':
@@ -55,14 +56,16 @@ def extensionss():
             else:
                 filter_has_errors = True
 
-    if not (f_member_id == None or f_member_id == ""):
-        form.member_id.data = f_member_id
-        from_value = FieldValidator.convert_and_validate_number(form.member_id)
-        if not from_value == None:
-            my_query = my_query.filter_by(member_id = from_value)
-            args_filter['member_id'] = from_value
-        else:
-            filter_has_errors = True
+    my_query, args_filter, filter_has_errors = Common.process_equal_number_filter(my_query, args_filter,
+        filter_has_errors, form.member_id, f_member_id, 'member_id', Extension, 'member_id')
+#    if not (f_member_id == None or f_member_id == ""):
+#        form.member_id.data = f_member_id
+#        from_value = FieldValidator.convert_and_validate_number(form.member_id)
+#        if not from_value == None:
+#            my_query = my_query.filter_by(member_id = from_value)
+#            args_filter['member_id'] = from_value
+#        else:
+#            filter_has_errors = True
 
     if filter_has_errors:
         flash(_l('There are filter values with errors')+'. '+_l('However, valid filter values are applied')+'.', 'warning')
@@ -124,30 +127,3 @@ def prices_update(price_id):
     elif request.method == 'GET':
         form.note.data = price.note
     return render_template('extension_prices_update.html', form=form, price=price)
-
-def process_related_date_filters(my_query, args_filter, filter_has_errors, from_field, to_field, f_from, f_to, field_from_name, field_to_name, db_column_name, validate_future_date):
-    from_value = None
-    if not (f_from == None or f_from == ""):
-        from_field.data = f_from
-        from_value = FieldValidator.convert_and_validate_date(from_field, validate_future_date)
-        if not from_value == None:
-            my_query = my_query.filter(getattr(Extension, db_column_name) >= from_value.strftime('%Y-%m-%d'))
-            args_filter[field_from_name] = f_from
-        else:
-            filter_has_errors = True
-    if not (f_to == None or f_to == ""):
-        to_field.data = f_to
-        to_value = FieldValidator.convert_and_validate_date(to_field, validate_future_date)
-        if not to_value == None:
-            if not from_value == None:
-                if FieldValidator.validate_date_order(from_value, to_value, to_field):
-                    my_query = my_query.filter(getattr(Extension, db_column_name) <= to_value.strftime('%Y-%m-%d'))
-                    args_filter[field_to_name] = f_to
-                else:
-                    filter_has_errors = True
-            else:
-                my_query = my_query.filter(getattr(Extension, db_column_name) <= to_value.strftime('%Y-%m-%d'))
-                args_filter[field_to_name] = f_to
-        else:
-            filter_has_errors = True
-    return my_query, args_filter, filter_has_errors
