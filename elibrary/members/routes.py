@@ -12,6 +12,7 @@ from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, PAGINATION, DATE_
 from elibrary.utils.common import Common
 
 members = Blueprint('members', __name__)
+sort_member_values = ['id', 'first_name', 'last_name', 'total_books_rented', 'date_registered', 'date_expiration']
 
 @members.route("/members/details/<int:member_id>")
 @login_required
@@ -46,7 +47,6 @@ def members_create():
 @login_required
 def members_update(member_id):
     member = Member.query.get_or_404(member_id)
-
     form = MemberUpdateForm()
     if form.validate_on_submit():
         member.first_name = form.first_name.data
@@ -99,8 +99,7 @@ def memberss(filtering = False, searching = False):
     sort_criteria = request.args.get('sort_by', 'id', type=str)
     sort_direction = request.args.get('direction', 'up', type=str)
     args_sort = {'sort_by': sort_criteria, 'direction': sort_direction}
-    if not (sort_criteria == 'id' or sort_criteria == 'first_name' or sort_criteria == 'last_name' or
-            sort_criteria == 'total_books_rented' or sort_criteria == 'date_registered' or sort_criteria == 'date_expiration'):
+    if not sort_criteria in sort_member_values:
         sort_criteria = 'id'
 
     s_text = request.args.get('text')

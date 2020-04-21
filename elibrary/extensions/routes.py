@@ -10,6 +10,8 @@ from elibrary.extensions.forms import FilterForm, PriceUpdate, PriceAdd
 from elibrary.utils.defines import PAGINATION
 
 extensions = Blueprint('extensions', __name__)
+sort_extensions_values = ['date_performed', 'member_id', 'date_extended', 'price', 'librarian_id']
+sort_prices_values = ['id', 'price_value', 'currency', 'is_enabled', 'date_established']
 
 @extensions.route("/extensions")
 @login_required
@@ -18,7 +20,7 @@ def extensionss():
     sort_criteria = request.args.get('sort_by', 'id', type=str)
     sort_direction = request.args.get('direction', 'down', type=str)
     args_sort = {'sort_by': sort_criteria, 'direction': sort_direction}
-    if not (sort_criteria == 'date_performed' or sort_criteria == 'member_id' or sort_criteria == 'date_extended' or sort_criteria == 'price' or sort_criteria == 'librarian_id'):
+    if not sort_criteria in sort_extensions_values:
         sort_criteria = 'id'
 
     f_date_performed_from = request.args.get('date_performed_from')
@@ -88,6 +90,9 @@ def prices():
         abort(403)
     sort_criteria = request.args.get('sort_by', 'id', type=str)
     sort_direction = request.args.get('direction', 'down', type=str)
+    if not sort_criteria in sort_prices_values:
+        sort_criteria = 'id'
+
     my_query = db.session.query(ExtensionPrice)
     if sort_direction == 'up':
         list = my_query.order_by(sort_criteria).all()

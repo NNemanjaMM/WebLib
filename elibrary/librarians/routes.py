@@ -10,6 +10,7 @@ from elibrary.models import Librarian
 from sqlalchemy import desc
 
 librarians = Blueprint('librarians', __name__)
+sort_librarian_values = ['first_name', 'last_name', 'date_registered']
 
 @librarians.route("/logout")
 @login_required
@@ -111,7 +112,7 @@ def librarianss():
     include_inactive = request.args.get('include_inactive', 'False', type=str)
     sort_criteria = request.args.get('sort_by', 'first_name', type=str)
     sort_direction = request.args.get('direction', 'up', type=str)
-    if not (sort_criteria == 'first_name' or sort_criteria == 'last_name' or sort_criteria == 'date_registered'):
+    if not sort_criteria in sort_librarian_values:
         sort_criteria = 'first_name'
 
     include_disabled_val=True

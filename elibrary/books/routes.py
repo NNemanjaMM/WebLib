@@ -12,6 +12,8 @@ from sqlalchemy import desc, or_, and_, func
 from sqlalchemy.sql.operators import is_
 
 books = Blueprint('books', __name__)
+sort_prices_values = ['inv_number', 'signature', 'title', 'author']
+sort_rents_values = ['date_performed', 'date_deadline', 'date_termination', 'is_terminated']
 
 @books.route("/books")
 @login_required
@@ -20,7 +22,7 @@ def bookss(filtering = False, searching = False):
     sort_criteria = request.args.get('sort_by', 'inv_number', type=str)
     sort_direction = request.args.get('direction', 'up', type=str)
     args_sort = {'sort_by': sort_criteria, 'direction': sort_direction}
-    if not (sort_criteria == 'inv_number' or sort_criteria == 'signature' or sort_criteria == 'title' or sort_criteria == 'author'):
+    if not sort_criteria in sort_prices_values:
         sort_criteria = 'inv_number'
 
     s_text = request.args.get('text')
@@ -236,7 +238,7 @@ def book_rents():
     sort_criteria = request.args.get('sort_by', 'id', type=str)
     sort_direction = request.args.get('direction', 'down', type=str)
     args_sort = {'sort_by': sort_criteria, 'direction': sort_direction}
-    if not (sort_criteria == 'date_performed' or sort_criteria == 'date_deadline' or sort_criteria == 'date_termination' or sort_criteria == 'is_terminated'):
+    if not sort_criteria in sort_rents_values:
         sort_criteria = 'date_performed'
 
     filter_has_errors = False
