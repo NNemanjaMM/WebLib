@@ -7,7 +7,6 @@ from wtforms.validators import ValidationError
 from elibrary.models import ExtensionPrice
 from elibrary.utils.custom_validations import (optional_cust, string_cust, length_cust, required_cust, char_cust, required_cust_decimal)
 
-
 class FilterForm(FlaskForm):
     date_performed_from = StringField(_l('Performed after'))
     date_performed_to = StringField(_l('Performed before'))

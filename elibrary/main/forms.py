@@ -21,8 +21,6 @@ class CreateBookForm(BookForm):
 class UpdateBookForm(BookForm):
     submit = SubmitField(_l('Update book'))
 
-class AcceptForm(FlaskForm):
-    submit_accept = SubmitField(_l('Approve'))
-
-class RejectForm(FlaskForm):
-    submit_reject = SubmitField(_l('Reject'))
+class AcceptRejectForm(FlaskForm):
+    approve = SubmitField(_l('Approve'))
+    reject = SubmitField(_l('Reject'))

@@ -5,7 +5,7 @@ from elibrary import bcrypt, db
 from elibrary.librarians.forms import (LibrarianCreateForm, LibrarianUpdateForm, LoginForm,
         LibrarianUpdatePasswordForm, LibrarianChangePasswordForm, LibrarianRequestChangePasswordForm)
 from elibrary.utils.defines import DATE_FORMAT
-from elibrary.main.forms import AcceptForm, RejectForm
+from elibrary.main.forms import AcceptRejectForm
 from elibrary.models import Librarian
 from sqlalchemy import desc
 
@@ -212,12 +212,11 @@ def librarians_username(librarian_id):
     librarian = Librarian.query.get_or_404(librarian_id)
     if not librarian.change_username:
         abort(405)
-    form_accept = AcceptForm()
-    form_reject = RejectForm()
+    form_decide = AcceptRejectForm()
     if not request.method == 'GET':
-        if form_reject.submit_reject.data and form_reject.validate():
+        if form_decide.reject.data and form_decide.validate():
             flash(_l('Account username change has been rejected')+'.', 'info')
-        elif form_accept.submit_accept.data and form_accept.validate():
+        elif form_decide.approve.data and form_decide.validate():
             user = Librarian.query.filter_by(username=librarian.change_username_value).first()
             if not user:
                 librarian.username = librarian.change_username_value
@@ -228,7 +227,7 @@ def librarians_username(librarian_id):
         librarian.change_username_value = None
         db.session.commit()
         return redirect(url_for('librarians.librarianss'))
-    return render_template('account_username_change_request.html', form1=form_accept, form2=form_reject, librarian=librarian)
+    return render_template('account_username_change_request.html', form=form_decide, librarian=librarian)
 
 @librarians.route("/librarians/availability/<int:librarian_id>", methods=['GET', 'POST'])
 @login_required
@@ -238,17 +237,16 @@ def librarians_availability(librarian_id):
     librarian = Librarian.query.get_or_404(librarian_id)
     if current_user.id == librarian_id:
         abort(405)
-    form_accept = AcceptForm()
-    form_reject = RejectForm()
+    form_decide = AcceptRejectForm()
     if not request.method == 'GET':
-        if form_reject.submit_reject.data and form_reject.validate():
+        if form_decide.reject.data and form_decide.validate():
             flash(_l('Account availability is not changed')+'.', 'info')
-        elif form_accept.submit_accept.data and form_accept.validate():
+        elif form_decide.approve.data and form_decide.validate():
             librarian.is_operational = not librarian.is_operational
             flash(_l('Account availability is changed')+'.', 'info')
         db.session.commit()
         return redirect(url_for('librarians.librarianss'))
-    return render_template('account_availability.html', form1=form_accept, form2=form_reject, librarian=librarian)
+    return render_template('account_availability.html', form=form_decide, librarian=librarian)
 
 @librarians.route("/librarians/administrate/<int:librarian_id>", methods=['GET', 'POST'])
 @login_required
@@ -264,8 +262,7 @@ def librarians_administrate(librarian_id):
     elif librarian.change_admin:    # za ovog administratora vec postoji zahtev da se izbaci
         abort(405)
 
-    form_accept = AcceptForm()
-    form_reject = RejectForm()
+    form_decide = AcceptRejectForm()
     response = False
     success = False
     ch_regular_to_admin = False
@@ -275,34 +272,28 @@ def librarians_administrate(librarian_id):
     msg_approve = ''
 
     if not librarian.is_admin:  # treba da postane administrator
-        print('treba da postane administrator')
         ch_regular_to_admin = True
         msg_title = _l('Add librarian as administrator')
         msg_approve = _l('Do you approve setting this librarian as the administrator')+'?'
     elif librarian.is_admin and not current_user.id == librarian_id: # trazimo da se iskljuci admin
-        print('trazimo da se iskljuci admin')
         ch_admin_disable_req = True
         msg_title = _l('Request librarian removal from administrators')
         msg_approve = _l('Approve your request to remove this librarian from administrators')+'?'
     elif librarian.is_admin and current_user.id == librarian_id and librarian.change_admin: # odlucuje da li ce prestati da bude admin
-        print('odlucuje da li ce prestati da bude admin')
         ch_admin_disable_resp = True
         msg_title = _l('Confirm your removal from administrators')
         msg_approve = _l('Approve your removal from administrators')+'?'
 
     if request.method == 'GET':
-        return render_template('account_administrate_request.html', form1=form_accept, form2=form_reject, librarian=librarian, title=msg_title, text=msg_approve)
+        return render_template('account_administrate_request.html', form=form_decide, librarian=librarian, title=msg_title, text=msg_approve)
     elif request.method == 'POST':
-        if form_reject.submit_reject.data and form_reject.validate():
-            print('potvrdio nece')
+        if form_decide.reject.data and form_decide.validate():
             response = False
             success = True
-        elif form_accept.submit_accept.data and form_accept.validate():
-            print('potvrdio hoce')
+        elif form_decide.approve.data and form_decide.validate():
             response = True
             success = True
     if success:
-        print('uspesno')
         if ch_regular_to_admin and response:
             librarian.is_admin = True
             flash(_l('You successfuly promoted librarian to the administrator')+'.', 'info')

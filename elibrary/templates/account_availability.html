@@ -50,15 +50,11 @@
             {% endif %}
         </p>
         <form method="POST" action="">
-            {{ form1.hidden_tag() }}
+            {{ form.hidden_tag() }}
             <div>
-                {{ form1.submit_accept }}
-            </div>
-        </form>
-        <form method="POST" action="">
-            {{ form2.hidden_tag() }}
-            <div>
-                {{ form2.submit_reject }}
+                {{ form.approve }}
+                
+                {{ form.reject }}
             </div>
         </form>
     </fieldset>
