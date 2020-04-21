@@ -4,6 +4,11 @@
 <h1>{{ title }}</h1>
 
 <div>
+    <p>
+        {% if form.has_error.data == True %}
+            {{ gettext('Book has a problem with inventory number') }}
+        {% endif %}
+    </p>
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset>
@@ -51,6 +56,14 @@
                     </div>
                 {% endif %}
             </div>
+            {% if current_user.is_admin %}
+                <div>
+                    {{ form.has_error.label }}
+                    {{ form.has_error }}
+                    <br/>
+                    {{ gettext('Please uncheck if the problem with inventory number is resolved') }}
+                </div>
+            {% endif %}
             <div>
                 {{ form.submit }}
             </div>

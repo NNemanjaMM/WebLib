@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from flask_wtf import FlaskForm
 from flask_babel import lazy_gettext as _l
-from wtforms import StringField, SubmitField, DateField, SelectField
+from wtforms import StringField, SubmitField, DateField, SelectField, BooleanField
 from wtforms.validators import ValidationError
 from elibrary.utils.custom_validations import optional_cust, required_cust, required_cust_date, string_cust, length_cust, signature_cust, numeric_cust
 from elibrary.utils.defines import DATE_FORMAT, BACKWARD_INPUT_LIMIT
@@ -11,6 +11,8 @@ class FilterForm(FlaskForm):
     signature = StringField(_l('Signature'))
     title = StringField(_l('Title'))
     author = StringField(_l('Author'))
+    is_rented = SelectField(_l('Is rented'), choices=[('none', '('+_l('Not selected')+')'), ('yes', _l('Yes')), ('no', _l('No'))])
+    has_error = SelectField(_l('Has error'), choices=[('none', '('+_l('Not selected')+')'), ('yes', _l('Yes')), ('no', _l('No'))])
     submit = SubmitField(_l('Filter'))
 
 class SearchForm(FlaskForm):
@@ -22,6 +24,7 @@ class BookCreateUpdateForm(FlaskForm):
     signature = StringField(_l('Signature'), validators=[required_cust(), signature_cust(), length_cust(max=15)])
     title = StringField(_l('Title'), validators=[required_cust(), string_cust(), length_cust(max=50)])
     author = StringField(_l('Author'), validators=[required_cust(), string_cust(), length_cust(max=50)])
+    has_error = BooleanField(_l('Has error') + ' (' + _l('book has a problematic inventory number') + ')')
     submit = SubmitField(_l('Submit'))
 
 class RentForm(FlaskForm):

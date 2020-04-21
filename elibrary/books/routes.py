@@ -28,6 +28,8 @@ def bookss(filtering = False, searching = False):
     f_signature = request.args.get('signature')
     f_title = request.args.get('title')
     f_author = request.args.get('author')
+    f_is_rented = request.args.get('is_rented')
+    f_has_error = request.args.get('has_error')
     if filtering:
         s_text = None
     elif searching:
@@ -35,6 +37,8 @@ def bookss(filtering = False, searching = False):
         f_signature = None
         f_title = None
         f_author = None
+        f_is_rented = None
+        f_has_error = None
 
     filter_has_errors = False
     args_filter = {}
@@ -48,7 +52,7 @@ def bookss(filtering = False, searching = False):
             my_query = my_query.filter(or_(Book.inv_number == s_text, Book.signature.like('%' + s_text + '%'),
                 Book.title.like('%' + s_text + '%'), Book.author.like('%' + s_text + '%')))
             args_filter['text'] = s_text
-    else:
+    elif filtering:
         my_query, args_filter, filter_has_errors = Common.process_like_filter(my_query, args_filter,
             filter_has_errors, form, form.inv_number, f_inv_number, 'inv_number', [numeric_cust, length_cust_max], Book, 'inv_number')
 
@@ -60,6 +64,24 @@ def bookss(filtering = False, searching = False):
 
         my_query, args_filter, filter_has_errors = Common.process_like_filter(my_query, args_filter,
             filter_has_errors, form, form.author, f_author, 'author', [string_cust, length_cust_max], Book, 'author')
+
+        if not (f_is_rented == None or f_is_rented == ""):
+            form.is_rented.data = f_is_rented
+            if f_is_rented == 'yes':
+                my_query = my_query.filter(Book.is_rented == True)
+                args_filter['is_rented'] = f_is_rented
+            elif f_is_rented == 'no':
+                my_query = my_query.filter(Book.is_rented == False)
+                args_filter['is_rented'] = f_is_rented
+
+        if not (f_has_error == None or f_has_error == ""):
+            form.has_error.data = f_has_error
+            if f_has_error == 'yes':
+                my_query = my_query.filter(Book.has_error == True)
+                args_filter['has_error'] = f_has_error
+            elif f_has_error == 'no':
+                my_query = my_query.filter(Book.has_error == False)
+                args_filter['has_error'] = f_has_error
 
     if filter_has_errors:
         flash(_l('There are filter values with errors')+'. '+_l('However, valid filter values are applied')+'.', 'warning')
@@ -90,6 +112,8 @@ def books_update(book_id):
         book.signature = form.signature.data
         book.title = form.title.data
         book.author = form.author.data
+        if current_user.is_admin:
+            book.has_error = form.has_error.data
         db.session.commit()
         flash(_l('Book is successfuly updated')+'.', 'success')
         return redirect(url_for('books.bookss'))
@@ -98,6 +122,7 @@ def books_update(book_id):
         form.signature.data = book.signature
         form.title.data = book.title
         form.author.data = book.author
+        form.has_error.data = book.has_error
     return render_template('books_cu.html', form=form, title=_l('Update book'))
 
 @books.route("/books/add", methods=['GET', 'POST'])
@@ -171,7 +196,6 @@ def book_rent(member_id):
                 db.session.commit()
                 book_id = new_book.id
                 flash(_l('New book is successfuly added')+'.', 'info')
-
             rental = Rental()
             rental.date_performed = date_value
             rental.date_deadline = date_value + timedelta(BOOK_RENT_PERIOD)
@@ -185,6 +209,25 @@ def book_rent(member_id):
             flash(_l('Book is successfuly rented')+'.', 'info')
             return redirect(url_for('members.members_details', member_id=member_id))
     return render_template('renting.html', form=form, message=message)
+
+@books.route("/books/rents/<int:rent_id>", methods=['GET', 'POST'])
+@login_required
+def book_rents_details(rent_id):
+    rent = Rental.query.get_or_404(rent_id)
+    member = Member.query.get_or_404(rent.member_id)
+    book = Book.query.get_or_404(rent.book_id)
+    form = RentTerminationForm()
+    form.date_rented = rent.date_performed
+    if not rent.is_terminated and form.validate_on_submit():
+        rent.is_terminated = True
+        rent.date_termination = form.date_returned.data
+        rent.librarian_return_id = current_user.id
+        member.number_of_rented_books = db.session.query(func.count(Rental.id)).filter(and_(Rental.member_id == member.id, Rental.is_terminated == False)).scalar()
+        book.is_rented = False
+        db.session.commit()
+        flash(_l('Book is successfuly returned')+'.', 'info')
+        return redirect(url_for('books.book_rents'))
+    return render_template('rent.html', form=form, rent=rent)
 
 @books.route("/books/rents")
 @login_required
@@ -240,9 +283,6 @@ def book_rents():
 
     if not (f_is_deadlime_passed == None or f_is_deadlime_passed == ""):
         form.is_deadlime_passed.data = f_is_deadlime_passed
-        print('value '+f_is_terminated)
-        print('first '+str(f_is_deadlime_passed == 'yes'))
-        print('second '+str(f_is_deadlime_passed == 'no'))
         if f_is_deadlime_passed == 'yes':
             my_query = my_query.filter(and_(date.today() > Rental.date_deadline, Rental.is_terminated == False))
             args_filter['is_deadlime_passed'] = f_is_deadlime_passed
@@ -270,20 +310,3 @@ def book_rents():
         list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     args_filter_and_sort = {**args_filter, **args_sort}
     return render_template('rents.html', form=form, rents_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort)
-
-@books.route("/books/rents/<int:rent_id>", methods=['GET', 'POST'])
-@login_required
-def book_rents_details(rent_id):
-    rent = Rental.query.get_or_404(rent_id)
-    member = Member.query.get_or_404(rent.member_id)
-    form = RentTerminationForm()
-    form.date_rented = rent.date_performed
-    if not rent.is_terminated and form.validate_on_submit():
-        rent.is_terminated = True
-        rent.date_termination = form.date_returned.data
-        rent.librarian_return_id = current_user.id
-        member.number_of_rented_books = db.session.query(func.count(Rental.id)).filter(and_(Rental.member_id == member.id, Rental.is_terminated == False)).scalar()
-        db.session.commit()
-        flash(_l('Book is successfuly returned')+'.', 'info')
-        return redirect(url_for('books.book_rents'))
-    return render_template('rent.html', form=form, rent=rent)
