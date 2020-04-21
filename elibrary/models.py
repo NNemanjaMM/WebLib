@@ -8,7 +8,7 @@ from flask_babel import gettext, lazy_gettext as _l
 def load_user(user_id):
     return Librarian.query.get(int(user_id))
 
-class Book(db.Model):     #za knjigu signatura (10 cifara, ima i tacke i povlake), inventarni broj (broj, 50000)
+class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     inv_number = db.Column(db.Integer, nullable=False)
     signature = db.Column(db.String(16), nullable=False)
@@ -16,7 +16,6 @@ class Book(db.Model):     #za knjigu signatura (10 cifara, ima i tacke i povlake
     author = db.Column(db.String(70), nullable=False)
     is_rented = db.Column(db.Boolean, default=False)
     has_error = db.Column(db.Boolean, default=False)
-    rentals = db.relationship("Rental", backref='book', lazy=True)
 
 class Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -29,10 +28,8 @@ class Member(db.Model):
     address = db.Column(db.String(60), nullable=False)
     date_registered = db.Column(db.Date, nullable=False, default=date.today())
     date_expiration = db.Column(db.Date, nullable=True, default=date.today())
-    total_books_rented = db.Column(db.Integer, nullable=False, default=0)       #povezati
-    number_of_rented_books = db.Column(db.Integer, nullable=False, default=0)   #povezati
-    membership_extensions = db.relationship("Extension", backref='member', lazy=True)
-    rented_books = db.relationship("Rental", backref='member', lazy=True)
+    total_books_rented = db.Column(db.Integer, nullable=False, default=0)
+    number_of_rented_books = db.Column(db.Integer, nullable=False, default=0)
 
     @property
     def is_membership_expired(self):
@@ -76,7 +73,6 @@ class Librarian(db.Model, UserMixin):
     change_admin = db.Column(db.Boolean, default=False)
     change_password = db.Column(db.Boolean, default=False)
     change_username_value = db.Column(db.String(30), nullable=True)
-    memberships_extended = db.relationship("Extension", backref='librarian', lazy=True)
 
     @property
     def change_username(self):
@@ -98,15 +94,30 @@ class Librarian(db.Model, UserMixin):
                       '{self.phone_print}', '{self.address}', '{self.date_registered}', '{self.is_admin}', \
                       '{self.is_operational}', '{self.change_password}', '{self.change_username}')"
 
+class ExtensionPrice(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    price_value = db.Column(db.Numeric(scale=2, precision=4, asdecimal=True), nullable=False)
+    currency = db.Column(db.String(3), nullable=False)
+    note = db.Column(db.String(150), nullable=True)
+    is_enabled = db.Column(db.Boolean, nullable=False, default=True)
+    
+    @property
+    def price_value_print(self):
+        return "{:.2f}".format(self.price_value)
+
+    def __repr__(self):
+        return "{:.2f}".format(self.price_value) + ' ' + self.currency
+
 class Extension(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     note = db.Column(db.String(150), nullable=True)
     price = db.Column(db.Numeric, nullable=False)
     date_performed = db.Column(db.Date, nullable=False, default=date.today())
     date_extended = db.Column(db.Date, nullable=False, default=date.today())
-    price_id = db.Column(db.Integer, db.ForeignKey('extension_price.id'), nullable=False)
-    member_id = db.Column(db.Integer, db.ForeignKey('member.id'), nullable=False)
-    librarian_id = db.Column(db.Integer, db.ForeignKey('librarian.id'), nullable=False)
+    price_id = db.Column(db.Integer, db.ForeignKey(ExtensionPrice.id), nullable=False)
+    member_id = db.Column(db.Integer, db.ForeignKey(Member.id), nullable=False)
+    price_details = db.relationship('ExtensionPrice', foreign_keys=[price_id])
+    member = db.relationship('Member', foreign_keys=[member_id])
 
     @property
     def date_performed_print(self):
@@ -120,18 +131,16 @@ class Extension(db.Model):
     def price_print(self):
         return "{:.2f}".format(self.price)
 
-class Rental(db.Model): # povezati sa knjigom, clanom, ko je odobrio, i ko je preuzeo knjigu nazad
+class Rental(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date_performed = db.Column(db.Date, nullable=False, default=date.today())
     date_deadline = db.Column(db.Date, nullable=False, default=date.today() + timedelta(BOOK_RENT_PERIOD))
     date_termination = db.Column(db.Date, nullable=True)
     is_terminated = db.Column(db.Boolean, default=False)
-    book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
-    member_id = db.Column(db.Integer, db.ForeignKey('member.id'), nullable=False)
-    librarian_rent_id = db.Column(db.Integer, db.ForeignKey('librarian.id'), nullable=False)
-    librarian_return_id = db.Column(db.Integer, db.ForeignKey('librarian.id'), nullable=True)
-    librarian_rent = db.relationship("Librarian", foreign_keys=[librarian_rent_id])
-    librarian_return = db.relationship("Librarian", foreign_keys=[librarian_return_id])
+    book_id = db.Column(db.Integer, db.ForeignKey(Book.id), nullable=False)
+    member_id = db.Column(db.Integer, db.ForeignKey(Member.id), nullable=False)
+    book = db.relationship("Book", foreign_keys=[book_id])
+    member = db.relationship("Member", foreign_keys=[member_id])
 
     @property
     def date_deadline_passed(self):
@@ -161,23 +170,3 @@ class Rental(db.Model): # povezati sa knjigom, clanom, ko je odobrio, i ko je pr
             return _l('Yes')
         else:
             return _l('No')
-
-class ExtensionPrice(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    price_value = db.Column(db.Numeric(scale=2, precision=4, asdecimal=True), nullable=False)
-    currency = db.Column(db.String(3), nullable=False)
-    note = db.Column(db.String(150), nullable=True)
-    is_enabled = db.Column(db.Boolean, nullable=False, default=True)
-    date_established = db.Column(db.Date, nullable=False, default=date.today())
-    extensions_with_this_price = db.relationship("Extension", backref='price_details', lazy=True)
-
-    @property
-    def price_value_print(self):
-        return "{:.2f}".format(self.price_value)
-
-    @property
-    def date_established_print(self):
-        return self.date_established.strftime(DATE_FORMAT)
-
-    def __repr__(self):
-        return "{:.2f}".format(self.price_value) + ' ' + self.currency

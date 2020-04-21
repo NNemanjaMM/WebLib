@@ -83,7 +83,6 @@ def members_extend(member_id):
         extension.date_performed = form.date_performed.data
         extension.date_extended = Common.add_year(extension.date_performed) if member.is_membership_expired else Common.add_year(member.date_expiration)
         extension.member_id = member_id
-        extension.librarian_id = current_user.id
         extension.price_id = form.price.data.id
         db.session.add(extension)
         member.date_expiration = extension.date_extended

@@ -52,8 +52,6 @@ class RentTerminationForm(FlaskForm):
 class RentFilterForm(FlaskForm):
     book_id = StringField(_l('Book id'))
     member_id = StringField(_l('Member id'))
-    librarian_rent_id = StringField(_l('Librarian (who rented book) id'))
-    librarian_return_id = StringField(_l('Librarian (who received book) id'))
     is_terminated = SelectField(_l('Is returned'), choices=[('none', '('+_l('Not selected')+')'), ('yes', _l('Yes')), ('no', _l('No'))])
     is_deadlime_passed = SelectField(_l('Is deadline passed'), choices=[('none', '('+_l('Not selected')+')'), ('yes', _l('Yes')), ('no', _l('No'))])
     date_performed_from = StringField(_l('Rent date after'))

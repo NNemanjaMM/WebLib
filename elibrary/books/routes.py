@@ -203,7 +203,6 @@ def book_rent(member_id):
             rental.date_deadline = date_value + timedelta(BOOK_RENT_PERIOD)
             rental.book_id = book_id
             rental.member_id = member_id
-            rental.librarian_rent_id = current_user.id
             db.session.add(rental)
             member.number_of_rented_books = db.session.query(func.count(Rental.id)).filter(and_(Rental.member_id == member_id, Rental.is_terminated == False)).scalar()
             member.total_books_rented = db.session.query(func.count(Rental.id)).filter(Rental.member_id == member_id).scalar()
@@ -223,7 +222,6 @@ def book_rents_details(rent_id):
     if not rent.is_terminated and form.validate_on_submit():
         rent.is_terminated = True
         rent.date_termination = form.date_returned.data
-        rent.librarian_return_id = current_user.id
         member.number_of_rented_books = db.session.query(func.count(Rental.id)).filter(and_(Rental.member_id == member.id, Rental.is_terminated == False)).scalar()
         book.is_rented = False
         db.session.commit()
@@ -256,8 +254,6 @@ def book_rents():
     f_is_deadlime_passed = request.args.get('is_deadlime_passed')
     f_book_id = request.args.get('book_id')
     f_member_id = request.args.get('member_id')
-    f_librarian_rent_id = request.args.get('librarian_rent_id')
-    f_librarian_return_id = request.args.get('librarian_return_id')
 
     my_query, args_filter, filter_has_errors = Common.process_related_date_filters(my_query,
         args_filter, filter_has_errors, form.date_performed_from,
@@ -297,12 +293,6 @@ def book_rents():
 
     my_query, args_filter, filter_has_errors = Common.process_equal_number_filter(my_query, args_filter,
         filter_has_errors, form.member_id, f_member_id, 'member_id', Rental, 'member_id')
-
-    my_query, args_filter, filter_has_errors = Common.process_equal_number_filter(my_query, args_filter,
-        filter_has_errors, form.librarian_rent_id, f_librarian_rent_id, 'librarian_rent_id', Rental, 'librarian_rent_id')
-
-    my_query, args_filter, filter_has_errors = Common.process_equal_number_filter(my_query, args_filter,
-        filter_has_errors, form.librarian_return_id, f_librarian_return_id, 'librarian_return_id', Rental, 'librarian_return_id')
 
     if filter_has_errors:
         flash(_l('There are filter values with errors')+'. '+_l('However, valid filter values are applied')+'.', 'warning')

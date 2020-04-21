@@ -24,12 +24,6 @@
         </strong>
     </div>
     <div>
-        {{ gettext('Date of establishment') }}
-        <strong>
-            {{ price.date_established_print }}
-        </strong>
-    </div>
-    <div>
         {% if price.is_enabled %}
             <strong>{{ gettext('This price is currently') }} {{ gettext('Enabled')}}</strong>
         {% else %}

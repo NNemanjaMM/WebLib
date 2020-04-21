@@ -63,22 +63,6 @@
         </strong>
     </p>
 
-    <p>
-        {{ gettext('Librarian who rented book') }}
-        <strong>
-            {{rent.librarian_rent.username }} ({{ gettext('id') }}: {{ rent.librarian_rent_id }})
-        </strong>
-    </p>
-
-    {% if rent.is_terminated %}
-        <p>
-            {{ gettext('Librarian who received book') }}
-            <strong>
-                {{rent.librarian_return.username }} ({{ gettext('id') }}: {{ rent.librarian_return_id }})
-            </strong>
-        </p>
-    {% endif %}
-
     {% if not rent.is_terminated %}
         <hr/>
 

@@ -10,8 +10,8 @@ from elibrary.extensions.forms import FilterForm, PriceUpdate, PriceAdd
 from elibrary.utils.defines import PAGINATION
 
 extensions = Blueprint('extensions', __name__)
-sort_extensions_values = ['date_performed', 'member_id', 'date_extended', 'price', 'librarian_id']
-sort_prices_values = ['id', 'price_value', 'currency', 'is_enabled', 'date_established']
+sort_extensions_values = ['date_performed', 'member_id', 'date_extended', 'price']
+sort_prices_values = ['id', 'price_value', 'currency', 'is_enabled']
 
 @extensions.route("/extensions")
 @login_required
@@ -29,7 +29,6 @@ def extensionss():
     f_date_extended_to = request.args.get('date_extended_to')
     f_price = request.args.get('price')
     f_member_id = request.args.get('member_id')
-    f_librarian_id = request.args.get('librarian_id')
 
     filter_has_errors = False
     args_filter = {}
@@ -62,15 +61,6 @@ def extensionss():
         if not from_value == None:
             my_query = my_query.filter_by(member_id = from_value)
             args_filter['member_id'] = from_value
-        else:
-            filter_has_errors = True
-
-    if not (f_librarian_id == None or f_librarian_id == ""):
-        form.librarian_id.data = f_librarian_id
-        from_value = FieldValidator.convert_and_validate_number(form.librarian_id)
-        if not from_value == None:
-            my_query = my_query.filter_by(librarian_id = from_value)
-            args_filter['librarian_id'] = from_value
         else:
             filter_has_errors = True
 
@@ -111,7 +101,6 @@ def prices_add():
         price.price_value = form.price_value.data
         price.currency = form.currency.data
         price.note = form.note.data
-        price.date_established = date.today()
         price.is_enabled = form.is_enabled.data
         db.session.add(price)
         db.session.commit()

@@ -28,11 +28,6 @@
         <a href="{{ url_for('extensions.prices', sort_by='is_enabled', direction='up') }}"> &uarr; </a>
         <a href="{{ url_for('extensions.prices', sort_by='is_enabled', direction='down') }}"> &darr; </a>
     </span>
-    <span>
-        {{ gettext('Date of establishment') }}
-        <a href="{{ url_for('extensions.prices', sort_by='date_established', direction='up') }}"> &uarr; </a>
-        <a href="{{ url_for('extensions.prices', sort_by='date_established', direction='down') }}"> &darr; </a>
-    </span>
 </p>
 
 {% for price in prices_list %}
@@ -50,7 +45,6 @@
         {% else %}
             <span>{{ gettext('No') }}</span>
         {% endif %}
-        <span>{{ price.date_established_print }}</span>
         <span><a href="{{ url_for('extensions.prices_update', price_id=price.id) }}">{{ gettext('Enable')}}/{{gettext('Disable') }}</a></span>
     </p>
 {% endfor %}

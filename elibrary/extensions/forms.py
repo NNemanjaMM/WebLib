@@ -14,7 +14,6 @@ class FilterForm(FlaskForm):
     date_extended_to = StringField(_l('Membership expires before'))
     price = QuerySelectField(_l('Price'), query_factory=lambda: ExtensionPrice.query.order_by(ExtensionPrice.price_value), allow_blank=True, blank_text=_l('Not selected'))
     member_id = StringField(_l('Member id'))
-    librarian_id = StringField(_l('Librarian id'))
     submit = SubmitField(_l('Filter'))
 
 class PriceUpdate(FlaskForm):

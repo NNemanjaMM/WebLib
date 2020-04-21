@@ -23,17 +23,6 @@
                     </div>
                 {% endif %}
             </div>
-                <div>
-                    {{ form.librarian_id.label }}
-                    {{ form.librarian_id }}
-                    {% if form.librarian_id.errors %}
-                        <div>
-                            {% for error in form.librarian_id.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
             <div>
                 {{ form.price.label }}
                 {{ form.price }}
@@ -119,11 +108,6 @@
         <a href="{{ url_for('extensions.extensionss', sort_by='price', direction='up', **extra_filter_args) }}"> &uarr; </a>
         <a href="{{ url_for('extensions.extensionss', sort_by='price', direction='down', **extra_filter_args) }}"> &darr; </a>
     </span>
-    <span>
-        {{ gettext('Librarian id') }}
-        <a href="{{ url_for('extensions.extensionss', sort_by='librarian_id', direction='up', **extra_filter_args) }}"> &and; </a>
-        <a href="{{ url_for('extensions.extensionss', sort_by='librarian_id', direction='down', **extra_filter_args) }}"> &or; </a>
-    </span>
 </p>
 {% for extension in extensions_list.items %}
     <p>
@@ -135,7 +119,6 @@
 
         <span>{{ extension.price_print }}</span>
         <span>{{ extension.note }}</span>
-        <span>{{ extension.librarian.username }}</span>
     </p>
 {% endfor %}
 

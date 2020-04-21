@@ -29,28 +29,6 @@
                 {% endif %}
             </div>
             <div>
-                {{ form.librarian_rent_id.label }}
-                {{ form.librarian_rent_id }}
-                {% if form.librarian_rent_id.errors %}
-                    <div>
-                        {% for error in form.librarian_rent_id.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div>
-                {{ form.librarian_return_id.label }}
-                {{ form.librarian_return_id }}
-                {% if form.librarian_return_id.errors %}
-                    <div>
-                        {% for error in form.librarian_return_id.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div>
                 {{ form.is_terminated.label }}
                 {{ form.is_terminated }}
             </div>
