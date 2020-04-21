@@ -1,7 +1,8 @@
 from datetime import date, timedelta
 from flask_login import UserMixin
 from elibrary import db, login_manager
-from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT
+from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT, BOOK_RENT_PERIOD
+from flask_babel import gettext, lazy_gettext as _l
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -9,10 +10,13 @@ def load_user(user_id):
 
 class Book(db.Model):     #za knjigu signatura (10 cifara, ima i tacke i povlake), inventarni broj (broj, 50000)
     id = db.Column(db.Integer, primary_key=True)
-    inv_number = db.Column(db.String(6), nullable=False)
+    inv_number = db.Column(db.Integer, nullable=False)
     signature = db.Column(db.String(16), nullable=False)
     title = db.Column(db.String(60), nullable=False)
     author = db.Column(db.String(70), nullable=False)
+    is_rented = db.Column(db.Boolean, default=False)
+    has_error = db.Column(db.Boolean, default=False)
+    rentals = db.relationship("Rental", backref='book', lazy=True)
 
 class Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -25,8 +29,10 @@ class Member(db.Model):
     address = db.Column(db.String(60), nullable=False)
     date_registered = db.Column(db.Date, nullable=False, default=date.today())
     date_expiration = db.Column(db.Date, nullable=True, default=date.today())
-    total_books_rented = db.Column(db.Integer, nullable=False, default=0)
+    total_books_rented = db.Column(db.Integer, nullable=False, default=0)       #povezati
+    number_of_rented_books = db.Column(db.Integer, nullable=False, default=0)   #povezati
     membership_extensions = db.relationship("Extension", backref='member', lazy=True)
+    rented_books = db.relationship("Rental", backref='member', lazy=True)
 
     @property
     def is_membership_expired(self):
@@ -35,10 +41,6 @@ class Member(db.Model):
     @property
     def is_membership_near_expired(self):
         return self.date_expiration <= date.today() + timedelta(EXPIRATION_EXTENSION_LIMIT) and self.date_expiration >= date.today()
-
-    @property
-    def number_of_rented_books(self):
-        return 0#len(self.rented_books)
 
     @property
     def phone_print(self):
@@ -121,8 +123,44 @@ class Extension(db.Model):
 class Rental(db.Model): # povezati sa knjigom, clanom, ko je odobrio, i ko je preuzeo knjigu nazad
     id = db.Column(db.Integer, primary_key=True)
     date_performed = db.Column(db.Date, nullable=False, default=date.today())
-    date_termination = db.Column(db.Date, nullable=False, default=date.today() + timedelta(EXPIRATION_EXTENSION_LIMIT))
+    date_deadline = db.Column(db.Date, nullable=False, default=date.today() + timedelta(BOOK_RENT_PERIOD))
+    date_termination = db.Column(db.Date, nullable=True)
     is_terminated = db.Column(db.Boolean, default=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'), nullable=False)
+    librarian_rent_id = db.Column(db.Integer, db.ForeignKey('librarian.id'), nullable=False)
+    librarian_return_id = db.Column(db.Integer, db.ForeignKey('librarian.id'), nullable=True)
+    librarian_rent = db.relationship("Librarian", foreign_keys=[librarian_rent_id])
+    librarian_return = db.relationship("Librarian", foreign_keys=[librarian_return_id])
+
+    @property
+    def date_deadline_passed(self):
+        return True if self.date_deadline < date.today() else False
+
+    @property
+    def returned_deadline_passed(self):
+        if self.is_terminated:
+            return True if self.date_termination > self.date_deadline else False
+        return False
+
+    @property
+    def date_performed_print(self):
+        return self.date_performed.strftime(DATE_FORMAT)
+
+    @property
+    def date_termination_print(self):
+        return self.date_termination.strftime(DATE_FORMAT)
+
+    @property
+    def date_deadline_print(self):
+        return self.date_deadline.strftime(DATE_FORMAT)
+
+    @property
+    def is_terminated_print(self):
+        if self.is_terminated:
+            return _l('Yes')
+        else:
+            return _l('No')
 
 class ExtensionPrice(db.Model):
     id = db.Column(db.Integer, primary_key=True)

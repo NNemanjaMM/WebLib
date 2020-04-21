@@ -1,0 +1,79 @@
+{% extends "base_layout.html" %}
+{% block content %}
+
+<h1>{{ gettext('Rent a book') }}</h1>
+
+<div>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset>
+            <div>
+                {{ form.date_rented.label }}
+                {{ form.date_rented }}
+                {% if form.date_rented.errors %}
+                    <div>
+                        {% for error in form.date_rented.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            {{ gettext('Book info') }}:
+            <div>
+                {{ form.inv_number.label }}
+                {{ form.inv_number }}
+
+                {{ form.search }}
+
+                {% if message %}
+                    <br/>
+                    {{ message }}
+                {% endif %}
+                {% if form.inv_number.errors %}
+                    <div>
+                        {% for error in form.inv_number.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.signature.label }}
+                {{ form.signature }}
+                {% if form.signature.errors %}
+                    <div>
+                        {% for error in form.signature.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.title.label }}
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <div>
+                        {% for error in form.title.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.author.label }}
+                {{ form.author }}
+                {% if form.author.errors %}
+                    <div>
+                        {% for error in form.author.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.submit }}
+            </div>
+        </fieldset>
+    </form>
+</div>
+{% endblock content %}

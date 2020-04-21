@@ -1,0 +1,109 @@
+{% extends "base_layout.html" %}
+{% block content %}
+    <h1>{{ gettext('Rent details') }}</h1>
+
+    {% if rent.date_deadline_passed %}
+    <p>
+        <strong>{{ gettext('Deadline passed') }}</strong>
+    </p>
+    {% endif %}
+
+    {% if rent.is_terminated %}
+    <p>
+        {% if rent.returned_deadline_passed %}
+            <strong>{{ gettext('Book returned after deadline') }}</strong>
+        {% else %}
+            <strong>{{ gettext('Book returned on time') }}</strong>
+        {% endif %}
+    </p>
+    {% endif %}
+
+    <p>
+        {{ gettext('Rent id') }}
+        <strong>
+            {{ rent.id }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Date rented') }}
+        <strong>
+            {{ rent.date_performed_print }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Deadline') }}
+        <strong>
+            {{ rent.date_deadline_print }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Book returned') }}
+        <strong>
+            {{ rent.is_terminated_print }}
+            {% if rent.is_terminated %}
+                {{ gettext('on') }} {{ rent.date_termination_print }}
+            {% endif %}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Book rented') }}
+        <strong>
+            {{rent.book.inv_number }} - {{rent.book.title }}, {{rent.book.author }} ({{ gettext('id') }}: {{ rent.book_id }})
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Member info') }}
+        <strong>
+            {{rent.member.first_name }} ({{rent.member.father_name }}) {{rent.member.last_name }} ({{ gettext('id') }}: {{ rent.member_id }})
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Librarian who rented book') }}
+        <strong>
+            {{rent.librarian_rent.username }} ({{ gettext('id') }}: {{ rent.librarian_rent_id }})
+        </strong>
+    </p>
+
+    {% if rent.is_terminated %}
+        <p>
+            {{ gettext('Librarian who received book') }}
+            <strong>
+                {{rent.librarian_return.username }} ({{ gettext('id') }}: {{ rent.librarian_return_id }})
+            </strong>
+        </p>
+    {% endif %}
+
+    {% if not rent.is_terminated %}
+        <hr/>
+
+        <div>
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <fieldset>
+                    <p>{{ gettext('If the book is returned, please fill date of the book return, and submit the data.') }}</p>
+                    <div>
+                        {{ form.date_returned.label }}
+                        {{ form.date_returned }}
+                        {% if form.date_returned.errors %}
+                            <div>
+                                {% for error in form.date_returned.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </fieldset>
+                <div>
+                    {{ form.submit }}
+                </div>
+            </form>
+        </div>
+    {% endif %}
+
+{% endblock content %}

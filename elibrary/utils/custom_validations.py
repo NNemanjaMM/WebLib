@@ -12,7 +12,7 @@ class required_cust_date(DataRequired):
         DataRequired.__init__(self, message = text)
 
 class required_cust_decimal(DataRequired):
-    def __init__(self, text = _l('Date value is not valid') + '. ' + _l('Make sure it is a decimal number and uses dot as decimal point') + '.'):
+    def __init__(self, text = _l('Decimal value is not valid') + '. ' + _l('Make sure it is a decimal number and uses dot as decimal point') + '.'):
         DataRequired.__init__(self, message = text)
 
 class optional_cust(optional):
@@ -63,9 +63,33 @@ class length_cust(Length):
         Length.__init__(self, min, max, message = text)
 
 class length_cust_max(Length):
-    def __init__(self):
-        text = _l('Input length can not be greather than') + ' 40 ' + _l('characters') + '.'
-        Length.__init__(self, -1, 40, message = text)
+    def __init__(self, max = 50):
+        text = _l('Input length can not be greather than') + ' ' + str(max) + ' ' + _l('characters') + '.'
+        Length.__init__(self, -1, max, message = text)
+
+class length_cust_max_15(length_cust_max):
+    def __init__(self, maximum=15):
+        length_cust_max.__init__(self, max = maximum)
+
+class required_cust_2():
+     def __call__(self, form, field):
+        try:
+            if field.data is None:
+                raise email_validator.EmailNotValidError()
+            email_validator.validate_email(
+                field.data,
+                check_deliverability=self.check_deliverability,
+                allow_smtputf8=self.allow_smtputf8,
+                allow_empty_local=self.allow_empty_local,
+            )
+        except email_validator.EmailNotValidError as e:
+            message = self.message
+            if message is None:
+                if self.granular_message:
+                    message = field.gettext(e)
+                else:
+                    message = field.gettext("Invalid email address.")
+            raise ValidationError(message)
 
 class FieldValidator():
     @staticmethod
@@ -80,7 +104,21 @@ class FieldValidator():
         return len(field.errors) == 0
 
     @staticmethod
-    def convert_and_validate_date(field, allow_future):
+    def validate_required_field(form, field, validator_classes):
+        field.errors = list()
+        if not field.data:
+            field.errors.append(_l('Field can not be empty')+'.')
+        else:
+            for validator_class in validator_classes:
+                validator = validator_class()
+                try:
+                    validator(form, field)
+                except ValueError as e:
+                    field.errors.append(e.args[0])
+        return len(field.errors) == 0
+
+    @staticmethod
+    def convert_and_validate_date(field, allow_future, date_min_str = MINIMUM_DATE):
         value = None
         field.errors = list()
         try:
@@ -88,10 +126,10 @@ class FieldValidator():
         except ValueError:
             field.errors.append(_l('Date value is not valid') + '. ' + _l('Make sute if matches the following format') + ' ' + _l('"dd.mm.yyyy."') + '.')
         if not value == None:
-            if value < datetime.strptime(MINIMUM_DATE, "%d.%m.%Y.").date():
-                field.errors.append(_l('Date can not be set before') + ' "' + str(MINIMUM_DATE) + '".')
+            if value < datetime.strptime(date_min_str, "%d.%m.%Y.").date():
+                field.errors.append(_l('Date can not be set before') + ' "' + str(date_min_str) + '".')
                 value = None
-            elif allow_future and value > date.today():
+            elif not allow_future and value > date.today():
                 field.errors.append(_l('Date can not be set in future') + '.')
                 value = None
         return value

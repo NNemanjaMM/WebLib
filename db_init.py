@@ -40,7 +40,7 @@ with app.app_context():
     
     book1 = Book(signature='21.125-123-55', inv_number='12', title='Derviš i smrt', author='Meša Selimović')
     book2 = Book(signature='21.125-123-55', inv_number='45', title='Prokleta avlija', author='Ivo Andrić')
-    book3 = Book(signature='21.125-123-76', inv_number='76', title='Blago cara Radovana', author='Jovan Dučić')
+    book3 = Book(signature='21.125-123-76', inv_number='76', title='Znamenje anđela', author='Dejan Stojiljković')
     book4 = Book(signature='23.543-321-77', inv_number='104', title='Olujni bedem', author='Dejan Stojiljković')
     book5 = Book(signature='64.243-987-02', inv_number='176', title='Komitet 300', author='Džon Kolman')
     book6 = Book(signature='38.563-123-78', inv_number='298', title='Stefan Nemanja', author='Luka Mičeta')

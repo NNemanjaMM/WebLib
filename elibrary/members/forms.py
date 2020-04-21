@@ -6,7 +6,7 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import ValidationError
 from elibrary.models import Member, ExtensionPrice
 from elibrary.utils.common import Common
-from elibrary.utils.defines import REGISTRATION_DATE_LIMIT, DATE_FORMAT
+from elibrary.utils.defines import BACKWARD_INPUT_LIMIT, DATE_FORMAT
 from elibrary.utils.custom_validations import (required_cust, email_cust, required_cust_date,
         phone_cust, string_cust, username_cust, equal_to_cust, length_cust, optional_cust)
 
@@ -26,8 +26,8 @@ class MemberCreateForm(UserForm):
     def validate_date_registered(self, date_registered):
         if date_registered.data > date.today():
             raise ValidationError(_l('Registration date') + ' '+ _l('cannot be set in future') + '.')
-        elif date_registered.data < date.today() - timedelta(REGISTRATION_DATE_LIMIT):
-            raise ValidationError(_l('Registration date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(REGISTRATION_DATE_LIMIT) + ' ' + _l('days') + '.')
+        elif date_registered.data < date.today() - timedelta(BACKWARD_INPUT_LIMIT):
+            raise ValidationError(_l('Registration date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days') + '.')
 
 class MemberUpdateForm(UserForm):
     submit = SubmitField(_l('Update member'))
@@ -41,8 +41,8 @@ class MemberExtensionForm(FlaskForm):
     def validate_date_performed(self, date_performed):
         if date_performed.data > date.today():
             raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set in future') + '.')
-        elif date_performed.data < date.today() - timedelta(REGISTRATION_DATE_LIMIT):
-            raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(REGISTRATION_DATE_LIMIT) + ' ' + _l('days') + '.')
+        elif date_performed.data < date.today() - timedelta(BACKWARD_INPUT_LIMIT):
+            raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days') + '.')
 
     def validate_price(self, price):
         if not price.data == None:
