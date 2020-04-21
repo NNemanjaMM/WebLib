@@ -184,11 +184,11 @@ def memberss(filtering = False, searching = False):
 
         if not (f_has_rented_books == None or f_has_rented_books == ""):
             form.has_rented_books.data = f_has_rented_books
-            if f_has_rented_books == 'has_rented':
-    #TODO iskodirati kada se knjige povezu
+            if f_has_rented_books == 'yes':
+                my_query = my_query.filter(Member.number_of_rented_books > 0)
                 args_filter['has_rented_books'] = f_has_rented_books
-            elif f_has_rented_books == 'does_not_have':
-    #TODO iskodirati kada se knjige povezu
+            elif f_has_rented_books == 'no':
+                my_query = my_query.filter(Member.number_of_rented_books == 0)
                 args_filter['has_rented_books'] = f_has_rented_books
 
         if not (f_has_expired == None or f_has_expired == ""):

@@ -60,7 +60,7 @@ class FilterForm(FlaskForm):
     id = StringField(_l('Member id'))
     first_name = StringField(_l('First name'))
     last_name = StringField(_l('Last name'))
-    has_rented_books = SelectField(_l('Has currently rented books'), choices=[('no_option', '('+_l('Not selected')+')'), ('has_rented', _l('Yes')), ('does_not_have', _l('No'))])
+    has_rented_books = SelectField(_l('Has currently rented books'), choices=[('none', '('+_l('Not selected')+')'), ('yes', _l('Yes')), ('no', _l('No'))])
     has_expired = SelectField(_l('Membership status'), choices=[('no_option', '('+_l('Not selected')+')'), ('expired', _l('Membership expired')), ('near_expiration', _l('Membership near expiration')), ('active', _l('Membership active'))])
     submit = SubmitField(_l('Filter'))
 
