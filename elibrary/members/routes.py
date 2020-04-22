@@ -6,10 +6,9 @@ from flask_babel import gettext, lazy_gettext as _l
 from elibrary import db
 from elibrary.models import Member, Extension, Rental
 from elibrary.utils.custom_validations import (string_cust, length_cust_max, FieldValidator)
-from elibrary.members.forms import (MemberCreateForm, MemberUpdateForm,
-    MemberExtensionForm, FilterForm, ShortFilterForm)
+from elibrary.members.forms import MemberCreateForm, MemberUpdateForm, FilterForm, ShortFilterForm
 from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, PAGINATION, DATE_FORMAT, MAX_RENTED_BOOKS
-from elibrary.utils.common import Common
+from elibrary.utils.common import CommonFilter
 
 members = Blueprint('members', __name__)
 sort_member_values = ['id', 'first_name', 'last_name', 'total_books_rented', 'date_registered', 'date_expiration']
@@ -69,28 +68,6 @@ def members_update(member_id):
         form.address.data = member.address
     return render_template('member_cu.html', form=form, is_creating=False)
 
-@members.route("/members/extend/<int:member_id>", methods=['GET', 'POST'])
-@login_required
-def members_extend(member_id):
-    member = Member.query.get_or_404(member_id)
-    if not (member.is_membership_near_expired or member.is_membership_expired):
-        abort(405)
-    form = MemberExtensionForm()
-    if form.validate_on_submit():
-        extension = Extension()
-        extension.note = form.note.data
-        extension.price = form.price.data.price_value
-        extension.date_performed = form.date_performed.data
-        extension.date_extended = Common.add_year(extension.date_performed) if member.is_membership_expired else Common.add_year(member.date_expiration)
-        extension.member_id = member_id
-        extension.price_id = form.price.data.id
-        db.session.add(extension)
-        member.date_expiration = extension.date_extended
-        db.session.commit()
-        flash(_l('Member\'s membership is successfuly extended to') + ' ' + member.date_expiration_print, 'info')
-        return redirect(url_for('members.members_details', member_id=member.id))
-    return render_template('member_extension.html', form=form, member=member)
-
 @members.route("/members")
 @login_required
 def memberss(filtering = False, searching = False):
@@ -140,28 +117,28 @@ def memberss(filtering = False, searching = False):
             my_query = my_query.filter(or_(Member.first_name.like('%' + s_text + '%'), Member.last_name.like('%' + s_text + '%'), Member.father_name.like('%' + s_text + '%'), Member.id == s_text))
             args_filter['text'] = s_text
     else:
-        my_query, args_filter, filter_has_errors = Common.process_related_date_filters(my_query,
+        my_query, args_filter, filter_has_errors = CommonFilter.process_related_date_filters(my_query,
             args_filter, filter_has_errors, form.registration_date_from,
             form.registration_date_to, f_registration_date_from, f_registration_date_to,
             'registration_date_from', 'registration_date_to', Member, 'date_registered', True)
 
-        my_query, args_filter, filter_has_errors = Common.process_related_date_filters(my_query,
+        my_query, args_filter, filter_has_errors = CommonFilter.process_related_date_filters(my_query,
             args_filter, filter_has_errors, form.expiration_date_from,
             form.expiration_date_to, f_expiration_date_from, f_expiration_date_to,
             'expiration_date_from', 'expiration_date_to', Member, 'date_expiration', False)
 
-        my_query, args_filter, filter_has_errors = Common.process_related_number_filters(my_query,
+        my_query, args_filter, filter_has_errors = CommonFilter.process_related_number_filters(my_query,
             args_filter, filter_has_errors, form.books_rented_from,
             form.books_rented_to, f_books_rented_from, f_books_rented_to,
             'books_rented_from', 'books_rented_to', Member, 'total_books_rented')
 
-        my_query, args_filter, filter_has_errors = Common.process_equal_number_filter(my_query, args_filter,
+        my_query, args_filter, filter_has_errors = CommonFilter.process_equal_number_filter(my_query, args_filter,
             filter_has_errors, form.id, f_id, 'id', Member, 'id')
 
-        my_query, args_filter, filter_has_errors = Common.process_like_filter(my_query, args_filter, filter_has_errors,
+        my_query, args_filter, filter_has_errors = CommonFilter.process_like_filter(my_query, args_filter, filter_has_errors,
             form, form.first_name, f_first_name, 'first_name', [string_cust, length_cust_max], Member, 'first_name')
 
-        my_query, args_filter, filter_has_errors = Common.process_like_filter(my_query, args_filter, filter_has_errors,
+        my_query, args_filter, filter_has_errors = CommonFilter.process_like_filter(my_query, args_filter, filter_has_errors,
             form, form.last_name, f_last_name, 'last_name', [string_cust, length_cust_max], Member, 'last_name')
 
         if not (f_has_rented_books == None or f_has_rented_books == ""):

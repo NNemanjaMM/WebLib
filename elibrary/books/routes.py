@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from flask_babel import gettext, lazy_gettext as _l
 from elibrary import db
 from elibrary.models import Book, Member, Rental
-from elibrary.utils.common import Common
+from elibrary.utils.common import CommonFilter
 from elibrary.utils.defines import PAGINATION, MAX_RENTED_BOOKS, RENTAL_DATE_LIMIT, DATE_FORMAT, BOOK_RENT_PERIOD
 from elibrary.utils.custom_validations import string_cust, length_cust_max, numeric_cust, signature_cust, length_cust_max_15, FieldValidator
 from elibrary.books.forms import FilterForm, SearchForm, BookCreateUpdateForm, RentForm, RentTerminationForm, RentFilterForm
@@ -54,17 +54,17 @@ def bookss(filtering = False, searching = False):
             my_query = my_query.filter(or_(Book.inv_number == s_text, Book.signature.like('%' + s_text + '%'),
                 Book.title.like('%' + s_text + '%'), Book.author.like('%' + s_text + '%')))
             args_filter['text'] = s_text
-    elif filtering:
-        my_query, args_filter, filter_has_errors = Common.process_like_filter(my_query, args_filter,
+    else:
+        my_query, args_filter, filter_has_errors = CommonFilter.process_like_filter(my_query, args_filter,
             filter_has_errors, form, form.inv_number, f_inv_number, 'inv_number', [numeric_cust, length_cust_max], Book, 'inv_number')
 
-        my_query, args_filter, filter_has_errors = Common.process_like_filter(my_query, args_filter,
+        my_query, args_filter, filter_has_errors = CommonFilter.process_like_filter(my_query, args_filter,
             filter_has_errors, form, form.signature, f_signature, 'signature', [string_cust, length_cust_max], Book, 'signature')
 
-        my_query, args_filter, filter_has_errors = Common.process_like_filter(my_query, args_filter,
+        my_query, args_filter, filter_has_errors = CommonFilter.process_like_filter(my_query, args_filter,
             filter_has_errors, form, form.title, f_title, 'title', [string_cust, length_cust_max], Book, 'title')
 
-        my_query, args_filter, filter_has_errors = Common.process_like_filter(my_query, args_filter,
+        my_query, args_filter, filter_has_errors = CommonFilter.process_like_filter(my_query, args_filter,
             filter_has_errors, form, form.author, f_author, 'author', [string_cust, length_cust_max], Book, 'author')
 
         if not (f_is_rented == None or f_is_rented == ""):
@@ -92,6 +92,9 @@ def bookss(filtering = False, searching = False):
     else:
         list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     args_filter_and_sort = {**args_filter, **args_sort}
+    print("filter "+str(len(args_filter)))
+    print("sort "+str(len(args_sort)))
+    print("zajedno "+str(len(args_filter_and_sort)))
     return render_template('books.html', form=form, form2=form2, books_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort)
 
 @books.route("/booksr")
@@ -229,6 +232,13 @@ def book_rents_details(rent_id):
         return redirect(url_for('books.book_rents'))
     return render_template('rent.html', form=form, rent=rent)
 
+@books.route("/books/rents/find/<int:book_id>")
+@login_required
+def book_rents_find(book_id):
+    rent = Rental.query.filter(and_(Rental.book_id==book_id, Rental.is_terminated==False)).first()
+    rent_id = rent.id if not rent == None else 1010101
+    return redirect(url_for('books.book_rents_details', rent_id=rent_id))
+
 @books.route("/books/rents")
 @login_required
 def book_rents():
@@ -255,17 +265,17 @@ def book_rents():
     f_book_id = request.args.get('book_id')
     f_member_id = request.args.get('member_id')
 
-    my_query, args_filter, filter_has_errors = Common.process_related_date_filters(my_query,
+    my_query, args_filter, filter_has_errors = CommonFilter.process_related_date_filters(my_query,
         args_filter, filter_has_errors, form.date_performed_from,
         form.date_performed_to, f_date_performed_from, f_date_performed_to,
         'date_performed_from', 'date_performed_to', Rental, 'date_performed', False)
 
-    my_query, args_filter, filter_has_errors = Common.process_related_date_filters(my_query,
+    my_query, args_filter, filter_has_errors = CommonFilter.process_related_date_filters(my_query,
         args_filter, filter_has_errors, form.date_deadline_from,
         form.date_deadline_to, f_date_deadline_from, f_date_deadline_to,
         'date_deadline_from', 'date_deadline_to', Rental, 'date_deadline', False)
 
-    my_query, args_filter, filter_has_errors = Common.process_related_date_filters(my_query,
+    my_query, args_filter, filter_has_errors = CommonFilter.process_related_date_filters(my_query,
         args_filter, filter_has_errors, form.date_terminated_from,
         form.date_terminated_to, f_date_terminated_from, f_date_terminated_to,
         'date_terminated_from', 'date_terminated_to', Rental, 'date_termination', False)
@@ -288,10 +298,10 @@ def book_rents():
             my_query = my_query.filter(and_(date.today() <= Rental.date_deadline, Rental.is_terminated == False))
             args_filter['is_deadlime_passed'] = f_is_deadlime_passed
 
-    my_query, args_filter, filter_has_errors = Common.process_equal_number_filter(my_query, args_filter,
+    my_query, args_filter, filter_has_errors = CommonFilter.process_equal_number_filter(my_query, args_filter,
         filter_has_errors, form.book_id, f_book_id, 'book_id', Rental, 'book_id')
 
-    my_query, args_filter, filter_has_errors = Common.process_equal_number_filter(my_query, args_filter,
+    my_query, args_filter, filter_has_errors = CommonFilter.process_equal_number_filter(my_query, args_filter,
         filter_has_errors, form.member_id, f_member_id, 'member_id', Rental, 'member_id')
 
     if filter_has_errors:

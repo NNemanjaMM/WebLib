@@ -2,10 +2,8 @@ from datetime import date, timedelta
 from flask_wtf import FlaskForm
 from flask_babel import lazy_gettext as _l
 from wtforms import StringField, SubmitField, SelectField, IntegerField, DateField, TextAreaField
-from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import ValidationError
-from elibrary.models import Member, ExtensionPrice
-from elibrary.utils.common import Common
+from elibrary.models import Member
 from elibrary.utils.defines import BACKWARD_INPUT_LIMIT, DATE_FORMAT
 from elibrary.utils.custom_validations import (required_cust, email_cust, required_cust_date,
         phone_cust, string_cust, username_cust, equal_to_cust, length_cust, optional_cust)
@@ -31,24 +29,6 @@ class MemberCreateForm(UserForm):
 
 class MemberUpdateForm(UserForm):
     submit = SubmitField(_l('Update member'))
-
-class MemberExtensionForm(FlaskForm):
-    price = QuerySelectField(_l('Price'), query_factory=lambda: ExtensionPrice.query.filter_by(is_enabled=True).order_by(ExtensionPrice.price_value))
-    note = TextAreaField(_l('Note'), validators=[optional_cust(), string_cust(), length_cust(max=150)])
-    date_performed = DateField(_l('Extension performed on'), validators=[required_cust_date()], format=DATE_FORMAT, default=date.today())
-    submit = SubmitField(_l('Extend membership'))
-
-    def validate_date_performed(self, date_performed):
-        if date_performed.data > date.today():
-            raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set in future') + '.')
-        elif date_performed.data < date.today() - timedelta(BACKWARD_INPUT_LIMIT):
-            raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days') + '.')
-
-    def validate_price(self, price):
-        if not price.data == None:
-            found = ExtensionPrice.query.filter_by(id=price.data.id).first()
-            if not found:
-                raise ValidationError(_l('Price value is not valid') + '.')
 
 class FilterForm(FlaskForm):
     registration_date_from = StringField(_l('Registered after'))

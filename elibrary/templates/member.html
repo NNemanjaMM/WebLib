@@ -115,7 +115,7 @@
     <p>
         <a href="{{ url_for('members.members_update', member_id=member.id) }}">{{ gettext('Update member data') }}</a>
         {% if member.is_membership_near_expired or member.is_membership_expired %}
-            <a href="{{ url_for('members.members_extend', member_id=member.id) }}">{{ gettext('Extend membership') }}</a>
+            <a href="{{ url_for('extensions.extensions_add', member_id=member.id) }}">{{ gettext('Extend membership') }}</a>            
         {% endif %}
         <br/>
         {% if member.is_membership_expired %}

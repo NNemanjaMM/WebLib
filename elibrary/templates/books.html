@@ -127,6 +127,9 @@
         {% endif %}
 
         <span><a href="{{ url_for('books.books_update', book_id=book.id) }}">{{ gettext('Update book') }}</a></span>
+        {% if book.is_rented %}
+            <span><a href="{{ url_for('books.book_rents_find', book_id=book.id) }}">{{ gettext('Rent details') }}</a></span>
+        {% endif %}
     </p>
 {% endfor %}
 

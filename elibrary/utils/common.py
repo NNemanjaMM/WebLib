@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from elibrary.utils.custom_validations import FieldValidator
 
-class Common:
+class CommonDate:
     @staticmethod
     def get_age(date_to_count):
         today = date.today()
@@ -18,6 +18,7 @@ class Common:
         else:
             return value + timedelta(365)
 
+class CommonFilter:
     @staticmethod
     def process_related_date_filters(my_query, args_filter, filter_has_errors, from_field, to_field, f_from, f_to, field_from_name, field_to_name, db_table, db_column_name, validate_future_date):
         from_value = None

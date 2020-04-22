@@ -1,15 +1,20 @@
 {% extends "base_layout.html" %}
 {% block content %}
-    {% for post in posts %}
-        <article class="media content-section">
-          <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" href="#">{{ post.author }}</a>
-              <small class="text-muted">{{ post.date_posted }}</small>
-            </div>
-            <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
-            <p class="article-content">{{ post.content }}</p>
-          </div>
-        </article>
-    {% endfor %}
+    <i>
+        Stvari koje se mogu izmeniti i koje treba pogledati:
+        <ul>
+            <li>Koje kolone da se vide u tabelama? - većina onih koje se vide u detaljima knjige mogu se videti i u tabeli sa knjigama. Slična situacija je i sa članovima, članarinama, iznajmljivanjima, itd.</li>
+            <li>Koji filteri da se koriste? - filteri se mogu ubaciti tako da pokriju većinu kolona koje se vide u tim tabelama.</li>
+            <li>Da li ubaciti "brze filtere", tj link koji će automatski popuniti određena filter polja da bi se dobio željeni filter. Prednost je jer se jednim klikom filtriraju korisnici po često korišćenim filterima i nema potrebe da se jedan po jedan postavljaju sa mogućnošću greške</li>
+            <li>Da li neke od provera ulaznih podataka treba izmeniti/izbaciti</li>
+            <li>Da li link-ove do nekih akcija iz stranice sa detaljima (korisnika, knjige, bibliotekara), prebaciti direktno u samu tabelu (preko koje se dolazi do detalja)</li>
+            <li>Da li za naslove knjiga, nazive pisaca treba odvojiti jos neki karakter osim sledecih: . , - _</li>
+            <li>Bilo koji drugi komentar na funkcionalnosti, ili spisak informacija za svaki od tipova podataka...</li>
+            <li>Po kojim kolonama ima smisla sortirati? - može po većini od kolona iz tabela</li>
+            <li>Šta staviti na početnu stranicu - lista knjiga koje su već trebale biti vraćene, lista izmena na nalozima bibliotekara, zahtevi bibliotekara za promenu lozinke/korisničkog imena/promene bibliotekara u administratora i obrnuto, ili bilo pta drugo što se može zaključiti na osnovu podataka u aplikaciji</li>
+            <li>Da li treba ubaciti "cancel", ili "vrati se na prethodnu stranicu" kada se uđe u stranicu sa detaljima (za knjigu, korisnika, bibliotekara..sve jedno), ili u stranicu sa izmenama - trenutno se može koristiti "back" dugme u browser-u</li>
+            <li>Na koju stranicu otići nakon akcija poput dodavanja knjige, iznajmljivanja knjige, dodavanja člana, prduženja članarine, itd. - da li na detalje o tom "događaju" ili na spisak svih "događaja" tog tipa</li>
+            <li>Bilo koji drugi komentar na funkcionalnosti, ili spisak informacija za svaki od tipova podataka...</li>
+        </ul>
+    </i><br/><br/>
 {% endblock content %}

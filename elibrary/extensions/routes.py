@@ -4,11 +4,11 @@ from flask import render_template, url_for, Blueprint, request, flash, redirect
 from flask_login import login_required,current_user
 from flask_babel import gettext, lazy_gettext as _l
 from elibrary import db
-from elibrary.models import Extension, ExtensionPrice
+from elibrary.models import Extension, ExtensionPrice, Member
 from elibrary.utils.custom_validations import FieldValidator, string_cust, length_cust_max
-from elibrary.extensions.forms import FilterForm, PriceUpdate, PriceAdd
+from elibrary.extensions.forms import FilterForm, ExtensionForm, PriceUpdate, PriceAdd
 from elibrary.utils.defines import PAGINATION
-from elibrary.utils.common import Common
+from elibrary.utils.common import CommonFilter, CommonDate
 
 extensions = Blueprint('extensions', __name__)
 sort_extensions_values = ['date_performed', 'member_id', 'date_extended', 'price']
@@ -36,12 +36,12 @@ def extensionss():
     form = FilterForm()
     my_query = db.session.query(Extension)
 
-    my_query, args_filter, filter_has_errors = Common.process_related_date_filters(my_query,
+    my_query, args_filter, filter_has_errors = CommonFilter.process_related_date_filters(my_query,
             args_filter, filter_has_errors, form.date_performed_from,
             form.date_performed_to, f_date_performed_from, f_date_performed_to,
             'date_performed_from', 'date_performed_to', Extension, 'date_performed', True)
 
-    my_query, args_filter, filter_has_errors = Common.process_related_date_filters(my_query,
+    my_query, args_filter, filter_has_errors = CommonFilter.process_related_date_filters(my_query,
             args_filter, filter_has_errors, form.date_extended_from,
             form.date_extended_to, f_date_extended_from, f_date_extended_to,
             'date_extended_from', 'date_extended_to', Extension, 'date_extended', True)
@@ -56,16 +56,8 @@ def extensionss():
             else:
                 filter_has_errors = True
 
-    my_query, args_filter, filter_has_errors = Common.process_equal_number_filter(my_query, args_filter,
+    my_query, args_filter, filter_has_errors = CommonFilter.process_equal_number_filter(my_query, args_filter,
         filter_has_errors, form.member_id, f_member_id, 'member_id', Extension, 'member_id')
-#    if not (f_member_id == None or f_member_id == ""):
-#        form.member_id.data = f_member_id
-#        from_value = FieldValidator.convert_and_validate_number(form.member_id)
-#        if not from_value == None:
-#            my_query = my_query.filter_by(member_id = from_value)
-#            args_filter['member_id'] = from_value
-#        else:
-#            filter_has_errors = True
 
     if filter_has_errors:
         flash(_l('There are filter values with errors')+'. '+_l('However, valid filter values are applied')+'.', 'warning')
@@ -75,6 +67,28 @@ def extensionss():
         list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     args_filter_and_sort = {**args_filter, **args_sort}
     return render_template('extensions.html', form=form, extensions_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort)
+
+@extensions.route("/extensions/add/<int:member_id>", methods=['GET', 'POST'])
+@login_required
+def extensions_add(member_id):
+    member = Member.query.get_or_404(member_id)
+    if not (member.is_membership_near_expired or member.is_membership_expired):
+        abort(405)
+    form = ExtensionForm()
+    if form.validate_on_submit():
+        extension = Extension()
+        extension.note = form.note.data
+        extension.price = form.price.data.price_value
+        extension.date_performed = form.date_performed.data
+        extension.date_extended = CommonDate.add_year(extension.date_performed) if member.is_membership_expired else CommonDate.add_year(member.date_expiration)
+        extension.member_id = member_id
+        extension.price_id = form.price.data.id
+        db.session.add(extension)
+        member.date_expiration = extension.date_extended
+        db.session.commit()
+        flash(_l('Member\'s membership is successfuly extended to') + ' ' + member.date_expiration_print, 'info')
+        return redirect(url_for('members.members_details', member_id=member.id))
+    return render_template('extension_add.html', form=form, member=member)
 
 @extensions.route("/extensions/prices")
 @login_required
