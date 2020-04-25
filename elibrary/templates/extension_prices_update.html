@@ -6,12 +6,6 @@
 <div>
     {{ gettext('For a price') }}
     <div>
-        {{ gettext('Price id') }}
-        <strong>
-            {{ price.id }}
-        </strong>
-    </div>
-    <div>
         {{ gettext('Value') }}
         <strong>
             {{ price.price_value_print }}
@@ -50,11 +44,15 @@
 
             <div>
                 <br/>
-                {% if price.is_enabled %}
-                    <b>{{ gettext('This price will be disabled, and the comment will be updated') }}</b>
-                {% else %}
-                    <b>{{ gettext('This price will be Enabled, and the comment will be updated') }}</b>
-                {% endif %}
+                <b>
+                    {{ gettext('This price will be') }}
+                    {% if price.is_enabled %}
+                        {{ gettext(' Disabled') }}
+                    {% else %}
+                        {{ gettext(' Enabled') }}
+                    {% endif %}
+                    {{ gettext('and the comment will be updated') }}
+                </b>
                 <br/>
                 <br/>
                 {{ gettext('Please approve or reject action') }}

@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from flask import render_template, url_for, request, flash, redirect, abort, Blueprint
 from flask_login import login_required, current_user
-from flask_babel import gettext, lazy_gettext as _l
+from flask_babel import gettext
 from elibrary import db
 from elibrary.models import Book, Member, Rental
 from elibrary.utils.common import CommonFilter
@@ -87,7 +87,7 @@ def bookss(filtering = False, searching = False):
 
     count_filtered = my_query.count()
     if filter_has_errors:
-        flash(_l('There are filter values with errors')+'. '+_l('However, valid filter values are applied')+'.', 'warning')
+        flash(gettext('There are filter values with errors')+'. '+gettext('However, valid filter values are applied')+'.', 'warning')
     if sort_direction == 'up':
         list = my_query.order_by(sort_criteria).paginate(page=page, per_page=PAGINATION)
     else:
@@ -118,7 +118,7 @@ def books_update(book_id):
         if current_user.is_admin:
             book.has_error = form.has_error.data
         db.session.commit()
-        flash(_l('Book is successfuly updated')+'.', 'success')
+        flash(gettext('Book is successfuly updated')+'.', 'success')
         return redirect(url_for('books.bookss'))
     elif request.method == 'GET':
         form.inv_number.data = book.inv_number
@@ -142,10 +142,10 @@ def books_add():
         if book_duplicate:
             book_duplicate.has_error = True
             book.has_error = True
-            flash(_l('Book with the same inventory number already exists')+'!', 'warning')
+            flash(gettext('Book with the same inventory number already exists')+'!', 'warning')
         db.session.add(book)
         db.session.commit()
-        flash(_l('Book is successfuly added')+'.', 'success')
+        flash(gettext('Book is successfuly added')+'.', 'success')
         return redirect(url_for('books.bookss'))
     return render_template('books_cu.html', form=form, is_creating=True)
 
@@ -167,12 +167,12 @@ def book_rent(member_id):
                 form.title.data = book.title
                 form.author.data = book.author
                 if book.is_rented:
-                    message = _l('Book with this inventory number is already rented') + '. ' +_l('Please check your inventory number and then continue') + '.'
+                    message = gettext('Book with this inventory number is already rented') + '. ' +gettext('Please check your inventory number and then continue') + '.'
             else:
                 form.signature.data = None
                 form.title.data = None
                 form.author.data = None
-                message = _l('Book with this inventory number was not found')
+                message = gettext('Book with this inventory number was not found')
     elif form.submit.data and form.validate():
         failed_1 = not FieldValidator.convert_and_validate_number(form.inv_number)
         failed_2 = not FieldValidator.validate_required_field(form, form.signature, [signature_cust, length_cust_max_15])
@@ -185,7 +185,7 @@ def book_rent(member_id):
             if book_duplicate and not book_duplicate.is_rented:
                 book_id = book_duplicate.id
                 book_duplicate.is_rented = True
-                flash(_l('Book with the same inventory number already exists')+'.', 'info')
+                flash(gettext('Book with the same inventory number already exists')+'.', 'info')
             else:
                 new_book = Book()
                 new_book.inv_number = form.inv_number.data
@@ -196,11 +196,11 @@ def book_rent(member_id):
                 if book_duplicate and book_duplicate.is_rented:
                     book_duplicate.has_error = True
                     new_book.has_error = True
-                    flash(_l('Book with the same inventory number is already rented')+'! '+_l('An error flag is set to the books with same inventory number')+'.', 'warning')
+                    flash(gettext('Book with this inventory number is already rented')+'! '+gettext('An error flag is set to the books with same inventory number')+'.', 'warning')
                 db.session.add(new_book)
                 db.session.commit()
                 book_id = new_book.id
-                flash(_l('New book is successfuly added')+'.', 'info')
+                flash(gettext('New book is successfuly added')+'.', 'info')
             rental = Rental()
             rental.date_performed = date_value
             rental.date_deadline = date_value + timedelta(BOOK_RENT_PERIOD)
@@ -210,7 +210,7 @@ def book_rent(member_id):
             member.number_of_rented_books = db.session.query(func.count(Rental.id)).filter(and_(Rental.member_id == member_id, Rental.is_terminated == False)).scalar()
             member.total_books_rented = db.session.query(func.count(Rental.id)).filter(Rental.member_id == member_id).scalar()
             db.session.commit()
-            flash(_l('Book is successfuly rented')+'.', 'info')
+            flash(gettext('Book is successfuly rented')+'.', 'info')
             return redirect(url_for('members.members_details', member_id=member_id))
     return render_template('renting.html', form=form, message=message)
 
@@ -228,7 +228,7 @@ def book_rents_details(rent_id):
         member.number_of_rented_books = db.session.query(func.count(Rental.id)).filter(and_(Rental.member_id == member.id, Rental.is_terminated == False)).scalar()
         book.is_rented = False
         db.session.commit()
-        flash(_l('Book is successfuly returned')+'.', 'info')
+        flash(gettext('Book is successfuly returned')+'.', 'info')
         return redirect(url_for('members.members_details', member_id=member.id))
     return render_template('rent.html', form=form, rent=rent)
 
@@ -312,7 +312,7 @@ def book_rents():
 
     count_filtered = my_query.count()
     if filter_has_errors:
-        flash(_l('There are filter values with errors')+'. '+_l('However, valid filter values are applied')+'.', 'warning')
+        flash(gettext('There are filter values with errors')+'. '+gettext('However, valid filter values are applied')+'.', 'warning')
     if not can_sort:
         list = my_query.paginate(page=page, per_page=PAGINATION)
     elif sort_direction == 'up':

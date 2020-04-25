@@ -1,0 +1,1257 @@
+# Serbian translations for PROJECT.
+# Copyright (C) 2020 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2020-04-25 16:46+0200\n"
+"PO-Revision-Date: 2020-04-25 14:59+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: sr\n"
+"Language-Team: sr <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: books/forms.py:14 books/forms.py:15 books/forms.py:55 books/forms.py:56
+#: members/forms.py:43 models.py:173 templates/account.html:58
+#: templates/account.html:69 templates/books.html:121
+#: templates/extension_prices.html:38 templates/members.html:205
+msgid "Yes"
+msgstr "Da"
+
+#: books/forms.py:14 books/forms.py:15 books/forms.py:55 books/forms.py:56
+#: members/forms.py:43 models.py:175 templates/account.html:60
+#: templates/account.html:71 templates/books.html:123
+#: templates/extension_prices.html:40 templates/members.html:207
+msgid "No"
+msgstr "Ne"
+
+#: books/forms.py:10 books/forms.py:23 books/forms.py:32
+#: templates/books.html:93
+msgid "Inventory number"
+msgstr "Inventarni broj"
+
+#: books/forms.py:11 books/forms.py:24 books/forms.py:33
+#: templates/books.html:98
+msgid "Signature"
+msgstr "Signatura"
+
+#: books/forms.py:12 books/forms.py:25 books/forms.py:34
+#: templates/books.html:103
+msgid "Title"
+msgstr "Naslov"
+
+#: books/forms.py:13 books/forms.py:26 books/forms.py:35
+#: templates/books.html:108
+msgid "Author"
+msgstr "Autor"
+
+#: books/forms.py:14
+msgid "Is rented"
+msgstr "Iznajmljena"
+
+#: books/forms.py:14 books/forms.py:15 books/forms.py:55 books/forms.py:56
+#: extensions/forms.py:40 members/forms.py:43 members/forms.py:44
+msgid "Not selected"
+msgstr "Nije odabrano"
+
+#: books/forms.py:15 books/forms.py:27 templates/books.html:126
+msgid "Has error"
+msgstr "Ima grešku"
+
+#: books/forms.py:16 books/forms.py:63 extensions/forms.py:42
+#: members/forms.py:45
+msgid "Filter"
+msgstr "Filtriraj"
+
+#: books/forms.py:19 members/forms.py:48
+msgid "Search for"
+msgstr "Pretraži za"
+
+#: books/forms.py:20 books/forms.py:37 members/forms.py:49
+msgid "Search"
+msgstr "Pretraži"
+
+#: books/forms.py:27
+msgid "book has a problematic inventory number"
+msgstr "knjiga ima problem sa inventarnim brojem"
+
+#: books/forms.py:28 books/forms.py:36 books/forms.py:42 extensions/forms.py:53
+msgid "Submit"
+msgstr "Pošalji"
+
+#: books/forms.py:31
+msgid "Rent date"
+msgstr "Datum iznajmljivanja"
+
+#: books/forms.py:41 books/forms.py:46 books/forms.py:48
+msgid "Book return date"
+msgstr "Datum vraćanja"
+
+#: books/forms.py:46 extensions/forms.py:21 librarians/forms.py:41
+#: members/forms.py:26
+msgid "cannot be set in future"
+msgstr "ne može biti postavljen u budućnosti"
+
+#: books/forms.py:48 extensions/forms.py:24 librarians/forms.py:43
+#: members/forms.py:28
+msgid "cannot be set in past for more than"
+msgstr "ne može biti postavljen u prošlosti za više od"
+
+#: books/forms.py:48 extensions/forms.py:24 librarians/forms.py:43
+#: members/forms.py:28
+msgid "days"
+msgstr "dana"
+
+#: books/forms.py:50
+msgid "Book cannot be returned before its rental"
+msgstr "Knjiga ne može biti vraćena pre iznajmljivanja"
+
+#: books/forms.py:53
+msgid "Book id"
+msgstr "Oznaka knjige"
+
+#: books/forms.py:54 extensions/forms.py:41 members/forms.py:40
+#: templates/extensions.html:97 templates/member.html:16
+#: templates/members.html:161
+msgid "Member id"
+msgstr "Broj članske karte"
+
+#: books/forms.py:55 templates/rents.html:130
+msgid "Is returned"
+msgstr "Je vraćena"
+
+#: books/forms.py:56
+msgid "Is deadline passed"
+msgstr "Probijen rok za vraćanje"
+
+#: books/forms.py:57
+msgid "Rent date after"
+msgstr "Iznajmljena nakon"
+
+#: books/forms.py:58
+msgid "Rent date before"
+msgstr "Iznajmljena pre"
+
+#: books/forms.py:59
+msgid "Deadline date after"
+msgstr "Rok za vraćanje nakon"
+
+#: books/forms.py:60
+msgid "Deadline date before"
+msgstr "Rok za vraćanje pre"
+
+#: books/forms.py:61
+msgid "Returned date after"
+msgstr "Vraćena nakon"
+
+#: books/forms.py:62
+msgid "Returned date before"
+msgstr "Vraćena pre"
+
+#: books/routes.py:90 books/routes.py:315 extensions/routes.py:64
+#: members/routes.py:168
+msgid "There are filter values with errors"
+msgstr "Neki od filtera su pogrešno popunjeni"
+
+#: books/routes.py:90 books/routes.py:315 extensions/routes.py:64
+#: members/routes.py:168
+msgid "However, valid filter values are applied"
+msgstr "Ispravni filteri će biti primenjeni"
+
+#: books/routes.py:121
+msgid "Book is successfuly updated"
+msgstr "Knjiga je uspešno izmenjena"
+
+#: books/routes.py:145 books/routes.py:188
+msgid "Book with the same inventory number already exists"
+msgstr "Knjiga sa istim inventarnim brojem već postoji"
+
+#: books/routes.py:148
+msgid "Book is successfuly added"
+msgstr "Knjiga je uspešno dodata"
+
+#: books/routes.py:170 books/routes.py:199
+msgid "Book with this inventory number is already rented"
+msgstr "Knjiga sa ovim inventarnim brojem je već iznajmljena"
+
+#: books/routes.py:170
+msgid "Please check your inventory number and then continue"
+msgstr "Proverite inventarni broj i potom nastavite"
+
+#: books/routes.py:175
+msgid "Book with this inventory number was not found"
+msgstr "Knjiga sa ovim inventarnim brojem je pronađena"
+
+#: books/routes.py:199
+msgid "An error flag is set to the books with same inventory number"
+msgstr "Knjige sa istim inventarnim brojem su obeležene greškom"
+
+#: books/routes.py:203
+msgid "New book is successfuly added"
+msgstr "Nova knjiga je uspešno dodata"
+
+#: books/routes.py:213
+msgid "Book is successfuly rented"
+msgstr "Knjiga je uspešno iznajmljena"
+
+#: books/routes.py:231
+msgid "Book is successfuly returned"
+msgstr "Knjiga je uspešno vraćena"
+
+#: extensions/forms.py:14 extensions/forms.py:40 extensions/forms.py:49
+#: templates/extensions.html:107
+msgid "Price"
+msgstr "Cena"
+
+#: extensions/forms.py:15 extensions/forms.py:51
+msgid "Note"
+msgstr "Beleška"
+
+#: extensions/forms.py:16
+msgid "Extension performed on"
+msgstr "Produženje je izvršeno na"
+
+#: extensions/forms.py:17 templates/member.html:104
+msgid "Extend membership"
+msgstr "Produži članstvo"
+
+#: extensions/forms.py:21 extensions/forms.py:24 extensions/forms.py:27
+msgid "Extension date"
+msgstr "Datum produženja"
+
+#: extensions/forms.py:27
+msgid "cannot be set more than"
+msgstr "ne može biti postavljen više of"
+
+#: extensions/forms.py:27
+msgid "days before the curent membership expiration date"
+msgstr "dana pre isteka trenutnog članstva"
+
+#: extensions/forms.py:33
+msgid "Price value is not valid"
+msgstr "Iznos nije validan"
+
+#: extensions/forms.py:36
+msgid "Expanded after"
+msgstr "Produženo nakon"
+
+#: extensions/forms.py:37
+msgid "Expanded before"
+msgstr "Produženo pre"
+
+#: extensions/forms.py:38 members/forms.py:36
+msgid "Membership expires after"
+msgstr "Ističe nakon"
+
+#: extensions/forms.py:39 members/forms.py:37
+msgid "Membership expires before"
+msgstr "Ističe pre"
+
+#: extensions/forms.py:45
+msgid "Note"
+msgstr "Beleška"
+
+#: extensions/forms.py:46 main/forms.py:7
+msgid "Approve"
+msgstr "Prihvati"
+
+#: extensions/forms.py:50 templates/extension_prices.html:17
+#: templates/extension_prices_update.html:15
+msgid "Currency"
+msgstr "Valuta"
+
+#: extensions/forms.py:52
+msgid "Enable price upon creation"
+msgstr "Aktiviraj cenu nakon dodavanja"
+
+#: extensions/forms.py:57
+msgid "Price value can not be lower than zero"
+msgstr "Iznos ne može biti manji od nule"
+
+#: extensions/forms.py:59
+msgid "Price value can not be higher than hundred"
+msgstr "Iznos ne može biti više od 1000"
+
+#: extensions/forms.py:63
+msgid "Price value already exists"
+msgstr "Kombinacija iznosa i valute već postoji"
+
+#: extensions/forms.py:63
+msgid "Please consider activating the existing one"
+msgstr "Razmotrite aktiviranje postojeće"
+
+#: extensions/routes.py:92
+msgid "Member's membership is successfuly extended to"
+msgstr "Članstvo je produženo do"
+
+#: extensions/routes.py:127
+msgid "New price is added"
+msgstr "Nova cena je dodata"
+
+#: extensions/routes.py:142
+msgid "Price availability is successfuly changed"
+msgstr "Dostupnost cene je uspešno promenjena"
+
+#: librarians/forms.py:13 librarians/forms.py:33 librarians/forms.py:46
+#: librarians/forms.py:50 templates/account.html:20
+#: templates/account_availability.html:23
+#: templates/account_password_change_request.html:23
+msgid "Username"
+msgstr "Korisničko ime"
+
+#: librarians/forms.py:14 librarians/forms.py:34 librarians/forms.py:54
+#: utils/custom_validations.py:52
+msgid "Password"
+msgstr "Lozinka"
+
+#: librarians/forms.py:15 librarians/routes.py:39 templates/login.html:4
+msgid "Login"
+msgstr "Prijava"
+
+#: librarians/forms.py:18 members/forms.py:12 members/forms.py:41
+#: templates/account.html:6 templates/account_administrate_request.html:9
+#: templates/account_availability.html:9
+#: templates/account_password_change_request.html:9
+#: templates/account_username_change_request.html:9
+#: templates/librarians.html:17 templates/member.html:23
+#: templates/members.html:166
+msgid "First name"
+msgstr "Ime"
+
+#: librarians/forms.py:19 members/forms.py:13 members/forms.py:42
+#: templates/account.html:13 templates/account_administrate_request.html:16
+#: templates/account_availability.html:16
+#: templates/account_password_change_request.html:16
+#: templates/account_username_change_request.html:16
+#: templates/librarians.html:22 templates/member.html:30
+#: templates/members.html:171
+msgid "Last name"
+msgstr "Prezime"
+
+#: librarians/forms.py:22 members/forms.py:16 templates/account.html:27
+#: templates/member.html:51
+msgid "E-mail"
+msgstr "E-mail"
+
+#: librarians/forms.py:23 members/forms.py:17 templates/account.html:34
+#: templates/member.html:58
+msgid "Phone number"
+msgstr "Broj telefona"
+
+#: librarians/forms.py:24 members/forms.py:18 templates/account.html:41
+#: templates/member.html:65
+msgid "Address"
+msgstr "Adresa"
+
+#: librarians/forms.py:29
+msgid "That username is taken. Please choose a different one"
+msgstr "Odabrano korisničko ime je zauzeto. Odaberite drugo"
+
+#: librarians/forms.py:32 librarians/forms.py:41 librarians/forms.py:43
+#: members/forms.py:21 members/forms.py:26 members/forms.py:28
+#: templates/account.html:48 templates/account_administrate_request.html:30
+#: templates/extension_add.html:23 templates/librarians.html:27
+#: templates/member.html:72 templates/members.html:186
+msgid "Registration date"
+msgstr "Datum registracije"
+
+#: librarians/forms.py:35 librarians/forms.py:55 utils/custom_validations.py:52
+msgid "Confirm password"
+msgstr "Potvrdite lozinku"
+
+#: librarians/forms.py:36
+msgid "This will be library administrator account"
+msgstr "Ovaj nalog će pripadati grupi administratora"
+
+#: librarians/forms.py:37
+msgid "Add librarian"
+msgstr "Dodaj bibliotekara"
+
+#: librarians/forms.py:47
+msgid "Update librarian"
+msgstr "Izmeni bibiliotekara"
+
+#: librarians/forms.py:51
+msgid "Request password change"
+msgstr "Zatraži promenu lozinke"
+
+#: librarians/forms.py:56 templates/account.html:100 templates/account.html:131
+#: templates/account_password_change.html:4
+#: templates/account_password_change_request.html:4
+msgid "Update password"
+msgstr "Izmeni lozinku"
+
+#: librarians/forms.py:59
+msgid "Old password"
+msgstr "Stara lozinka"
+
+#: librarians/routes.py:34 librarians/routes.py:37
+msgid "Login Unsuccessful"
+msgstr "Neuspešna prijava"
+
+#: librarians/routes.py:34
+msgid "This user is inactive"
+msgstr "Ovaj korisnik nije aktivan"
+
+#: librarians/routes.py:35
+msgid "For the activation consult the administrator"
+msgstr "Za aktivaciju kontaktirajte administratora"
+
+#: librarians/routes.py:37
+msgid "Please check username and password"
+msgstr "Proverite korisničko ime i lozinku"
+
+#: librarians/routes.py:52
+msgid "Reset password request has been sent to the administrator"
+msgstr "Zahtev za resetovanje lozinke je poslat administratoru"
+
+#: librarians/routes.py:54
+msgid "Combination of the username, first and last name does not exist"
+msgstr "Ovakva kombinacija korisničkog imena, imena i prezimena ne postoji"
+
+#: librarians/routes.py:55
+msgid "Please check your input and try again"
+msgstr "Proverite unesenu vrednost i pokušajte ponovo"
+
+#: librarians/routes.py:59
+msgid "Password Change Request"
+msgstr "Zahtev za promenu lozinke"
+
+#: librarians/routes.py:65
+msgid "My account"
+msgstr "Moj nalog"
+
+#: librarians/routes.py:79
+msgid "A username change request has been created"
+msgstr "Zahtev za promenu korisničkog imena je poslat"
+
+#: librarians/routes.py:81 librarians/routes.py:179
+msgid "Account has been updated"
+msgstr "Nalog je izmenjen"
+
+#: librarians/routes.py:100 librarians/routes.py:204
+msgid "Account password has been updated"
+msgstr "Lozinka je izmenjena"
+
+#: librarians/routes.py:103
+msgid "Current password value is not correct"
+msgstr "Trenutna lozinka je pogrešna"
+
+#: librarians/routes.py:137
+msgid "Account details"
+msgstr "Detalji naloga"
+
+#: librarians/routes.py:159
+msgid "Account has been created"
+msgstr "Nalog je kreiran"
+
+#: librarians/routes.py:224
+msgid "Account username has been changed"
+msgstr "Korisničko ime je izmenjeno"
+
+#: librarians/routes.py:219 librarians/routes.py:226
+msgid "Username change has been rejected"
+msgstr "Zahtev za promenu korisničkog imena je odbijen"
+
+#: librarians/routes.py:227
+msgid "Requested username is already in use"
+msgstr "Željeno korisničko ime je već zauzeto"
+
+#: librarians/routes.py:244
+msgid "Account availability is not changed"
+msgstr "Dostupnost naloga nije promenjena"
+
+#: librarians/routes.py:247
+msgid "Account availability is changed"
+msgstr "Dostupnost naloga je promenjena"
+
+#: librarians/routes.py:277
+msgid "Add librarian as administrator"
+msgstr "Dodaj bibliotekara u grupu administratora"
+
+#: librarians/routes.py:278
+msgid "Do you approve setting this librarian as the administrator"
+msgstr "Da li potvrđujete dodavanje ovog bibliotekara u grupu administratora"
+
+#: librarians/routes.py:281
+msgid "Request librarian removal from administrators"
+msgstr "Zatraži uklanjanje administratora iz grupe administratora"
+
+#: librarians/routes.py:282
+msgid "Approve your request to remove this librarian from administrators"
+msgstr "Potvrdite zahtev za uklanjanje bibliotekara iz grupe administratora"
+
+#: librarians/routes.py:285
+msgid "Confirm your removal from administrators"
+msgstr "Potvrdite vaše uklanjanje iz grupe administratora"
+
+#: librarians/routes.py:286
+msgid "Approve your removal from administrators"
+msgstr "Da li potvrđujete vaše uklanjanje iz grupe administratora"
+
+#: librarians/routes.py:300
+msgid "You successfuly promoted librarian to the administrator"
+msgstr "Uspešno ste dodali bibliotekara u grupu administratora"
+
+#: librarians/routes.py:303
+msgid ""
+"You successfuly created a request to remove librarian from the "
+"administrators"
+msgstr "Uspešno ste kreirali zahtev da bibliotekar bude uklonjen iz grupe administratora"
+
+#: librarians/routes.py:307
+msgid "You are successfuly removed from the administrators"
+msgstr "Uspešno ste uklonjeni iz grupe administratora"
+
+#: librarians/routes.py:310
+msgid "You successfuly rejected request to be removed from the administrators"
+msgstr "Uspešno ste odbili zahtev za vaše uklanjanje iz grupe administratora"
+
+#: main/forms.py:8
+msgid "Reject"
+msgstr "Odbij"
+
+#: members/forms.py:14 templates/member.html:37
+msgid "Father name"
+msgstr "Ime oca"
+
+#: members/forms.py:15 templates/member.html:44
+msgid "Profession"
+msgstr "Zanimanje"
+
+#: members/forms.py:22 templates/member_cu.html:5 templates/members.html:6
+msgid "Add member"
+msgstr "Dodaj člana"
+
+#: members/forms.py:31 templates/member_cu.html:7
+msgid "Update member"
+msgstr "Izmeni člana"
+
+#: members/forms.py:34
+msgid "Registered after"
+msgstr "Prijavljen nakon"
+
+#: members/forms.py:35
+msgid "Registered before"
+msgstr "Prijavljen pre"
+
+#: members/forms.py:38
+msgid "Number of rented books above"
+msgstr "Broj iznajmljenih knjiga veći od"
+
+#: members/forms.py:39
+msgid "Number of rented books below"
+msgstr "Broj iznajmljenih knjiga manji od"
+
+#: members/forms.py:43
+msgid "Has currently rented books"
+msgstr "Ima trenutno iznajmljene knjige"
+
+#: members/forms.py:44
+msgid "Membership status"
+msgstr "Status članstva"
+
+#: members/forms.py:44 templates/members.html:216
+msgid "Membership expired"
+msgstr "Istek članstva"
+
+#: members/forms.py:44 templates/member.html:11 templates/members.html:218
+msgid "Membership near expiration"
+msgstr "Članstvo je blizu isteka"
+
+#: members/forms.py:44
+msgid "Membership active"
+msgstr "Članstvo je aktivno"
+
+#: members/routes.py:41
+msgid "New member has been added"
+msgstr "Član je dodat"
+
+#: members/routes.py:59
+msgid "Member data has been updated"
+msgstr "Podaci člana su izmenjeni"
+
+#: templates/account.html:55 templates/librarians.html:42
+msgid "Is administrator"
+msgstr "Je administrator"
+
+#: templates/account.html:66
+msgid "Is operational"
+msgstr "Je aktivan"
+
+#: templates/account.html:79
+msgid "Password change is requested"
+msgstr "Zatražena je promena lozinke"
+
+#: templates/account.html:85
+msgid "Username change is requested"
+msgstr "Zatražena je promena korisničkog imena"
+
+#: templates/account.html:91
+msgid "Removal from administrators requsted"
+msgstr "Zatraženo je uklanjanje iz grupe administratora"
+
+#: templates/account.html:103
+msgid "Update username"
+msgstr "Izmeni korisničko ime"
+
+#: templates/account.html:108
+msgid "Set as admin"
+msgstr "Ubaci u grupu administratora"
+
+#: templates/account.html:110
+msgid "Remove from admins"
+msgstr "Ukloni iz grupe administratora"
+
+#: templates/account.html:116 templates/account.html:130
+#: templates/account_cu.html:4 templates/login_password_reset.html:4
+msgid "Update account"
+msgstr "Izmeni nalog"
+
+#: templates/account.html:120
+msgid "Disable account"
+msgstr "Deaktiviraj nalog"
+
+#: templates/account.html:122
+msgid "Enable account"
+msgstr "Aktiviraj nalog"
+
+#: templates/account.html:133
+msgid "Handle remove from admins"
+msgstr "Odgovori na zahtev za uklanjanje iz grupe administratora"
+
+#: templates/account_administrate_request.html:7
+#: templates/account_availability.html:7
+#: templates/account_password_change_request.html:7
+#: templates/account_username_change_request.html:7
+msgid "For a librarian"
+msgstr "Za bibliotekara"
+
+#: templates/account_administrate_request.html:23
+#: templates/account_username_change_request.html:23
+msgid "Current username"
+msgstr "Trenutno korisničko ime"
+
+#: templates/account_availability.html:4
+msgid "Librarian's account availability update"
+msgstr "Izmena dostupnosti naloga bibliotekara"
+
+#: templates/account_availability.html:30
+msgid "Current status"
+msgstr "Trenutni status"
+
+#: templates/account_availability.html:33
+#: templates/account_availability.html:47
+#: templates/account_availability.html:49
+#: templates/extension_prices_update.html:22
+msgid "Enabled"
+msgstr "Aktivan"
+
+#: templates/account_availability.html:35
+#: templates/account_availability.html:47
+#: templates/account_availability.html:49
+#: templates/extension_prices_update.html:24
+msgid "Disabled"
+msgstr "Neaktivan"
+
+#: templates/account_availability.html:44
+msgid "Do you approve librarian's account availability change"
+msgstr "Da li potvrđujete promenu dostupnosti bibliotekara"
+
+#: templates/account_availability.html:47
+#: templates/account_availability.html:49
+#: templates/account_username_change_request.html:42
+msgid "From"
+msgstr "Od"
+
+#: templates/account_availability.html:47
+#: templates/account_availability.html:49
+#: templates/account_username_change_request.html:42
+msgid "to"
+msgstr "do"
+
+#: templates/account_cu.html:131
+msgid "You can request a username change by populating the username field"
+msgstr ""
+"Možete zatražiti promenu korisničkog imena popunjavanjem polja za "
+"korisničko ime"
+
+#: templates/account_cu.html:133
+msgid "It will be applied once the administrator accepts it"
+msgstr "Biće primenjeno nakon što administrator prihvati zahtev"
+
+#: templates/account_cu.html:135
+msgid "Current username is"
+msgstr "Trenutno korisničko ime je"
+
+#: templates/account_username_change_request.html:4
+msgid "Librarian username update"
+msgstr "Izmena korisničkog imena bibliotekara"
+
+#: templates/account_username_change_request.html:30
+msgid "Requested username"
+msgstr "Traženo korisničko ime"
+
+#: templates/account_username_change_request.html:40
+msgid "Do you approve librarian's username change request"
+msgstr "Da li prihvatate zahtev za promenu korisničkog imena"
+
+#: templates/base_layout.html:7 templates/login_layout.html:7
+msgid "e-Library"
+msgstr "e-Biblioteka"
+
+#: templates/base_layout.html:15
+msgid "Home"
+msgstr "Početna"
+
+#: templates/base_layout.html:16 templates/books.html:4
+msgid "Books"
+msgstr "Knjige"
+
+#: templates/base_layout.html:17 templates/members.html:4
+msgid "Members"
+msgstr "Članovi"
+
+#: templates/base_layout.html:18 templates/extensions.html:4
+msgid "Memberships"
+msgstr "Članarine"
+
+#: templates/base_layout.html:19 templates/rents.html:4
+msgid "Rents"
+msgstr "Iznajmljivanja"
+
+#: templates/base_layout.html:21 templates/librarians.html:4
+msgid "Librarians"
+msgstr "Bibliotekari"
+
+#: templates/base_layout.html:22 templates/events.html:4
+msgid "Events"
+msgstr "Događaji"
+
+#: templates/base_layout.html:24
+msgid "Account"
+msgstr "Moj nalog"
+
+#: templates/base_layout.html:25
+msgid "Logout"
+msgstr "Odjava"
+
+#: templates/books.html:6 templates/books_cu.html:5
+msgid "Add book"
+msgstr "Dodaj knjigu"
+
+#: templates/books.html:25 templates/members.html:25
+msgid "Clear search"
+msgstr "Očisti pretragu"
+
+#: templates/books.html:86 templates/extensions.html:85
+#: templates/members.html:154 templates/rents.html:113
+msgid "Clear filter"
+msgstr "Očisti filtere"
+
+#: templates/books.html:129 templates/books_cu.html:7
+msgid "Update book"
+msgstr "Izmeni knjigu"
+
+#: templates/books.html:131 templates/rent.html:3
+msgid "Rent details"
+msgstr "Detalji iznajmljivanja"
+
+#: templates/books.html:137 templates/extensions.html:126
+#: templates/members.html:230 templates/rents.html:165
+msgid "Number of items in list"
+msgstr "Broj stavki u listi"
+
+#: templates/books_cu.html:13
+msgid "Book has a problem with inventory number"
+msgstr "Knjiga ima problem sa inventarnim brojem"
+
+#: templates/books_cu.html:68
+msgid "Please uncheck if the problem with inventory number is resolved"
+msgstr "Molimo Vas odznačite ukoliko je problem sa inventarnim brojem rešen"
+
+#: templates/event.html:4
+msgid "Event details"
+msgstr "Detalji događaja"
+
+#: templates/extension_add.html:4
+msgid "Member's membership extension"
+msgstr "Produženje članarine"
+
+#: templates/extension_add.html:7
+msgid "For a member"
+msgstr "Za člana"
+
+#: templates/extension_add.html:9
+msgid "Membership number"
+msgstr "Broj članske karte"
+
+#: templates/extension_add.html:16
+msgid "Member"
+msgstr "Član"
+
+#: templates/extension_add.html:30
+msgid "Expiration date"
+msgstr "Datum isteka članarine"
+
+#: templates/extension_add.html:34
+msgid "Expired"
+msgstr "Istekla"
+
+#: templates/extension_add.html:73
+msgid ""
+"Membership expiration date will be set a year after the date of "
+"membership extension"
+msgstr ""
+"Datum isteka članstva biće postavljen na godinu dana od datuma produženja"
+" članstva"
+
+#: templates/extension_add.html:75
+msgid ""
+"Membership expiration date will be set a year after the current "
+"membership expiration"
+msgstr ""
+"Datum isteka članstva biće postavljen na godinu dana nakon isteka "
+"trenutnog članstva"
+
+#: templates/extension_add.html:83 templates/extension_prices_update.html:65
+msgid "Cancel"
+msgstr "Odustani"
+
+#: templates/extension_prices.html:4
+msgid "Defined prices"
+msgstr "Definisane cene"
+
+#: templates/extension_prices.html:7 templates/extension_prices_add.html:4
+#: templates/extensions.html:9
+msgid "Add price"
+msgstr "Dodaj cenu"
+
+#: templates/extension_prices.html:12 templates/extension_prices_update.html:9
+msgid "Value"
+msgstr "Iznos"
+
+#: templates/extension_prices.html:22
+msgid "Price is enabled"
+msgstr "Cena je aktivna"
+
+#: templates/extension_prices.html:33
+msgid "(no note inserted)"
+msgstr "(nije unesen komentar)"
+
+#: templates/extension_prices.html:42
+msgid "Enable"
+msgstr "Aktivna"
+
+#: templates/extension_prices.html:42
+msgid "Disable"
+msgstr "Neaktivna"
+
+#: templates/extension_prices_update.html:4
+msgid "Price update"
+msgstr "Izmena cene"
+
+#: templates/extension_prices_update.html:7
+msgid "For a price"
+msgstr "Za cenu"
+
+#: templates/extension_prices_update.html:22
+#: templates/extension_prices_update.html:24
+msgid "This price is currently"
+msgstr "Ova cena je trenutno"
+
+#: templates/extension_prices_update.html:48
+msgid "This price will be"
+msgstr "Ova cena će postati"
+
+#: templates/extension_prices_update.html:50
+msgid " Disabled"
+msgstr "Neaktivna"
+
+#: templates/extension_prices_update.html:52
+msgid " Enabled"
+msgstr "Aktivna"
+
+#: templates/extension_prices_update.html:54
+msgid "and the comment will be updated"
+msgstr "i komentar će biti izmenjen"
+
+#: templates/extension_prices_update.html:58
+msgid "Please approve or reject action"
+msgstr "Molimo Vas odobrite ili odbijte ovu akciju"
+
+#: templates/extensions.html:8
+msgid "Review prices"
+msgstr "Pogledaj cenu"
+
+#: templates/extensions.html:92
+msgid "Date performed"
+msgstr "Datum produženja"
+
+#: templates/extensions.html:102
+msgid "Membership expires"
+msgstr "Članstvo ističe"
+
+#: templates/librarians.html:6
+msgid "Add new librarian"
+msgstr "Dodaj novog bibliotekara"
+
+#: templates/librarians.html:10
+msgid "Do not include inactive librarians"
+msgstr "Ne prikazuj neaktivne bibliotekare"
+
+#: templates/librarians.html:12
+msgid "Include inactive librarians"
+msgstr "Prikaži i neaktivne bibliotekare"
+
+#: templates/librarians.html:44
+msgid "Is not administrator"
+msgstr "Nije administrator"
+
+#: templates/librarians.html:48
+msgid "Is not operational"
+msgstr "Nije aktivan"
+
+#: templates/librarians.html:52
+msgid "Requested password change"
+msgstr "Zatraži promenu lozinke"
+
+#: templates/librarians.html:56
+msgid "Requested username change"
+msgstr "Zatraži promenu korisničkog imena"
+
+#: templates/librarians.html:60
+msgid "Requested removal from admins"
+msgstr "Zatraži uklanjanje iz grupe administratora"
+
+#: templates/librarians.html:64 templates/member.html:128
+#: templates/members.html:222 templates/rents.html:159
+msgid "More details"
+msgstr "Više detalja"
+
+#: templates/login.html:43
+msgid "Request the administrator to"
+msgstr "Zatraži od administratora da"
+
+#: templates/login.html:44
+msgid "reset your password"
+msgstr "resetuje moju lozinku"
+
+#: templates/login_password_reset.html:57
+msgid "Go back to the"
+msgstr "Vrati se na"
+
+#: templates/login_password_reset.html:58
+msgid "login page"
+msgstr "stranicu za prijavu"
+
+#: templates/member.html:3
+msgid "Member details"
+msgstr "Detalji člana"
+
+#: templates/member.html:7
+msgid "Membership not active"
+msgstr "Članstvo je isteklo"
+
+#: templates/member.html:79 templates/members.html:191
+msgid "Membership expiration date"
+msgstr "Datum isteka članstva"
+
+#: templates/member.html:86
+msgid "Total number of rented books"
+msgstr "Ukupan broj iznajmljenih knjiga"
+
+#: templates/member.html:93
+msgid "Number of currently rented books"
+msgstr "Broj trenutno iznajmljenih knjiga"
+
+#: templates/member.html:102
+msgid "Update member data"
+msgstr "Izmeni podatke člana"
+
+#: templates/member.html:108
+msgid "Members without active membership can not rent a book"
+msgstr "Članovi kojima je isteklo članstvo ne mogu iznajmiti knjigu"
+
+#: templates/member.html:110
+msgid "Members can not rent more than"
+msgstr "Članovi ne mogu iznajmiti više od"
+
+#: templates/member.html:110
+msgid "books at a time"
+msgstr "knjiga u isto vreme"
+
+#: templates/member.html:112 templates/renting.html:4
+msgid "Rent a book"
+msgstr "Iznajmi knjigu"
+
+#: templates/member.html:117
+msgid "Currently rented"
+msgstr "Trenutno iznajmljeno"
+
+#: templates/member.html:124 templates/rent.html:7 templates/rents.html:147
+msgid "Deadline passed"
+msgstr "Rok istekao"
+
+#: templates/member.html:135
+msgid "All rented books"
+msgstr "Sve iznajmljene knjige"
+
+#: templates/members.html:176
+msgid "Total books rented"
+msgstr "Ukupno iznajmljeno knjiga"
+
+#: templates/members.html:181
+msgid "Currently rented books"
+msgstr "Trenutno iznajmljeno knjiga"
+
+#: templates/rent.html:14
+msgid "Book returned after deadline"
+msgstr "Knjiga vraćena nakon roka"
+
+#: templates/rent.html:16
+msgid "Book returned on time"
+msgstr "Knjiga vraćena pre roka"
+
+#: templates/rent.html:22 templates/rents.html:120
+msgid "Date rented"
+msgstr "Datum iznajmljivanja"
+
+#: templates/rent.html:29
+msgid "Deadline"
+msgstr "Rok za vraćanje"
+
+#: templates/rent.html:36
+msgid "Book returned"
+msgstr "Knjiga je vraćena"
+
+#: templates/rent.html:40
+msgid "on"
+msgstr "na"
+
+#: templates/rent.html:46
+msgid "Book rented"
+msgstr "Iznajmljena knjiga"
+
+#: templates/rent.html:48 templates/rent.html:55
+msgid "id"
+msgstr "br"
+
+#: templates/rent.html:53
+msgid "Member info"
+msgstr "Podaci o članu"
+
+#: templates/rent.html:66
+msgid ""
+"If the book is returned, please fill date of the book return, and submit "
+"the data."
+msgstr ""
+"Ukoliko je knjiga vraćena, popunite datum vraćanja i stisnite dugme "
+"pošajli"
+
+#: templates/renting.html:21
+msgid "Book info"
+msgstr "Podaci o knjizi"
+
+#: templates/rents.html:38
+msgid "When this filter is used, filtered items can not be sorted"
+msgstr "Kada se koristi ovaj filter nije moguće sortiranje tabele po kolonama"
+
+#: templates/rents.html:125
+msgid "Return deadline"
+msgstr "Rok za vraćanje"
+
+#: templates/rents.html:135
+msgid "Date returned"
+msgstr "Datum vraćanja"
+
+#: templates/errors/403.html:4
+msgid "Not authorized"
+msgstr "Not authorized"
+
+#: templates/errors/403.html:6
+msgid ""
+"You do not have permission to perform requested action or access the "
+"requested page."
+msgstr ""
+"Nemate dozvolu da izvršite traženu akciju ili pristupite traženoj "
+"stranici."
+
+#: templates/errors/403.html:8
+msgid ""
+"Please check with your administrator if you should be able to perform "
+"this action or access the requested page."
+msgstr ""
+"Molimo Vas proverite sa administratorom da li vam je potrebna dozvola za "
+"izvršavanje tražene akcije ili pristup traženoj stranici."
+
+#: templates/errors/403.html:10 templates/errors/500.html:10
+msgid ""
+"Meanwhile, you can perform other actions or access other pages - use the "
+"menu at the top of the page."
+msgstr ""
+"U međuvremenu, možete izvršiti neku od akcija koje su vam dostupne u "
+"navigacionom meniju."
+
+#: templates/errors/404.html:4
+msgid "Resource Not Found"
+msgstr "Resource Not Found"
+
+#: templates/errors/404.html:6
+msgid "The page or requesred resource does not exist."
+msgstr "Tražena stranica ili resurs nisu dostupni."
+
+#: templates/errors/404.html:8
+msgid "Please choose a different page or resource."
+msgstr "Molimo Vas odaberite drugu stranicu ili resurs."
+
+#: templates/errors/405.html:4
+msgid "Method Not Allowed"
+msgstr "Method Not Allowed"
+
+#: templates/errors/405.html:6
+msgid "The method requested is not allowed under the current circumstances."
+msgstr "Traženu akciju nije moguće izvršiti pod trenutnim okolnostima."
+
+#: templates/errors/405.html:8
+msgid "The execution may result in the application misbehavior."
+msgstr "Izvršavanje tražene akcije može prouzrokovati grešku u radu aplikacije."
+
+#: templates/errors/405.html:10
+msgid "Please choose a different action or try to change the account."
+msgstr "Molimo Vas odaberite drugu akciju, ili probajte sa drugim nalogom."
+
+#: templates/errors/500.html:4
+msgid "Internal server error"
+msgstr "Internal server error"
+
+#: templates/errors/500.html:6
+msgid "We are experiencing some trouble with the application."
+msgstr "Trenutno postoje problemi sa aplikacijom."
+
+#: templates/errors/500.html:8
+msgid ""
+"Please check your parameters and try again. If the problem persists "
+"contact the application provider."
+msgstr ""
+"Molmo vas proverite parametre zahteva i pokušajte ponovo. Ukoliko problem"
+" i dalje postoji, kontaktirajte proizvođača aplikacije."
+
+#: utils/custom_validations.py:11 utils/custom_validations.py:127
+msgid "Date value is not valid"
+msgstr "Datum nije validan"
+
+#: utils/custom_validations.py:11
+msgid "Make sure if matches the following format"
+msgstr "Proverite da li odgovara sledećem formatu"
+
+#: utils/custom_validations.py:11 utils/custom_validations.py:127
+msgid "\"dd.mm.yyyy.\""
+msgstr ""
+
+#: utils/custom_validations.py:15
+msgid "Decimal value is not valid"
+msgstr "Decimalni broj nije validan"
+
+#: utils/custom_validations.py:15
+msgid "Make sure it is a decimal number and uses dot as decimal point"
+msgstr "Proverite da li decimalni broj koristi tačku kao decimalni zarez"
+
+#: utils/custom_validations.py:23
+msgid "Value does not match e-mail format"
+msgstr "Vrednost ne odgovara formatu e-mail adrese"
+
+#: utils/custom_validations.py:27
+msgid "Phone number does not match expected format"
+msgstr "Broj telefona ne odgovara očekivanom formatu"
+
+#: utils/custom_validations.py:28
+msgid ""
+"E.g. 069/1128767, 0691128767, +387691128767, 059/343565, 059343565, "
+"+38759343565"
+msgstr "Npr. 069/1128767, 0691128767, +387691128767, 059/343565, 059343565, +38759343565"
+
+#: utils/custom_validations.py:32
+msgid "Only letters, numbers, spaces, dots, commas, and hyphens are allowed"
+msgstr "Samo slova, brojevi, razmaci, tačke, zarezi i povlake su dozvoljeni"
+
+#: utils/custom_validations.py:36
+msgid "Only upper case letters are allowed"
+msgstr "Samo velika slova su dozvoljena"
+
+#: utils/custom_validations.py:40
+msgid "Only letters, numbers, and following characters are allowed"
+msgstr "Samo slova, brojevi i sledeći karakteri su dozvoljeni"
+
+#: utils/custom_validations.py:44
+msgid "Only numbers, dots, and hyphens are allowed"
+msgstr "Samo slova, brojevi, tačke i povlake su dozvoljeni"
+
+#: utils/custom_validations.py:48
+msgid "Only digits are allowed"
+msgstr "Samo cifre su dozvoljene"
+
+#: utils/custom_validations.py:52
+msgid "does not match the"
+msgstr "ne odgovara"
+
+#: utils/custom_validations.py:58
+msgid "Input length must be between"
+msgstr "Dužina unosa mora biti između"
+
+#: utils/custom_validations.py:58 utils/custom_validations.py:60
+#: utils/custom_validations.py:62 utils/custom_validations.py:67
+msgid "characters"
+msgstr "karaktera"
+
+#: utils/custom_validations.py:60
+msgid "Maximum input length is"
+msgstr "Dužina unosa mora biti manja od"
+
+#: utils/custom_validations.py:62
+msgid "Minimum input length is"
+msgstr "Dužina unosa mora biti veća od"
+
+#: utils/custom_validations.py:110
+msgid "Field can not be empty"
+msgstr "Polje mora biti popunjeno"
+
+#: utils/custom_validations.py:127
+msgid "Make sute if matches the following format"
+msgstr "Proverite da li odgovara sledećem formatu"
+
+#: utils/custom_validations.py:130
+msgid "Date can not be set before"
+msgstr "Datum ne može biti postavljen pre"
+
+#: utils/custom_validations.py:133
+msgid "Date can not be set in future"
+msgstr "Datum ne može biti postavljen u budućnosti"
+
+#: utils/custom_validations.py:141
+msgid "Before date value can not be set after the after date value"
+msgstr "Datum \"pre\" ne može biti veći od datuma "\nakon\""
+
+#: utils/custom_validations.py:151
+msgid "Value is not a valid whole number"
+msgstr "Vrednost nije validan ceo broj"
+
+#: utils/custom_validations.py:154
+msgid "Number can not be lower than zero"
+msgstr "Broj ne može biti manji od nule"
+
+#: utils/custom_validations.py:157
+msgid "Number can not be greater than"
+msgstr "Broj ne može biti veći od"
+
+#: utils/custom_validations.py:165
+msgid "Greater than value can not be higher than lower than value"
+msgstr ""\Veće od"\ vrednost ne može biti vaća od "\manje od"\ vrednosti"

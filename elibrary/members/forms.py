@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 from flask_wtf import FlaskForm
-from flask_babel import lazy_gettext as _l
+from flask_babel import gettext, lazy_gettext as _l
 from wtforms import StringField, SubmitField, SelectField, IntegerField, DateField, TextAreaField
 from wtforms.validators import ValidationError
 from elibrary.models import Member

@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from sqlalchemy import and_
 from flask_wtf import FlaskForm
-from flask_babel import lazy_gettext as _l
+from flask_babel import gettext, lazy_gettext as _l
 from wtforms import StringField, SubmitField, DateField, TextAreaField, DecimalField, BooleanField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import ValidationError
@@ -42,7 +42,7 @@ class FilterForm(FlaskForm):
     submit = SubmitField(_l('Filter'))
 
 class PriceUpdate(FlaskForm):
-    note = TextAreaField(_l('Add a note'), validators=[optional_cust(), string_cust(), length_cust(max=150)])
+    note = TextAreaField(_l('Note'), validators=[optional_cust(), string_cust(), length_cust(max=150)])
     submit = SubmitField(_l('Approve'))
 
 class PriceAdd(FlaskForm):

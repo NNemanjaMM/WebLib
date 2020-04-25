@@ -29,12 +29,14 @@ def create_app(config_class=Config):
     from elibrary.members.routes import members
     from elibrary.extensions.routes import extensions
     from elibrary.books.routes import books
+    from elibrary.events.routes import events
     from elibrary.main.routes import main
     from elibrary.errors.handlers import errors
     app.register_blueprint(librarians)
     app.register_blueprint(members)
     app.register_blueprint(extensions)
     app.register_blueprint(books)
+    app.register_blueprint(events)
     app.register_blueprint(main)
     app.register_blueprint(errors)
 

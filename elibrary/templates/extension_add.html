@@ -13,7 +13,7 @@
     </div>
 
     <div>
-        {{ gettext('Name') }}
+        {{ gettext('Member') }}
         <strong>
             {{ member.first_name }} ({{ member.father_name }}) {{ member.last_name }}
         </strong>
@@ -31,7 +31,7 @@
         <strong>
             {{ member.date_expiration_print }}
             {% if member.is_membership_expired %}
-                <span>{{ gettext('(Expired)') }}</span>
+                <span>({{ gettext('Expired') }})</span>
             {% endif %}
         </strong>
     </div>

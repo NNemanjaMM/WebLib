@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 from flask_wtf import FlaskForm
-from flask_babel import lazy_gettext as _l
+from flask_babel import gettext, lazy_gettext as _l
 from wtforms import StringField, SubmitField, DateField, SelectField, BooleanField
 from wtforms.validators import ValidationError
 from elibrary.utils.custom_validations import optional_cust, required_cust, required_cust_date, string_cust, length_cust, signature_cust, numeric_cust

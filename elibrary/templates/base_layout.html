@@ -16,10 +16,10 @@
                 <a href="{{ url_for('books.bookss') }}">{{ gettext('Books') }}</a>
                 <a href="{{ url_for('members.memberss') }}">{{ gettext('Members') }}</a>
                 <a href="{{ url_for('extensions.extensionss') }}">{{ gettext('Memberships') }}</a>
-                <a href="{{ url_for('books.book_rents') }}">{{ gettext('Rentals') }}</a>
+                <a href="{{ url_for('books.book_rents') }}">{{ gettext('Rents') }}</a>
                 {% if current_user.is_admin %}
                     <a href="{{ url_for('librarians.librarianss') }}">{{ gettext('Librarians') }}</a>
-                    <a href="">{{ gettext('Events') }}</a>
+                    <a href="{{ url_for('events.eventss') }}">{{ gettext('Events') }}</a>
                 {% endif %}
                 <a href="{{ url_for('librarians.account') }}">{{ gettext('Account') }}</a>
                 <a href="{{ url_for('librarians.logout') }}">{{ gettext('Logout') }}</a>

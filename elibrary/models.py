@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from flask_login import UserMixin
 from elibrary import db, login_manager
 from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT, BOOK_RENT_PERIOD
-from flask_babel import gettext, lazy_gettext as _l
+from flask_babel import gettext
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -170,6 +170,6 @@ class Rental(db.Model):
     @property
     def is_terminated_print(self):
         if self.is_terminated:
-            return _l('Yes')
+            return gettext('Yes')
         else:
-            return _l('No')
+            return gettext('No')

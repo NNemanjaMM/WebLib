@@ -1,6 +1,5 @@
 elibrary/site.db
 elibrary/config.py
-elibrary/translations/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -56,7 +55,6 @@ coverage.xml
 .pytest_cache/
 
 # Translations
-*.mo
 *.pot
 
 # Django stuff:
