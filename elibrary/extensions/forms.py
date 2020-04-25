@@ -19,8 +19,12 @@ class ExtensionForm(FlaskForm):
     def validate_date_performed(self, date_performed):
         if date_performed.data > date.today():
             raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set in future') + '.')
-        elif date_performed.data < self.date_expiration - timedelta(BACKWARD_INPUT_LIMIT):
-            raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days before the curent membership expiration date') + '.')
+        elif self.date_expiration < date.today():
+            if date_performed.data < date.today() - timedelta(BACKWARD_INPUT_LIMIT):
+                raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days') + '.')
+        elif self.date_expiration >= date.today():
+            if date_performed.data < self.date_expiration - timedelta(BACKWARD_INPUT_LIMIT):
+                raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days before the curent membership expiration date') + '.')
 
     def validate_price(self, price):
         if not price.data == None:

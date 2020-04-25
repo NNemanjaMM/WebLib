@@ -223,9 +223,13 @@
         </span>
 
         <span><i>Da li ovde ubaciti i komande: iznajmi, produzi clanstvo, itd?</i></span>
-
     </p>
 {% endfor %}
+
+<p>
+    {{ gettext('Number of items in list') }}
+    {{ count_filtered }}
+</p>
 
 {% for page_num in members_list.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
     {% if page_num %}

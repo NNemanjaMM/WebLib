@@ -163,6 +163,7 @@ def memberss(filtering = False, searching = False):
                 my_query = my_query.filter(Member.date_expiration >= date.today().strftime('%Y-%m-%d'))
                 args_filter['has_expired'] = f_has_expired
 
+    count_filtered = my_query.count()
     if filter_has_errors:
         flash(_l('There are filter values with errors')+'. '+_l('However, valid filter values are applied')+'.', 'warning')
     if sort_direction == 'up':
@@ -170,7 +171,7 @@ def memberss(filtering = False, searching = False):
     else:
         list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     args_filter_and_sort = {**args_filter, **args_sort}
-    return render_template('members.html', form=form, form2=form2, members_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort)
+    return render_template('members.html', form=form, form2=form2, members_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, count_filtered = count_filtered)
 
 @members.route("/membersr")
 @login_required

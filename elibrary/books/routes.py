@@ -8,7 +8,7 @@ from elibrary.utils.common import CommonFilter
 from elibrary.utils.defines import PAGINATION, MAX_RENTED_BOOKS, RENTAL_DATE_LIMIT, DATE_FORMAT, BOOK_RENT_PERIOD
 from elibrary.utils.custom_validations import string_cust, length_cust_max, numeric_cust, signature_cust, length_cust_max_15, FieldValidator
 from elibrary.books.forms import FilterForm, SearchForm, BookCreateUpdateForm, RentForm, RentTerminationForm, RentFilterForm
-from sqlalchemy import desc, or_, and_, func
+from sqlalchemy import desc, or_, and_, func, text
 from sqlalchemy.sql.operators import is_
 
 books = Blueprint('books', __name__)
@@ -85,6 +85,7 @@ def bookss(filtering = False, searching = False):
                 my_query = my_query.filter(Book.has_error == False)
                 args_filter['has_error'] = f_has_error
 
+    count_filtered = my_query.count()
     if filter_has_errors:
         flash(_l('There are filter values with errors')+'. '+_l('However, valid filter values are applied')+'.', 'warning')
     if sort_direction == 'up':
@@ -92,10 +93,7 @@ def bookss(filtering = False, searching = False):
     else:
         list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     args_filter_and_sort = {**args_filter, **args_sort}
-    print("filter "+str(len(args_filter)))
-    print("sort "+str(len(args_sort)))
-    print("zajedno "+str(len(args_filter_and_sort)))
-    return render_template('books.html', form=form, form2=form2, books_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort)
+    return render_template('books.html', form=form, form2=form2, books_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, count_filtered = count_filtered)
 
 @books.route("/booksr")
 @login_required
@@ -282,6 +280,12 @@ def book_rents():
         form.date_terminated_to, f_date_terminated_from, f_date_terminated_to,
         'date_terminated_from', 'date_terminated_to', Rental, 'date_termination', False)
 
+    my_query, args_filter, filter_has_errors = CommonFilter.process_equal_number_filter(my_query, args_filter,
+        filter_has_errors, form.book_id, f_book_id, 'book_id', Rental, 'book_id')
+
+    my_query, args_filter, filter_has_errors = CommonFilter.process_equal_number_filter(my_query, args_filter,
+        filter_has_errors, form.member_id, f_member_id, 'member_id', Rental, 'member_id')
+
     if not (f_is_terminated == None or f_is_terminated == ""):
         form.is_terminated.data = f_is_terminated
         if f_is_terminated == 'yes':
@@ -291,27 +295,29 @@ def book_rents():
             my_query = my_query.filter(Rental.is_terminated == False)
             args_filter['is_terminated'] = f_is_terminated
 
+    can_sort = True
     if not (f_is_deadlime_passed == None or f_is_deadlime_passed == ""):
         form.is_deadlime_passed.data = f_is_deadlime_passed
+        can_sort = False
         if f_is_deadlime_passed == 'yes':
-            my_query = my_query.filter(and_(date.today() > Rental.date_deadline, Rental.is_terminated == False))
-            #and_(Rental.date_termination == Rental.date_termination, Rental.is_terminated == True)
+            my_query1 = my_query.filter(and_(date.today() > Rental.date_deadline, Rental.is_terminated == False))
+            my_query2 = my_query.filter(and_(Rental.date_termination > Rental.date_deadline, Rental.is_terminated == True))
+            my_query = my_query1.union(my_query2)
             args_filter['is_deadlime_passed'] = f_is_deadlime_passed
         elif f_is_deadlime_passed == 'no':
-            my_query = my_query.filter(and_(date.today() <= Rental.date_deadline, Rental.is_terminated == False))
+            my_query1 = my_query.filter(and_(date.today() <= Rental.date_deadline, Rental.is_terminated == False))
+            my_query2 = my_query.filter(and_(Rental.date_termination <= Rental.date_deadline, Rental.is_terminated == True))
+            my_query = my_query1.union(my_query2)
             args_filter['is_deadlime_passed'] = f_is_deadlime_passed
 
-    my_query, args_filter, filter_has_errors = CommonFilter.process_equal_number_filter(my_query, args_filter,
-        filter_has_errors, form.book_id, f_book_id, 'book_id', Rental, 'book_id')
-
-    my_query, args_filter, filter_has_errors = CommonFilter.process_equal_number_filter(my_query, args_filter,
-        filter_has_errors, form.member_id, f_member_id, 'member_id', Rental, 'member_id')
-
+    count_filtered = my_query.count()
     if filter_has_errors:
         flash(_l('There are filter values with errors')+'. '+_l('However, valid filter values are applied')+'.', 'warning')
-    if sort_direction == 'up':
+    if not can_sort:
+        list = my_query.paginate(page=page, per_page=PAGINATION)
+    elif sort_direction == 'up':
         list = my_query.order_by(sort_criteria).paginate(page=page, per_page=PAGINATION)
     else:
         list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     args_filter_and_sort = {**args_filter, **args_sort}
-    return render_template('rents.html', form=form, rents_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort)
+    return render_template('rents.html', form=form, rents_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, count_filtered = count_filtered)

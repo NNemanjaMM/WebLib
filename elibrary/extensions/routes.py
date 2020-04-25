@@ -59,6 +59,7 @@ def extensionss():
     my_query, args_filter, filter_has_errors = CommonFilter.process_equal_number_filter(my_query, args_filter,
         filter_has_errors, form.member_id, f_member_id, 'member_id', Extension, 'member_id')
 
+    count_filtered = my_query.count()
     if filter_has_errors:
         flash(_l('There are filter values with errors')+'. '+_l('However, valid filter values are applied')+'.', 'warning')
     if sort_direction == 'up':
@@ -66,7 +67,7 @@ def extensionss():
     else:
         list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     args_filter_and_sort = {**args_filter, **args_sort}
-    return render_template('extensions.html', form=form, extensions_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort)
+    return render_template('extensions.html', form=form, extensions_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, count_filtered = count_filtered)
 
 @extensions.route("/extensions/add/<int:member_id>", methods=['GET', 'POST'])
 @login_required

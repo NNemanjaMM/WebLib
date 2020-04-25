@@ -35,6 +35,7 @@
             <div>
                 {{ form.is_deadlime_passed.label }}
                 {{ form.is_deadlime_passed }}
+                <i>{{ gettext('When this filter is used, filtered items can not be sorted') }}</i>
             </div>
 
             <hr/>
@@ -159,6 +160,11 @@
         </span>
     </p>
 {% endfor %}
+
+<p>
+    {{ gettext('Number of items in list') }}
+    {{ count_filtered }}
+</p>
 
 {% for page_num in rents_list.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
     {% if page_num %}
