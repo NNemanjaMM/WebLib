@@ -1,6 +1,6 @@
 from datetime import date
 from sqlalchemy import desc, func, or_
-from flask import render_template, url_for, Blueprint, request, flash, redirect
+from flask import render_template, url_for, Blueprint, request, flash, redirect, abort
 from flask_login import login_required,current_user
 from flask_babel import gettext, lazy_gettext as _l
 from elibrary import db
@@ -12,7 +12,7 @@ from elibrary.utils.common import CommonFilter, CommonDate
 
 extensions = Blueprint('extensions', __name__)
 sort_extensions_values = ['date_performed', 'member_id', 'date_extended', 'price']
-sort_prices_values = ['id', 'price_value', 'currency', 'is_enabled']
+sort_prices_values = ['price_value', 'currency', 'is_enabled']
 
 @extensions.route("/extensions")
 @login_required
@@ -39,12 +39,12 @@ def extensionss():
     my_query, args_filter, filter_has_errors = CommonFilter.process_related_date_filters(my_query,
             args_filter, filter_has_errors, form.date_performed_from,
             form.date_performed_to, f_date_performed_from, f_date_performed_to,
-            'date_performed_from', 'date_performed_to', Extension, 'date_performed', True)
+            'date_performed_from', 'date_performed_to', Extension, 'date_performed', False)
 
     my_query, args_filter, filter_has_errors = CommonFilter.process_related_date_filters(my_query,
             args_filter, filter_has_errors, form.date_extended_from,
             form.date_extended_to, f_date_extended_from, f_date_extended_to,
-            'date_extended_from', 'date_extended_to', Extension, 'date_extended', True)
+            'date_extended_from', 'date_extended_to', Extension, 'date_extended', False)
 
     if not (f_price == None or f_price == ""):
         if not f_price == '__None':
@@ -75,19 +75,21 @@ def extensions_add(member_id):
     if not (member.is_membership_near_expired or member.is_membership_expired):
         abort(405)
     form = ExtensionForm()
+    form.date_expiration = member.date_expiration
     if form.validate_on_submit():
-        extension = Extension()
-        extension.note = form.note.data
-        extension.price = form.price.data.price_value
-        extension.date_performed = form.date_performed.data
-        extension.date_extended = CommonDate.add_year(extension.date_performed) if member.is_membership_expired else CommonDate.add_year(member.date_expiration)
-        extension.member_id = member_id
-        extension.price_id = form.price.data.id
-        db.session.add(extension)
-        member.date_expiration = extension.date_extended
-        db.session.commit()
-        flash(_l('Member\'s membership is successfuly extended to') + ' ' + member.date_expiration_print, 'info')
-        return redirect(url_for('members.members_details', member_id=member.id))
+        if form.price.data.is_enabled:
+            extension = Extension()
+            extension.note = form.note.data
+            extension.price = form.price.data.price_value
+            extension.date_performed = form.date_performed.data
+            extension.date_extended = CommonDate.add_year(extension.date_performed) if member.is_membership_expired else CommonDate.add_year(member.date_expiration)
+            extension.member_id = member_id
+            extension.price_id = form.price.data.id
+            db.session.add(extension)
+            member.date_expiration = extension.date_extended
+            db.session.commit()
+            flash(_l('Member\'s membership is successfuly extended to') + ' ' + member.date_expiration_print, 'info')
+            return redirect(url_for('members.members_details', member_id=member.id))
     return render_template('extension_add.html', form=form, member=member)
 
 @extensions.route("/extensions/prices")
@@ -95,10 +97,10 @@ def extensions_add(member_id):
 def prices():
     if not current_user.is_admin:
         abort(403)
-    sort_criteria = request.args.get('sort_by', 'id', type=str)
+    sort_criteria = request.args.get('sort_by', 'price_value', type=str)
     sort_direction = request.args.get('direction', 'down', type=str)
     if not sort_criteria in sort_prices_values:
-        sort_criteria = 'id'
+        sort_criteria = 'price_value'
 
     my_query = db.session.query(ExtensionPrice)
     if sort_direction == 'up':

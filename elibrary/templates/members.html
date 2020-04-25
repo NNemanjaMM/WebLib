@@ -1,7 +1,7 @@
 {% extends "base_layout.html" %}
 {% block content %}
 
-<h1>{{ gettext('Library members') }}</h1>
+<h1>{{ gettext('Members') }}</h1>
 
 <a href="{{ url_for('members.members_create') }}">{{ gettext('Add new library member') }}</a>
 
@@ -178,6 +178,11 @@
         <a href="{{ url_for('members.memberss', sort_by='total_books_rented', direction='down', **extra_filter_args) }}"> &or; </a>
     </span>
     <span>
+        {{ gettext('Currently rented books') }}
+        <a href="{{ url_for('members.memberss', sort_by='number_of_rented_books', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('members.memberss', sort_by='number_of_rented_books', direction='down', **extra_filter_args) }}"> &or; </a>
+    </span>
+    <span>
         {{ gettext('Registration date') }}
         <a href="{{ url_for('members.memberss', sort_by='date_registered', direction='up', **extra_filter_args) }}"> &uarr; </a>
         <a href="{{ url_for('members.memberss', sort_by='date_registered', direction='down', **extra_filter_args) }}"> &darr; </a>
@@ -203,6 +208,7 @@
         {% endif %}
 
         <span>{{ member.total_books_rented }}</span>
+        <span>{{ member.number_of_rented_books }}</span>
         <span>{{ member.date_registered_print }} </span>
         <span>{{ member.date_expiration_print }} </span>
 

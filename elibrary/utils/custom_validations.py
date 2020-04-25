@@ -25,7 +25,7 @@ class email_cust(Email):
 
 class phone_cust(Regexp):
     def __init__(self, text = _l('Phone number does not match expected format')+'. '+\
-                _l('E.g. 063/1128767, 0631128767, +381631128767, 025/343565, 025343565, +38125343565')+'.'):
+                _l('E.g. 069/1128767, 0691128767, +387691128767, 059/343565, 059343565, +38759343565')+'.'):
         Regexp.__init__(self, '^((0\d{2}\/)|(0\d{2})|(\+\d{1,3}\d{2}))\d{6,8}$', message = text)
 
 class string_cust(Regexp):
@@ -137,7 +137,7 @@ class FieldValidator():
     @staticmethod
     def validate_date_order(first_date_value, second_date_value, second_date_field):
         second_date_field.errors = list()
-        if not first_date_value < second_date_value:
+        if not first_date_value <= second_date_value:
             second_date_field.errors.append(_l('Before date value can not be set after the after date value') + '.')
         return len(second_date_field.errors) == 0
 
@@ -161,6 +161,6 @@ class FieldValidator():
     @staticmethod
     def validate_number_order(first_number_value, second_number_value, second_number_field):
         second_number_field.errors = list()
-        if not first_number_value < second_number_value:
+        if not first_number_value <= second_number_value:
             second_number_field.errors.append(_l('Greater than value can not be higher than lower than value') + '.')
         return len(second_number_field.errors) == 0

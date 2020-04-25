@@ -10,6 +10,7 @@ from elibrary.utils.defines import BACKWARD_INPUT_LIMIT, DATE_FORMAT
 from elibrary.utils.custom_validations import (optional_cust, string_cust, length_cust, required_cust, required_cust_date, char_cust, required_cust_decimal)
 
 class ExtensionForm(FlaskForm):
+    date_expiration = None
     price = QuerySelectField(_l('Price'), query_factory=lambda: ExtensionPrice.query.filter_by(is_enabled=True).order_by(ExtensionPrice.price_value))
     note = TextAreaField(_l('Note'), validators=[optional_cust(), string_cust(), length_cust(max=150)])
     date_performed = DateField(_l('Extension performed on'), validators=[required_cust_date()], format=DATE_FORMAT, default=date.today())
@@ -18,8 +19,8 @@ class ExtensionForm(FlaskForm):
     def validate_date_performed(self, date_performed):
         if date_performed.data > date.today():
             raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set in future') + '.')
-        elif date_performed.data < date.today() - timedelta(BACKWARD_INPUT_LIMIT):
-            raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days') + '.')
+        elif date_performed.data < self.date_expiration - timedelta(BACKWARD_INPUT_LIMIT):
+            raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days before the curent membership expiration date') + '.')
 
     def validate_price(self, price):
         if not price.data == None:
@@ -38,7 +39,7 @@ class FilterForm(FlaskForm):
 
 class PriceUpdate(FlaskForm):
     note = TextAreaField(_l('Add a note'), validators=[optional_cust(), string_cust(), length_cust(max=150)])
-    submit = SubmitField(_l('Submit'))
+    submit = SubmitField(_l('Approve'))
 
 class PriceAdd(FlaskForm):
     price_value = DecimalField(_l('Price'), validators=[required_cust_decimal()], places=2)

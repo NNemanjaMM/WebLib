@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 from sqlalchemy import desc, or_, and_
-from flask import render_template, url_for, redirect, request, flash, Blueprint, abort
+from flask import render_template, url_for, redirect, request, flash, Blueprint
 from flask_login import current_user, login_required
 from flask_babel import gettext, lazy_gettext as _l
 from elibrary import db
@@ -11,7 +11,7 @@ from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, PAGINATION, DATE_
 from elibrary.utils.common import CommonFilter
 
 members = Blueprint('members', __name__)
-sort_member_values = ['id', 'first_name', 'last_name', 'total_books_rented', 'date_registered', 'date_expiration']
+sort_member_values = ['id', 'first_name', 'last_name', 'total_books_rented', 'number_of_rented_books', 'date_registered', 'date_expiration']
 
 @members.route("/members/details/<int:member_id>")
 @login_required
@@ -113,14 +113,14 @@ def memberss(filtering = False, searching = False):
 
     if not (s_text == None or s_text == ""):
         form2.text.data = s_text
-        if FieldValidator.validate_field(form2, form2.text, [string_cust]):
+        if FieldValidator.validate_field(form2, form2.text, [string_cust, length_cust_max]):
             my_query = my_query.filter(or_(Member.first_name.like('%' + s_text + '%'), Member.last_name.like('%' + s_text + '%'), Member.father_name.like('%' + s_text + '%'), Member.id == s_text))
             args_filter['text'] = s_text
     else:
         my_query, args_filter, filter_has_errors = CommonFilter.process_related_date_filters(my_query,
             args_filter, filter_has_errors, form.registration_date_from,
             form.registration_date_to, f_registration_date_from, f_registration_date_to,
-            'registration_date_from', 'registration_date_to', Member, 'date_registered', True)
+            'registration_date_from', 'registration_date_to', Member, 'date_registered', False)
 
         my_query, args_filter, filter_has_errors = CommonFilter.process_related_date_filters(my_query,
             args_filter, filter_has_errors, form.expiration_date_from,

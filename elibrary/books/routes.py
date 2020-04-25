@@ -128,7 +128,7 @@ def books_update(book_id):
         form.title.data = book.title
         form.author.data = book.author
         form.has_error.data = book.has_error
-    return render_template('books_cu.html', form=form, title=_l('Update book'))
+    return render_template('books_cu.html', form=form, is_creating=False)
 
 @books.route("/books/add", methods=['GET', 'POST'])
 @login_required
@@ -141,13 +141,15 @@ def books_add():
         book.signature = form.signature.data
         book.title = form.title.data
         book.author = form.author.data
+        if book_duplicate:
+            book_duplicate.has_error = True
+            book.has_error = True
+            flash(_l('Book with the same inventory number already exists')+'!', 'warning')
         db.session.add(book)
         db.session.commit()
         flash(_l('Book is successfuly added')+'.', 'success')
-        if book_duplicate:
-            flash(_l('Book with the same inventory number already exists')+'!', 'warning')
         return redirect(url_for('books.bookss'))
-    return render_template('books_cu.html', form=form, title=_l('Add book'))
+    return render_template('books_cu.html', form=form, is_creating=True)
 
 @books.route("/books/rent/<int:member_id>", methods=['GET', 'POST'])
 @login_required
@@ -229,7 +231,7 @@ def book_rents_details(rent_id):
         book.is_rented = False
         db.session.commit()
         flash(_l('Book is successfuly returned')+'.', 'info')
-        return redirect(url_for('books.book_rents'))
+        return redirect(url_for('members.members_details', member_id=member.id))
     return render_template('rent.html', form=form, rent=rent)
 
 @books.route("/books/rents/find/<int:book_id>")
@@ -293,6 +295,7 @@ def book_rents():
         form.is_deadlime_passed.data = f_is_deadlime_passed
         if f_is_deadlime_passed == 'yes':
             my_query = my_query.filter(and_(date.today() > Rental.date_deadline, Rental.is_terminated == False))
+            #and_(Rental.date_termination == Rental.date_termination, Rental.is_terminated == True)
             args_filter['is_deadlime_passed'] = f_is_deadlime_passed
         elif f_is_deadlime_passed == 'no':
             my_query = my_query.filter(and_(date.today() <= Rental.date_deadline, Rental.is_terminated == False))

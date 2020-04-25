@@ -130,7 +130,7 @@
             <a href="{{ url_for('librarians.account_change') }}">{{ gettext('Update account') }}</a>
             <a href="{{ url_for('librarians.account_password') }}">{{ gettext('Update password') }}</a>
             {% if account.change_admin %}
-                <a href="{{ url_for('librarians.librarians_administrate', librarian_id=account.id) }}">{{ gettext('Remove from admins') }}</a>
+                <a href="{{ url_for('librarians.librarians_administrate', librarian_id=account.id) }}">{{ gettext('Handle remove from admins') }}</a>
             {% endif %}
         </p>
     {% endif %}

@@ -9,11 +9,6 @@
 
 <p>
     <span>
-        {{ gettext('Price id') }}
-        <a href="{{ url_for('extensions.prices', sort_by='id', direction='up') }}"> &uarr; </a>
-        <a href="{{ url_for('extensions.prices', sort_by='id', direction='down') }}"> &darr; </a>
-    </span>
-    <span>
         {{ gettext('Price value') }}
         <a href="{{ url_for('extensions.prices', sort_by='price_value', direction='up') }}"> &and; </a>
         <a href="{{ url_for('extensions.prices', sort_by='price_value', direction='down') }}"> &or;</a>
@@ -32,7 +27,6 @@
 
 {% for price in prices_list %}
     <p>
-        <span>{{ price.id }}</span>
         <span>{{ price.price_value_print }}</span>
         <span>{{ price.currency }}</span>
         {% if price.note == None or price.note == "" %}

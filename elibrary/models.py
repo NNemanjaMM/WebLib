@@ -100,7 +100,7 @@ class ExtensionPrice(db.Model):
     currency = db.Column(db.String(3), nullable=False)
     note = db.Column(db.String(150), nullable=True)
     is_enabled = db.Column(db.Boolean, nullable=False, default=True)
-    
+
     @property
     def price_value_print(self):
         return "{:.2f}".format(self.price_value)
@@ -144,7 +144,10 @@ class Rental(db.Model):
 
     @property
     def date_deadline_passed(self):
-        return True if self.date_deadline < date.today() else False
+        if self.is_terminated:
+            return True if self.date_deadline < self.date_termination else False
+        else:
+            return True if self.date_deadline < date.today() else False
 
     @property
     def returned_deadline_passed(self):

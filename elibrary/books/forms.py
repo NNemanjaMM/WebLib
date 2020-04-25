@@ -47,7 +47,7 @@ class RentTerminationForm(FlaskForm):
         elif date_returned.data < date.today() - timedelta(BACKWARD_INPUT_LIMIT):
             raise ValidationError(_l('Book return date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days') + '.')
         elif date_returned.data < self.date_rented:
-            raise ValidationError(_l('Book cannot be returned after its rental') + '.')
+            raise ValidationError(_l('Book cannot be returned before its rental') + '.')
 
 class RentFilterForm(FlaskForm):
     book_id = StringField(_l('Book id'))

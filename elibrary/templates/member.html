@@ -4,7 +4,7 @@
 
     {% if member.is_membership_expired %}
         <strong>
-            {{ gettext('Membership expired') }}
+            {{ gettext('Membership not active') }}
         </strong>
     {% elif member.is_membership_near_expired %}
         <strong>
@@ -83,30 +83,16 @@
     </p>
 
     <p>
-        {{ gettext('Total rented books number') }}
+        {{ gettext('Total number of rented books') }}
         <strong>
             {{ member.total_books_rented }}
         </strong>
     </p>
 
     <p>
-        {{ gettext('Currently rented') }}
+        {{ gettext('Number of currently rented books') }}
         <strong>
             {{ member.number_of_rented_books }}
-        </strong>
-    </p>
-
-    <p>
-        {{ gettext('Membership extensions') }}
-        <strong>
-            <i>to be defined</i>
-        </strong>
-    </p>
-
-    <p>
-        {{ gettext('All book rentals') }}
-        <strong>
-            <i>to be defined</i>
         </strong>
     </p>
 
@@ -115,13 +101,13 @@
     <p>
         <a href="{{ url_for('members.members_update', member_id=member.id) }}">{{ gettext('Update member data') }}</a>
         {% if member.is_membership_near_expired or member.is_membership_expired %}
-            <a href="{{ url_for('extensions.extensions_add', member_id=member.id) }}">{{ gettext('Extend membership') }}</a>            
+            <a href="{{ url_for('extensions.extensions_add', member_id=member.id) }}">{{ gettext('Extend membership') }}</a>
         {% endif %}
         <br/>
         {% if member.is_membership_expired %}
-            <strong>{{ gettext('Members with expired membership can not rent a book') }}</strong>
+            <strong>{{ gettext('Members without active membership can not rent a book') }}</strong>
         {% elif member.number_of_rented_books >= max_books %}
-            <strong>{{ gettext('Members can not rent more than') }} {{ max_books }} {{ gettext('books') }}</strong>
+            <strong>{{ gettext('Members can not rent more than') }} {{ max_books }} {{ gettext('books at a time') }}</strong>
         {% else %}
             <a href="{{ url_for('books.book_rent', member_id=member.id) }}">{{ gettext('Rent a book') }}</a>
         {% endif %}
@@ -145,9 +131,13 @@
     {% endfor %}
 {% endif %}
 
-<a href="{{ url_for('books.book_rents', member_id=member.id) }}">{{ gettext('All rented books') }}</a>
+{% if member.total_books_rented > 0 %}
+    <a href="{{ url_for('books.book_rents', member_id=member.id) }}">{{ gettext('All rented books') }}</a>
+{% endif %}
 
-<h3>Membership extensions</h3>
+{% if extensions.count() > 0 %}
+    <h3>Membership extensions</h3>
+{% endif %}
 
 {% for extension in extensions %}
     <p>

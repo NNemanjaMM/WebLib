@@ -2,19 +2,28 @@
 {% block content %}
     <i>
         Stvari koje se mogu izmeniti i koje treba pogledati:
-        <ul>
+        <ol>
             <li>Koje kolone da se vide u tabelama? - većina onih koje se vide u detaljima knjige mogu se videti i u tabeli sa knjigama. Slična situacija je i sa članovima, članarinama, iznajmljivanjima, itd.</li>
+            <li>Po kojim kolonama ima smisla sortirati? - može po većini od kolona iz tabela</li>
             <li>Koji filteri da se koriste? - filteri se mogu ubaciti tako da pokriju većinu kolona koje se vide u tim tabelama.</li>
             <li>Da li ubaciti "brze filtere", tj link koji će automatski popuniti određena filter polja da bi se dobio željeni filter. Prednost je jer se jednim klikom filtriraju korisnici po često korišćenim filterima i nema potrebe da se jedan po jedan postavljaju sa mogućnošću greške</li>
+            <li>Da li filteri za tekstualna polja i dalje da rade tako što proveravaju da li se uneseni tekst sadrži u polju, ili da provedava da li postoji identičan sadržaj</li>
+            <br/>
+            <li>Da li na stranici za vraćanje knjige odmah ubaciti današnji datum? Prednost: ovako je lakše jer većina datuma će biti današnja; mana: neko će se zaleteti pa kliknuti bez da promeni datum (ili još gore - bez da je knjiga vraćena), a posle nema načina da se to ispravi</li>
             <li>Da li neke od provera ulaznih podataka treba izmeniti/izbaciti</li>
-            <li>Da li link-ove do nekih akcija iz stranice sa detaljima (korisnika, knjige, bibliotekara), prebaciti direktno u samu tabelu (preko koje se dolazi do detalja)</li>
+            <li>Stavljeno je da datumi ne mogu da se unose više od mesec dana unazad, da li je to u redu? Npr situacija da se otkrije da je neka knjiga zaista vraćena pre dva meseca, šta onda staviti (ako je uopšte u redu da se dođe do takve situacije)..?</li>
             <li>Da li za naslove knjiga, nazive pisaca treba odvojiti jos neki karakter osim sledecih: . , - _</li>
-            <li>Bilo koji drugi komentar na funkcionalnosti, ili spisak informacija za svaki od tipova podataka...</li>
-            <li>Po kojim kolonama ima smisla sortirati? - može po većini od kolona iz tabela</li>
-            <li>Šta staviti na početnu stranicu - lista knjiga koje su već trebale biti vraćene, lista izmena na nalozima bibliotekara, zahtevi bibliotekara za promenu lozinke/korisničkog imena/promene bibliotekara u administratora i obrnuto, ili bilo pta drugo što se može zaključiti na osnovu podataka u aplikaciji</li>
+            <br/>
+            <li>Da li link-ove do nekih akcija iz stranice sa detaljima (korisnika, knjige, bibliotekara), prebaciti direktno u samu tabelu (preko koje se dolazi do detalja) u vidu teksta ili ikonica</li>
             <li>Da li treba ubaciti "cancel", ili "vrati se na prethodnu stranicu" kada se uđe u stranicu sa detaljima (za knjigu, korisnika, bibliotekara..sve jedno), ili u stranicu sa izmenama - trenutno se može koristiti "back" dugme u browser-u</li>
             <li>Na koju stranicu otići nakon akcija poput dodavanja knjige, iznajmljivanja knjige, dodavanja člana, prduženja članarine, itd. - da li na detalje o tom "događaju" ili na spisak svih "događaja" tog tipa</li>
+            <br/>
+            <li>Trenutno je ograničeno da bibliotekarima može da upravlja admin, isto se odnosi na cene članarine, greške na knjigama, i biće za log-ove. Da li ovo treba proširiti na još neke funkcije, ili skloniti sa nekih od pomenutih?</li>
+            <br/>
+            <li>Da li stranicu sa cenama članarine odvojiti u poseban meni u navbaru, ili da ostane ovako..?</li>
+            <li>Šta staviti na početnu stranicu - lista knjiga koje su već trebale biti vraćene, lista izmena na nalozima bibliotekara, zahtevi bibliotekara za promenu lozinke/korisničkog imena/promene bibliotekara u administratora i obrnuto, ili bilo pta drugo što se može zaključiti na osnovu podataka u aplikaciji</li>
+            <br/>
             <li>Bilo koji drugi komentar na funkcionalnosti, ili spisak informacija za svaki od tipova podataka...</li>
-        </ul>
+        </ol>
     </i><br/><br/>
 {% endblock content %}
