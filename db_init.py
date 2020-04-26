@@ -13,7 +13,7 @@ with app.app_context():
     pass3 = bcrypt.generate_password_hash('djokadjoka').decode('utf-8')
     admin2 = Librarian(first_name='Pera', last_name='Perić', username='pera.peric', password=pass2, phone='0651128767', address='Peroslava Perića 5, Bileća', is_admin=True, date_registered=date(1991, 7, 23))
     admin1 = Librarian(first_name='Mika', last_name='Mikić', username='mika.mikic', password=pass1, email='mikam@gmail.com', phone='+387664408404', address='Milivoja Mikića 3, Nevesinje', date_registered=date(2013, 9, 3))
-    admin3 = Librarian(first_name='Đoka', last_name='Đokić', username='djoka.djokic', password=pass3, email='djoka.kralj@outlook.com', phone='0591128767', address='Đorđija Đokića 21, Istočno Sarajevo', date_registered=date(2002, 11, 14), is_operational=False)
+    admin3 = Librarian(first_name='Đoka', last_name='Đokić', username='djoka.djokic', password=pass3, email='djoka.kralj@outlook.com', phone='0591128767', address='Đorđija Đokića 21, Istočno Sarajevo', date_registered=date(2002, 11, 14), is_active=False)
     db.session.add(admin1)
     db.session.add(admin2)
     db.session.add(admin3)

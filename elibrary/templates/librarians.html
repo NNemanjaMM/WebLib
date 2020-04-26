@@ -44,7 +44,7 @@
             <span>{{ gettext('Is not administrator') }}</span>
         {% endif %}
 
-        {% if not librarian.is_operational %}
+        {% if not librarian.is_active %}
             <span>{{ gettext('Is not active') }}</span>
         {% endif %}
 

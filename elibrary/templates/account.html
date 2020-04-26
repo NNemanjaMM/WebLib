@@ -70,7 +70,7 @@
     <p>
         {{ gettext('Account is active') }}
         <strong>
-            {% if account.is_operational %}
+            {% if account.is_active %}
                 {{ gettext('Yes') }}
             {% else %}
                 {{ gettext('No') }}
@@ -98,7 +98,7 @@
             {% if account.change_password %}
                 <a href="{{ url_for('librarians.librarians_password', librarian_id=account.id) }}">{{ gettext('Update password') }}</a>
             {% endif %}
-            {% if account.is_operational and not current_user.id == account.id %}
+            {% if account.is_active and not current_user.id == account.id %}
                 {% if not account.is_admin %}
                     <a href="{{ url_for('librarians.librarians_administrate', librarian_id=account.id) }}">{{ gettext('Set as admin') }}</a>
                 {% elif not account.change_admin %}
@@ -106,7 +106,7 @@
                 {% endif %}
             {% endif %}
             {% if not current_user.id == account.id %}
-                {% if account.is_operational %}
+                {% if account.is_active %}
                     <a href="{{ url_for('librarians.librarians_availability', librarian_id=account.id) }}">{{ gettext('Disable account') }}</a>
                 {% else %}
                     <a href="{{ url_for('librarians.librarians_availability', librarian_id=account.id) }}">{{ gettext('Enable account') }}</a>

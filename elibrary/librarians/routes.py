@@ -26,7 +26,7 @@ def login():
     if form.validate_on_submit():
         admin = Librarian.query.filter_by(username=form.username.data).first()
         if admin:
-            if admin.is_operational and bcrypt.check_password_hash(admin.password, form.password.data):
+            if admin.is_active and bcrypt.check_password_hash(admin.password, form.password.data):
                 login_user(admin)
                 next_page = request.args.get('next')
                 return redirect(next_page) if next_page else redirect(url_for('main.home'))
@@ -114,7 +114,7 @@ def librarianss():
     filter_args = {'include_inactive': 'True'}
     my_query = db.session.query(Librarian)
     if include_inactive == 'False':
-        my_query = my_query.filter(Librarian.is_operational)
+        my_query = my_query.filter(Librarian.is_active)
         include_disabled_val=False
         filter_args['include_inactive']='False'
     if sort_direction == 'up':
@@ -186,7 +186,7 @@ def librarians_availability(librarian_id):
         if form_decide.reject.data and form_decide.validate():
             flash(gettext('Account availability is not updated')+'.', 'info')
         elif form_decide.approve.data and form_decide.validate():
-            librarian.is_operational = not librarian.is_operational
+            librarian.is_active = not librarian.is_active
             flash(gettext('Account availability is successfully updated')+'.', 'info')
         db.session.commit()
         return redirect(url_for('librarians.librarianss'))
@@ -198,7 +198,7 @@ def librarians_administrate(librarian_id):
     if not current_user.is_admin:
         abort(403)
     librarian = Librarian.query.get_or_404(librarian_id)
-    if not librarian.is_operational:
+    if not librarian.is_active:
         abort(405)
     if current_user.id == librarian_id: # da li admin menja sam sebe
         if not current_user.change_admin:   # ukoliko admin menja sebe, mora imati

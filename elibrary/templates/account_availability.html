@@ -29,7 +29,7 @@
     <div>
         {{ gettext('Current status') }}
         <strong>
-            {% if librarian.is_operational %}
+            {% if librarian.is_active %}
                 {{ gettext('Enabled') }}
             {% else %}
                 {{ gettext('Disabled') }}
@@ -43,7 +43,7 @@
         <p>
             {{ gettext('Do you approve librarian\'s account availability update') }}?
             <br/>
-            {% if librarian.is_operational %}
+            {% if librarian.is_active %}
                 {{ gettext('From') }} <strong>{{gettext('Enabled') }}</strong> {{ gettext('to') }} <strong>{{ gettext('Disabled') }}</strong>.
             {% else %}
                 {{ gettext('From') }} <strong>{{ gettext('Disabled') }}</strong> {{ gettext('to') }} <strong>{{gettext('Enabled') }}</strong>.

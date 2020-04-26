@@ -486,6 +486,10 @@ msgstr "Uspešno ste isključeni iz grupe administratora"
 msgid "You successfully rejected request to be removed from the administrators"
 msgstr "Uspešno ste odbili zahtev za Vašim isključivanjem iz grupe administratora"
 
+#: main/forms.py:8
+msgid "Reject"
+msgstr "Odbij"
+
 #: members/forms.py:14 templates/member.html:30
 msgid "Father name"
 msgstr "Ime oca"
