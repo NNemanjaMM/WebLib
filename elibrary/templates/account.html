@@ -17,21 +17,7 @@
     </p>
 
     <p>
-        {{ gettext('Username') }}
-        <strong>
-            {{ account.username }}
-        </strong>
-    </p>
-
-    <p>
-        {{ gettext('E-mail') }}
-        <strong>
-            {{ account.email }}
-        </strong>
-    </p>
-
-    <p>
-        {{ gettext('Phone number') }}
+        {{ gettext('Phone') }}
         <strong>
             {{ account.phone_print }}
         </strong>
@@ -52,7 +38,21 @@
     </p>
 
     <p>
-        {{ gettext('Is administrator') }}
+        {{ gettext('E-mail address') }}
+        <strong>
+            {{ account.email }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Username') }}
+        <strong>
+            {{ account.username }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Account is administrator') }}
         <strong>
             {% if account.is_admin %}
                 {{ gettext('Yes') }}
@@ -63,7 +63,7 @@
     </p>
 
     <p>
-        {{ gettext('Is operational') }}
+        {{ gettext('Account is operational') }}
         <strong>
             {% if account.is_operational %}
                 {{ gettext('Yes') }}
@@ -80,12 +80,6 @@
             </strong>
         {% endif %}
 
-        {% if account.change_username %}
-            <strong>
-                {{ gettext('Username change is requested') }}
-            </strong>
-        {% endif %}
-
         {% if account.change_admin %}
             <strong>
                 {{ gettext('Removal from administrators requsted') }}
@@ -99,10 +93,6 @@
             {% if account.change_password %}
                 <a href="{{ url_for('librarians.librarians_password', librarian_id=account.id) }}">{{ gettext('Update password') }}</a>
             {% endif %}
-            {% if account.change_username %}
-                <a href="{{ url_for('librarians.librarians_username', librarian_id=account.id) }}">{{ gettext('Update username') }}</a>
-            {% endif %}
-
             {% if account.is_operational and not current_user.id == account.id %}
                 {% if not account.is_admin %}
                     <a href="{{ url_for('librarians.librarians_administrate', librarian_id=account.id) }}">{{ gettext('Set as admin') }}</a>
@@ -110,26 +100,22 @@
                     <a href="{{ url_for('librarians.librarians_administrate', librarian_id=account.id) }}">{{ gettext('Remove from admins') }}</a>
                 {% endif %}
             {% endif %}
-
-            <br/>
-
-            <a href="{{ url_for('librarians.librarians_update', librarian_id=account.id) }}">{{ gettext('Update account') }}</a>
-
             {% if not current_user.id == account.id %}
                 {% if account.is_operational %}
                     <a href="{{ url_for('librarians.librarians_availability', librarian_id=account.id) }}">{{ gettext('Disable account') }}</a>
                 {% else %}
                     <a href="{{ url_for('librarians.librarians_availability', librarian_id=account.id) }}">{{ gettext('Enable account') }}</a>
                 {% endif %}
+            {% elif current_user.id == account.id %}
+                {{ gettext('This is your account. If you wish to edit it, please go to My account page.') }}
             {% endif %}
-
-
         </p>
     {% else %}
         <p>
             <a href="{{ url_for('librarians.account_change') }}">{{ gettext('Update account') }}</a>
             <a href="{{ url_for('librarians.account_password') }}">{{ gettext('Update password') }}</a>
             {% if account.change_admin %}
+                <br/>
                 <a href="{{ url_for('librarians.librarians_administrate', librarian_id=account.id) }}">{{ gettext('Handle remove from admins') }}</a>
             {% endif %}
         </p>

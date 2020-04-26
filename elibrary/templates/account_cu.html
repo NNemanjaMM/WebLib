@@ -30,17 +30,6 @@
                 {% endif %}
             </div>
             <div>
-                {{ form.email.label }}
-                {{ form.email }}
-                {% if form.email.errors %}
-                    <div>
-                        {% for error in form.email.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div>
                 {{ form.phone.label }}
                 {{ form.phone }}
                 {% if form.phone.errors %}
@@ -57,6 +46,17 @@
                 {% if form.address.errors %}
                     <div>
                         {% for error in form.address.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.email.label }}
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div>
+                        {% for error in form.email.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
@@ -122,31 +122,6 @@
                         </div>
                     {% endif %}
                 </div>
-
-            {% else %}
-
-                {% if not admin_is_editing %}
-                    <hr/>
-                    <p>
-                        {{ gettext('You can request a username change by populating the username field') }}.
-                        <br/>
-                        {{ gettext('It will be applied once the administrator accepts it') }}.
-                        <br/>
-                        {{ gettext('Current username is') }}
-                        <strong>{{ current_user.username }}</strong>
-                    </p>
-                    <div>
-                        {{ form.username.label }}
-                        {{ form.username }}
-                        {% if form.username.errors %}
-                            <div>
-                                {% for error in form.username.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-                {% endif %}
 
             {% endif %}
 

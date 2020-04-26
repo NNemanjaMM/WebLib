@@ -72,11 +72,6 @@ class Librarian(db.Model, UserMixin):
     is_operational = db.Column(db.Boolean, default=True)
     change_admin = db.Column(db.Boolean, default=False)
     change_password = db.Column(db.Boolean, default=False)
-    change_username_value = db.Column(db.String(30), nullable=True)
-
-    @property
-    def change_username(self):
-        return not self.change_username_value == None
 
     @property
     def phone_print(self):
@@ -92,7 +87,7 @@ class Librarian(db.Model, UserMixin):
     def __repr__(self):
         return f"User('{self.id}', '{self.first_name}', '{self.last_name}', '{self.username}', '{self.email}', \
                       '{self.phone_print}', '{self.address}', '{self.date_registered}', '{self.is_admin}', \
-                      '{self.is_operational}', '{self.change_password}', '{self.change_username}')"
+                      '{self.is_operational}', '{self.change_password}')"
 
 class ExtensionPrice(db.Model):
     id = db.Column(db.Integer, primary_key=True)

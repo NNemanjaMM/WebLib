@@ -58,13 +58,12 @@ def login_password_reset():
     form.last_name.data=''
     return render_template('login_password_reset.html', form=form, title=gettext('Password Change Request'))
 
-
 @librarians.route("/account")
 @login_required
 def account():
     return render_template('account.html', account=current_user, title=gettext('My account'), admin_is_editing=False)
 
-@librarians.route("/account/change", methods=['GET', 'POST'])
+@librarians.route("/account/update", methods=['GET', 'POST'])
 @login_required
 def account_change():
     form = LibrarianUpdateForm()
@@ -74,9 +73,6 @@ def account_change():
         current_user.email = form.email.data
         current_user.phone = form.phone.data.replace("/", "")
         current_user.address = form.address.data
-        if not (current_user.username == form.username.data or form.username.data==''):
-            current_user.change_username_value = form.username.data
-            flash(gettext('A username change request has been created')+'.', 'success')
         db.session.commit()
         flash(gettext('Account has been updated')+'.', 'success')
         return redirect(url_for('librarians.account'))
@@ -102,7 +98,6 @@ def account_password():
         else:
             flash(gettext('Current password value is not correct')+'.', 'error')
     return render_template('account_password_change.html', form=form)
-
 
 @librarians.route("/librarians")
 @login_required
@@ -136,7 +131,6 @@ def librarians_details(librarian_id):
     librarian = Librarian.query.get_or_404(librarian_id)
     return render_template('account.html', account=librarian, title=gettext('Account details'), admin_is_editing=True)
 
-
 @librarians.route("/librarians/create", methods=['GET', 'POST'])
 @login_required
 def librarians_create():
@@ -160,32 +154,6 @@ def librarians_create():
         return redirect(url_for('librarians.librarianss'))
     return render_template('account_cu.html', form=form, is_creating=True)
 
-@librarians.route("/librarians/update/<int:librarian_id>", methods=['GET', 'POST'])
-@login_required
-def librarians_update(librarian_id):
-    if not current_user.is_admin:
-        abort(403)
-    librarian = Librarian.query.get_or_404(librarian_id)
-    if librarian.id == current_user.id:
-        return redirect(url_for('librarians.account_change'))
-    form = LibrarianUpdateForm()
-    if form.validate_on_submit():
-        librarian.first_name = form.first_name.data
-        librarian.last_name = form.last_name.data
-        librarian.email = form.email.data
-        librarian.phone = form.phone.data.replace("/", "")
-        librarian.address = form.address.data
-        db.session.commit()
-        flash(gettext('Account has been updated')+'.', 'success')
-        return redirect(url_for('librarians.librarians_details',librarian_id=librarian.id))
-    elif request.method == 'GET':
-        form.first_name.data = librarian.first_name
-        form.last_name.data = librarian.last_name
-        form.email.data = librarian.email
-        form.phone.data = librarian.phone_print
-        form.address.data = librarian.address
-    return render_template('account_cu.html', form=form, admin_is_editing=True, is_creating=False)
-
 @librarians.route("/librarians/password/<int:librarian_id>", methods=['GET', 'POST'])
 @login_required
 def librarians_password(librarian_id):
@@ -204,31 +172,6 @@ def librarians_password(librarian_id):
         flash(gettext('Account password has been updated')+'.', 'success')
         return redirect(url_for('librarians.librarians_details', librarian_id=librarian.id))
     return render_template('account_password_change_request.html', form=form, librarian=librarian)
-
-@librarians.route("/librarians/username/<int:librarian_id>", methods=['GET', 'POST'])
-@login_required
-def librarians_username(librarian_id):
-    if not current_user.is_admin:
-        abort(403)
-    librarian = Librarian.query.get_or_404(librarian_id)
-    if not librarian.change_username:
-        abort(405)
-    form_decide = AcceptRejectForm()
-    if not request.method == 'GET':
-        if form_decide.reject.data and form_decide.validate():
-            flash(gettext('Username change has been rejected')+'.', 'info')
-        elif form_decide.approve.data and form_decide.validate():
-            user = Librarian.query.filter_by(username=librarian.change_username_value).first()
-            if not user:
-                librarian.username = librarian.change_username_value
-                flash(gettext('Account username has been changed')+'.', 'info')
-            else:
-                flash(gettext('Username change has been rejected')+'.', 'info')
-                flash(gettext('Requested username is already in use')+'.', 'info')
-        librarian.change_username_value = None
-        db.session.commit()
-        return redirect(url_for('librarians.librarianss'))
-    return render_template('account_username_change_request.html', form=form_decide, librarian=librarian)
 
 @librarians.route("/librarians/availability/<int:librarian_id>", methods=['GET', 'POST'])
 @login_required

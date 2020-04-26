@@ -43,7 +43,6 @@ class LibrarianCreateForm(LibrarianForm):
             raise ValidationError(_l('Registration date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days') + '.')
 
 class LibrarianUpdateForm(LibrarianForm):
-    username = StringField(_l('Username'), validators=[optional_cust(), length_cust(min=6, max=30), username_cust()])
     submit = SubmitField(_l('Update librarian'))
 
 class LibrarianRequestChangePasswordForm(LibrarianBaseForm):

@@ -7,7 +7,7 @@ from elibrary.models import Book, Member, Rental
 from elibrary.utils.common import CommonFilter
 from elibrary.utils.defines import PAGINATION, MAX_RENTED_BOOKS, RENTAL_DATE_LIMIT, DATE_FORMAT, BOOK_RENT_PERIOD
 from elibrary.utils.custom_validations import string_cust, length_cust_max, numeric_cust, signature_cust, length_cust_max_15, FieldValidator
-from elibrary.books.forms import FilterForm, SearchForm, BookCreateUpdateForm, RentForm, RentTerminationForm, RentFilterForm
+from elibrary.books.forms import FilterForm, SearchForm, BookUpdateForm, BookCreateForm, RentForm, RentTerminationForm, RentFilterForm
 from sqlalchemy import desc, or_, and_, func, text
 from sqlalchemy.sql.operators import is_
 
@@ -108,7 +108,7 @@ def booksf():
 @books.route("/books/update/<int:book_id>", methods=['GET', 'POST'])
 @login_required
 def books_update(book_id):
-    form = BookCreateUpdateForm()
+    form = BookUpdateForm()
     book = Book.query.get_or_404(book_id)
     if form.validate_on_submit():
         book.inv_number = form.inv_number.data
@@ -131,18 +131,13 @@ def books_update(book_id):
 @books.route("/books/add", methods=['GET', 'POST'])
 @login_required
 def books_add():
-    form = BookCreateUpdateForm()
+    form = BookCreateForm()
     if form.validate_on_submit():
         book = Book()
-        book_duplicate = Book.query.filter(Book.inv_number==form.inv_number.data).first()
         book.inv_number = form.inv_number.data
         book.signature = form.signature.data
         book.title = form.title.data
         book.author = form.author.data
-        if book_duplicate:
-            book_duplicate.has_error = True
-            book.has_error = True
-            flash(gettext('Book with the same inventory number already exists')+'!', 'warning')
         db.session.add(book)
         db.session.commit()
         flash(gettext('Book is successfuly added')+'.', 'success')
@@ -185,7 +180,7 @@ def book_rent(member_id):
             if book_duplicate and not book_duplicate.is_rented:
                 book_id = book_duplicate.id
                 book_duplicate.is_rented = True
-                flash(gettext('Book with the same inventory number already exists')+'.', 'info')
+                flash(gettext('Book with this inventory number already exists')+'.', 'info')
             else:
                 new_book = Book()
                 new_book.inv_number = form.inv_number.data

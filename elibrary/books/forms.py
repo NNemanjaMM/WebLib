@@ -3,6 +3,7 @@ from flask_wtf import FlaskForm
 from flask_babel import gettext, lazy_gettext as _l
 from wtforms import StringField, SubmitField, DateField, SelectField, BooleanField
 from wtforms.validators import ValidationError
+from elibrary.models import Book
 from elibrary.utils.custom_validations import optional_cust, required_cust, required_cust_date, string_cust, length_cust, signature_cust, numeric_cust
 from elibrary.utils.defines import DATE_FORMAT, BACKWARD_INPUT_LIMIT
 
@@ -19,13 +20,19 @@ class SearchForm(FlaskForm):
     text = StringField(_l('Search for'), validators=[optional_cust(), string_cust(), length_cust(max=50)])
     submit = SubmitField(_l('Search'))
 
-class BookCreateUpdateForm(FlaskForm):
+class BookUpdateForm(FlaskForm):
     inv_number = StringField(_l('Inventory number'), validators=[required_cust(), numeric_cust(), length_cust(max=6)])
     signature = StringField(_l('Signature'), validators=[required_cust(), signature_cust(), length_cust(max=15)])
     title = StringField(_l('Title'), validators=[required_cust(), string_cust(), length_cust(max=50)])
     author = StringField(_l('Author'), validators=[required_cust(), string_cust(), length_cust(max=50)])
     has_error = BooleanField(_l('Has error') + ' (' + _l('book has a problematic inventory number') + ')')
     submit = SubmitField(_l('Submit'))
+
+class BookCreateForm(BookUpdateForm):
+    def validate_inv_number(self, inv_number):
+        book_duplicate = Book.query.filter(Book.inv_number==inv_number.data).first()
+        if book_duplicate:
+            raise ValidationError(_l('Book with the same inventory number already exists') + '.')
 
 class RentForm(FlaskForm):
     date_rented = StringField(_l('Rent date'))
