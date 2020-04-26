@@ -1,6 +1,11 @@
 {% extends "base_layout.html" %}
 {% block content %}
-    <h1>{{ title }}</h1>
+
+{% if admin_is_editing %}
+    <h1>{{ gettext('Account details') }}</h1>
+{% else %}
+    <h1>{{ gettext('My account') }}</h1>
+{% endif %}
 
     <p>
         {{ gettext('First name') }}
@@ -31,13 +36,6 @@
     </p>
 
     <p>
-        {{ gettext('Registration date') }}
-        <strong>
-            {{ account.date_registered_print }}
-        </strong>
-    </p>
-
-    <p>
         {{ gettext('E-mail address') }}
         <strong>
             {{ account.email }}
@@ -48,6 +46,13 @@
         {{ gettext('Username') }}
         <strong>
             {{ account.username }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('Registration date') }}
+        <strong>
+            {{ account.date_registered_print }}
         </strong>
     </p>
 
@@ -63,7 +68,7 @@
     </p>
 
     <p>
-        {{ gettext('Account is operational') }}
+        {{ gettext('Account is active') }}
         <strong>
             {% if account.is_operational %}
                 {{ gettext('Yes') }}
@@ -107,7 +112,7 @@
                     <a href="{{ url_for('librarians.librarians_availability', librarian_id=account.id) }}">{{ gettext('Enable account') }}</a>
                 {% endif %}
             {% elif current_user.id == account.id %}
-                {{ gettext('This is your account. If you wish to edit it, please go to My account page.') }}
+                {{ gettext('This is your account. If you wish to edit it, please go to page') }} {{ gettext('My account') }}.
             {% endif %}
         </p>
     {% else %}

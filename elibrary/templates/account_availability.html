@@ -41,7 +41,7 @@
 <div>
     <fieldset>
         <p>
-            {{ gettext('Do you approve librarian\'s account availability change') }}?
+            {{ gettext('Do you approve librarian\'s account availability update') }}?
             <br/>
             {% if librarian.is_operational %}
                 {{ gettext('From') }} <strong>{{gettext('Enabled') }}</strong> {{ gettext('to') }} <strong>{{ gettext('Disabled') }}</strong>.
@@ -53,7 +53,7 @@
             {{ form.hidden_tag() }}
             <div>
                 {{ form.approve }}
-                
+
                 {{ form.reject }}
             </div>
         </form>

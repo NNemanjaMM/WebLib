@@ -38,7 +38,7 @@ def members_create():
         member.date_expiration = form.date_registered.data
         db.session.add(member)
         db.session.commit()
-        flash(gettext('New member has been added')+'.', 'success')
+        flash(gettext('Member is successfully added')+'.', 'success')
         return redirect(url_for('members.members_details', member_id=member.id))
     return render_template('member_cu.html', form=form, is_creating=True)
 
@@ -56,7 +56,7 @@ def members_update(member_id):
         member.phone = form.phone.data.replace("/", "")
         member.address = form.address.data
         db.session.commit()
-        flash(gettext('Member data has been updated')+'.', 'success')
+        flash(gettext('Member data is successfully updated')+'.', 'success')
         return redirect(url_for('members.members_details',member_id=member.id))
     elif request.method == 'GET':
         form.first_name.data = member.first_name
@@ -165,7 +165,7 @@ def memberss(filtering = False, searching = False):
 
     count_filtered = my_query.count()
     if filter_has_errors:
-        flash(gettext('There are filter values with errors')+'. '+gettext('However, valid filter values are applied')+'.', 'warning')
+        flash(gettext('There are filter values with errors. However, valid filter values are applied.'), 'warning')
     if sort_direction == 'up':
         list = my_query.order_by(sort_criteria).paginate(page=page, per_page=PAGINATION)
     else:

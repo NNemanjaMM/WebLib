@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from flask_babel import gettext, lazy_gettext as _l
+from flask_babel import gettext as _l
 from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, optional
 

@@ -13,28 +13,28 @@ class ExtensionForm(FlaskForm):
     date_expiration = None
     price = QuerySelectField(_l('Price'), query_factory=lambda: ExtensionPrice.query.filter_by(is_enabled=True).order_by(ExtensionPrice.price_value))
     note = TextAreaField(_l('Note'), validators=[optional_cust(), string_cust(), length_cust(max=150)])
-    date_performed = DateField(_l('Extension performed on'), validators=[required_cust_date()], format=DATE_FORMAT, default=date.today())
+    date_performed = DateField(_l('Date extended'), validators=[required_cust_date()], format=DATE_FORMAT, default=date.today())
     submit = SubmitField(_l('Extend membership'))
 
     def validate_date_performed(self, date_performed):
         if date_performed.data > date.today():
-            raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set in future') + '.')
+            raise ValidationError(_l('Date can not be set in future') + '.')
         elif self.date_expiration < date.today():
             if date_performed.data < date.today() - timedelta(BACKWARD_INPUT_LIMIT):
-                raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days') + '.')
+                raise ValidationError(_l('Date cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days') + '.')
         elif self.date_expiration >= date.today():
             if date_performed.data < self.date_expiration - timedelta(BACKWARD_INPUT_LIMIT):
-                raise ValidationError(_l('Extension date') + ' '+ _l('cannot be set more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days before the curent membership expiration date') + '.')
+                raise ValidationError(_l('Date cannot be set more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days before the curent membership expiration date') + '.')
 
     def validate_price(self, price):
         if not price.data == None:
             found = ExtensionPrice.query.filter_by(id=price.data.id).first()
             if not found:
-                raise ValidationError(_l('Price value is not valid') + '.')
+                raise ValidationError(_l('Value is not a valid price') + '.')
 
 class FilterForm(FlaskForm):
-    date_performed_from = StringField(_l('Expanded after'))
-    date_performed_to = StringField(_l('Expanded before'))
+    date_performed_from = StringField(_l('Extended after'))
+    date_performed_to = StringField(_l('Extended before'))
     date_extended_from = StringField(_l('Membership expires after'))
     date_extended_to = StringField(_l('Membership expires before'))
     price = QuerySelectField(_l('Price'), query_factory=lambda: ExtensionPrice.query.order_by(ExtensionPrice.price_value), allow_blank=True, blank_text=_l('Not selected'))
@@ -50,14 +50,14 @@ class PriceAdd(FlaskForm):
     currency = StringField(_l('Currency'), validators=[required_cust(), char_cust(), length_cust(max=3)])
     note = TextAreaField(_l('Note'), validators=[optional_cust(), string_cust(), length_cust(max=150)])
     is_enabled = BooleanField(_l('Enable price upon creation'))
-    submit = SubmitField(_l('Submit'))
+    submit = SubmitField(_l('Add price'))
 
     def validate_price_value(self, price_value):
         if price_value.data < 0.0:
-            raise ValidationError(_l('Price value can not be lower than zero')+'.')
+            raise ValidationError(_l('Price can not be lower than zero')+'.')
         elif price_value.data > 100.0:
-            raise ValidationError(_l('Price value can not be higher than hundred')+'.')
+            raise ValidationError(_l('Price can not be higher than hundred')+'.')
         else:
             exists = ExtensionPrice.query.filter(and_(ExtensionPrice.price_value==price_value.data, ExtensionPrice.currency==self.currency.data)).first()
             if not exists == None:
-                raise ValidationError(_l('Price value already exists')+'. '+_l('Please consider activating the existing one')+'.')
+                raise ValidationError(_l('Price value already exists, please consider activating the existing one')+'.')

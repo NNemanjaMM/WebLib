@@ -4,7 +4,7 @@
 <h1>{{ gettext('Defined prices') }}</h1>
 
 {% if current_user.is_admin %}
-    <a href="{{ url_for('extensions.prices_add') }}">{{ gettext('Add price') }}</a>
+    <a href="{{ url_for('extensions.prices_add') }}">{{ gettext('Create price') }}</a>
 {% endif %}
 
 <p>

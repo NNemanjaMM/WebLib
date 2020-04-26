@@ -6,7 +6,7 @@
 
 {% if current_user.is_admin %}
     <a href="{{ url_for('extensions.prices') }}">{{ gettext('Review prices') }}</a>
-    <a href="{{ url_for('extensions.prices_add') }}">{{ gettext('Add price') }}</a>
+    <a href="{{ url_for('extensions.prices_add') }}">{{ gettext('Create price') }}</a>
 {% endif %}
 
 <div>

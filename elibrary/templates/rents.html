@@ -122,7 +122,7 @@
         <a href="{{ url_for('books.book_rents', sort_by='date_performed', direction='down', **extra_filter_args) }}"> &or;</a>
     </span>
     <span>
-        {{ gettext('Return deadline') }}
+        {{ gettext('Deadline') }}
         <a href="{{ url_for('books.book_rents', sort_by='date_deadline', direction='up', **extra_filter_args) }}"> &and; </a>
         <a href="{{ url_for('books.book_rents', sort_by='date_deadline', direction='down', **extra_filter_args) }}"> &or;</a>
     </span>

@@ -23,17 +23,6 @@
                 {% endif %}
             </div>
             <div>
-                {{ form.last_name.label }}
-                {{ form.last_name }}
-                {% if form.last_name.errors %}
-                    <div>
-                        {% for error in form.last_name.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div>
                 {{ form.father_name.label }}
                 {{ form.father_name }}
                 {% if form.father_name.errors %}
@@ -45,22 +34,22 @@
                 {% endif %}
             </div>
             <div>
-                {{ form.profession.label }}
-                {{ form.profession }}
-                {% if form.profession.errors %}
+                {{ form.last_name.label }}
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
                     <div>
-                        {% for error in form.profession.errors %}
+                        {% for error in form.last_name.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
                 {% endif %}
             </div>
             <div>
-                {{ form.email.label }}
-                {{ form.email }}
-                {% if form.email.errors %}
+                {{ form.profession.label }}
+                {{ form.profession }}
+                {% if form.profession.errors %}
                     <div>
-                        {% for error in form.email.errors %}
+                        {% for error in form.profession.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
@@ -83,6 +72,17 @@
                 {% if form.address.errors %}
                     <div>
                         {% for error in form.address.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.email.label }}
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div>
+                        {% for error in form.email.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>

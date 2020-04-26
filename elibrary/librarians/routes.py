@@ -31,10 +31,10 @@ def login():
                 next_page = request.args.get('next')
                 return redirect(next_page) if next_page else redirect(url_for('main.home'))
             else:
-                flash(gettext('Login Unsuccessful')+'. '+gettext('This user is inactive')+'.', 'danger')
-                flash(gettext('For the activation consult the administrator')+'. ', 'danger')
+                flash(gettext('Login unsuccessfull')+'. ', 'danger')
+                flash(gettext('This user is inactive. For the activation consult the administrator.'), 'danger')
         else:
-            flash(gettext('Login Unsuccessful')+'. '+gettext('Please check username and password')+'.', 'danger')
+            flash(gettext('Login unsuccessfull')+'. '+gettext('Please check username and password')+'.', 'danger')
     form.username.data=''
     return render_template('login.html', title=gettext('Login'), form=form)
 
@@ -49,19 +49,19 @@ def login_password_reset():
             if librarian.first_name == form.first_name.data and librarian.last_name == form.last_name.data:
                 librarian.change_password = True
                 db.session.commit()
-                flash(gettext('Reset password request has been sent to the administrator')+'.', 'success')
+                flash(gettext('Reset password request is successfully sent to the administrator')+'.', 'success')
                 return redirect(url_for('librarians.login'))
-        flash(gettext('Combination of the username, first and last name does not exist')+'.', 'error')
+        flash(gettext('Combination of the username, first name and last name does not exist')+'.', 'error')
         flash(gettext('Please check your input and try again')+'.', 'error')
     form.username.data=''
     form.first_name.data=''
     form.last_name.data=''
-    return render_template('login_password_reset.html', form=form, title=gettext('Password Change Request'))
+    return render_template('login_password_reset.html', form=form, title=gettext('Password change request'))
 
 @librarians.route("/account")
 @login_required
 def account():
-    return render_template('account.html', account=current_user, title=gettext('My account'), admin_is_editing=False)
+    return render_template('account.html', account=current_user, admin_is_editing=False)
 
 @librarians.route("/account/update", methods=['GET', 'POST'])
 @login_required
@@ -74,7 +74,7 @@ def account_change():
         current_user.phone = form.phone.data.replace("/", "")
         current_user.address = form.address.data
         db.session.commit()
-        flash(gettext('Account has been updated')+'.', 'success')
+        flash(gettext('Account data is successfully updated')+'.', 'success')
         return redirect(url_for('librarians.account'))
     elif request.method == 'GET':
         form.first_name.data = current_user.first_name
@@ -93,7 +93,7 @@ def account_password():
             current_user.password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
             current_user.change_password = False
             db.session.commit()
-            flash(gettext('Account password has been updated')+'.', 'success')
+            flash(gettext('Account password is successfully updated')+'.', 'success')
             return redirect(url_for('librarians.account'))
         else:
             flash(gettext('Current password value is not correct')+'.', 'error')
@@ -129,7 +129,7 @@ def librarians_details(librarian_id):
     if not current_user.is_admin:
         abort(403)
     librarian = Librarian.query.get_or_404(librarian_id)
-    return render_template('account.html', account=librarian, title=gettext('Account details'), admin_is_editing=True)
+    return render_template('account.html', account=librarian, admin_is_editing=True)
 
 @librarians.route("/librarians/create", methods=['GET', 'POST'])
 @login_required
@@ -150,7 +150,7 @@ def librarians_create():
         librarian.is_admin = form.is_administrator.data
         db.session.add(librarian)
         db.session.commit()
-        flash(gettext('Account has been created')+'.', 'success')
+        flash(gettext('Account is successfully added')+'.', 'success')
         return redirect(url_for('librarians.librarianss'))
     return render_template('account_cu.html', form=form, is_creating=True)
 
@@ -169,7 +169,7 @@ def librarians_password(librarian_id):
         librarian.password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
         librarian.change_password = False
         db.session.commit()
-        flash(gettext('Account password has been updated')+'.', 'success')
+        flash(gettext('Account password is successfully updated')+'.', 'success')
         return redirect(url_for('librarians.librarians_details', librarian_id=librarian.id))
     return render_template('account_password_change_request.html', form=form, librarian=librarian)
 
@@ -184,10 +184,10 @@ def librarians_availability(librarian_id):
     form_decide = AcceptRejectForm()
     if not request.method == 'GET':
         if form_decide.reject.data and form_decide.validate():
-            flash(gettext('Account availability is not changed')+'.', 'info')
+            flash(gettext('Account availability is not updated')+'.', 'info')
         elif form_decide.approve.data and form_decide.validate():
             librarian.is_operational = not librarian.is_operational
-            flash(gettext('Account availability is changed')+'.', 'info')
+            flash(gettext('Account availability is successfully updated')+'.', 'info')
         db.session.commit()
         return redirect(url_for('librarians.librarianss'))
     return render_template('account_availability.html', form=form_decide, librarian=librarian)
@@ -218,15 +218,15 @@ def librarians_administrate(librarian_id):
     if not librarian.is_admin:  # treba da postane administrator
         ch_regular_to_admin = True
         msg_title = gettext('Add librarian as administrator')
-        msg_approve = gettext('Do you approve setting this librarian as the administrator')+'?'
+        msg_approve = gettext('Please approve setting this librarian as the administrator')+'?'
     elif librarian.is_admin and not current_user.id == librarian_id: # trazimo da se iskljuci admin
         ch_admin_disable_req = True
-        msg_title = gettext('Request librarian removal from administrators')
-        msg_approve = gettext('Approve your request to remove this librarian from administrators')+'?'
+        msg_title = gettext('Librarian removal from administrators request')
+        msg_approve = gettext('Please approve your request to remove this librarian from administrators')+'.'
     elif librarian.is_admin and current_user.id == librarian_id and librarian.change_admin: # odlucuje da li ce prestati da bude admin
         ch_admin_disable_resp = True
-        msg_title = gettext('Confirm your removal from administrators')
-        msg_approve = gettext('Approve your removal from administrators')+'?'
+        msg_title = gettext('Your removal from administrators request')
+        msg_approve = gettext('Please approve or reject your removal from administrators')+'.'
 
     if request.method == 'GET':
         return render_template('account_administrate_request.html', form=form_decide, librarian=librarian, title=msg_title, text=msg_approve)
@@ -240,16 +240,16 @@ def librarians_administrate(librarian_id):
     if success:
         if ch_regular_to_admin and response:
             librarian.is_admin = True
-            flash(gettext('You successfuly promoted librarian to the administrator')+'.', 'info')
+            flash(gettext('Librarian is successfully promoted to the administrator')+'.', 'info')
         elif ch_admin_disable_req and response:
             librarian.change_admin = True
-            flash(gettext('You successfuly created a request to remove librarian from the administrators')+'.', 'info')
+            flash(gettext('You successfully created a request to remove librarian from the administrators')+'.', 'info')
         elif ch_admin_disable_resp and response:
             librarian.is_admin = False
             librarian.change_admin = False
-            flash(gettext('You are successfuly removed from the administrators')+'.', 'info')
+            flash(gettext('You are successfully removed from the administrators')+'.', 'info')
         elif ch_admin_disable_resp and not response:
             librarian.change_admin = False
-            flash(gettext('You successfuly rejected request to be removed from the administrators')+'.', 'info')
+            flash(gettext('You successfully rejected request to be removed from the administrators')+'.', 'info')
         db.session.commit()
     return redirect(url_for('librarians.librarianss'))

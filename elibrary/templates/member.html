@@ -27,16 +27,16 @@
     </p>
 
     <p>
-        {{ gettext('Last name') }}
+        {{ gettext('Father name') }}
         <strong>
-            {{ member.last_name }}
+            {{ member.father_name }}
         </strong>
     </p>
 
     <p>
-        {{ gettext('Father name') }}
+        {{ gettext('Last name') }}
         <strong>
-            {{ member.father_name }}
+            {{ member.last_name }}
         </strong>
     </p>
 
@@ -48,14 +48,7 @@
     </p>
 
     <p>
-        {{ gettext('E-mail') }}
-        <strong>
-            {{ member.email }}
-        </strong>
-    </p>
-
-    <p>
-        {{ gettext('Phone number') }}
+        {{ gettext('Phone') }}
         <strong>
             {{ member.phone_print }}
         </strong>
@@ -65,6 +58,13 @@
         {{ gettext('Address') }}
         <strong>
             {{ member.address }}
+        </strong>
+    </p>
+
+    <p>
+        {{ gettext('E-mail address') }}
+        <strong>
+            {{ member.email }}
         </strong>
     </p>
 
@@ -109,7 +109,7 @@
         {% elif member.number_of_rented_books >= max_books %}
             <strong>{{ gettext('Members can not rent more than') }} {{ max_books }} {{ gettext('books at a time') }}</strong>
         {% else %}
-            <a href="{{ url_for('books.book_rent', member_id=member.id) }}">{{ gettext('Rent a book') }}</a>
+            <a href="{{ url_for('books.book_rent', member_id=member.id) }}">{{ gettext('Rent book') }}</a>
         {% endif %}
     </p>
 

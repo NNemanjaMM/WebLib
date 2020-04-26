@@ -13,8 +13,8 @@ class UserForm(FlaskForm):
     last_name = StringField(_l('Last name'), validators=[required_cust(), length_cust(max=30), string_cust()])
     father_name = StringField(_l('Father name'), validators=[required_cust(), length_cust(max=20), string_cust()])
     profession = StringField(_l('Profession'), validators=[required_cust(), length_cust(max=50), string_cust()])
-    email = StringField(_l('E-mail'), validators=[optional_cust(), email_cust(), length_cust(max=50)])
-    phone = StringField(_l('Phone number'), validators=[required_cust(), phone_cust()])
+    email = StringField(_l('E-mail address'), validators=[optional_cust(), email_cust(), length_cust(max=50)])
+    phone = StringField(_l('Phone'), validators=[required_cust(), phone_cust()])
     address = StringField(_l('Address'), validators=[required_cust(), length_cust(max=60), string_cust()])
 
 class MemberCreateForm(UserForm):
@@ -23,9 +23,9 @@ class MemberCreateForm(UserForm):
 
     def validate_date_registered(self, date_registered):
         if date_registered.data > date.today():
-            raise ValidationError(_l('Registration date') + ' '+ _l('cannot be set in future') + '.')
+            raise ValidationError(_l('Date can not be set in future') + '.')
         elif date_registered.data < date.today() - timedelta(BACKWARD_INPUT_LIMIT):
-            raise ValidationError(_l('Registration date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days') + '.')
+            raise ValidationError(_l('Date cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days') + '.')
 
 class MemberUpdateForm(UserForm):
     submit = SubmitField(_l('Update member'))
@@ -40,8 +40,8 @@ class FilterForm(FlaskForm):
     id = StringField(_l('Member id'))
     first_name = StringField(_l('First name'))
     last_name = StringField(_l('Last name'))
-    has_rented_books = SelectField(_l('Has currently rented books'), choices=[('none', '('+_l('Not selected')+')'), ('yes', _l('Yes')), ('no', _l('No'))])
-    has_expired = SelectField(_l('Membership status'), choices=[('no_option', '('+_l('Not selected')+')'), ('expired', _l('Membership expired')), ('near_expiration', _l('Membership near expiration')), ('active', _l('Membership active'))])
+    has_rented_books = SelectField(_l('Has currently rented books'), choices=[('none', _l('Not selected')), ('yes', _l('Yes')), ('no', _l('No'))])
+    has_expired = SelectField(_l('Membership status'), choices=[('no_option', _l('Not selected')), ('expired', _l('Membership expired')), ('near_expiration', _l('Membership near expiration')), ('active', _l('Membership active'))])
     submit = SubmitField(_l('Filter'))
 
 class ShortFilterForm(FlaskForm):

@@ -12,27 +12,30 @@ class FilterForm(FlaskForm):
     signature = StringField(_l('Signature'))
     title = StringField(_l('Title'))
     author = StringField(_l('Author'))
-    is_rented = SelectField(_l('Is rented'), choices=[('none', '('+_l('Not selected')+')'), ('yes', _l('Yes')), ('no', _l('No'))])
-    has_error = SelectField(_l('Has error'), choices=[('none', '('+_l('Not selected')+')'), ('yes', _l('Yes')), ('no', _l('No'))])
+    is_rented = SelectField(_l('Is rented'), choices=[('none', _l('Not selected')), ('yes', _l('Yes')), ('no', _l('No'))])
+    has_error = SelectField(_l('Has error'), choices=[('none', _l('Not selected')), ('yes', _l('Yes')), ('no', _l('No'))])
     submit = SubmitField(_l('Filter'))
 
 class SearchForm(FlaskForm):
     text = StringField(_l('Search for'), validators=[optional_cust(), string_cust(), length_cust(max=50)])
     submit = SubmitField(_l('Search'))
 
-class BookUpdateForm(FlaskForm):
+class BookCUForm(FlaskForm):
     inv_number = StringField(_l('Inventory number'), validators=[required_cust(), numeric_cust(), length_cust(max=6)])
     signature = StringField(_l('Signature'), validators=[required_cust(), signature_cust(), length_cust(max=15)])
     title = StringField(_l('Title'), validators=[required_cust(), string_cust(), length_cust(max=50)])
     author = StringField(_l('Author'), validators=[required_cust(), string_cust(), length_cust(max=50)])
     has_error = BooleanField(_l('Has error') + ' (' + _l('book has a problematic inventory number') + ')')
-    submit = SubmitField(_l('Submit'))
 
-class BookCreateForm(BookUpdateForm):
+class BookUpdateForm(BookCUForm):
+    submit = SubmitField(_l('Update book'))
+
+class BookCreateForm(BookCUForm):
+    submit = SubmitField(_l('Add book'))
     def validate_inv_number(self, inv_number):
         book_duplicate = Book.query.filter(Book.inv_number==inv_number.data).first()
         if book_duplicate:
-            raise ValidationError(_l('Book with the same inventory number already exists') + '.')
+            raise ValidationError(_l('Book with this inventory number') + ' ' +_l('already exists'))
 
 class RentForm(FlaskForm):
     date_rented = StringField(_l('Rent date'))
@@ -40,27 +43,27 @@ class RentForm(FlaskForm):
     signature = StringField(_l('Signature'))
     title = StringField(_l('Title'))
     author = StringField(_l('Author'))
-    submit = SubmitField(_l('Submit'))
+    submit = SubmitField(_l('Rent book'))
     search = SubmitField(_l('Search'))
 
 class RentTerminationForm(FlaskForm):
     date_rented = None
-    date_returned = DateField(_l('Book return date'), validators=[required_cust_date()], format=DATE_FORMAT)
-    submit = SubmitField(_l('Submit'))
+    date_returned = DateField(_l('Return date'), validators=[required_cust_date()], format=DATE_FORMAT)
+    submit = SubmitField(_l('Return book'))
 
     def validate_date_returned(self, date_returned):
         if date_returned.data > date.today():
-            raise ValidationError(_l('Book return date') + ' '+ _l('cannot be set in future') + '.')
+            raise ValidationError(_l('Date can not be set in future') + '.')
         elif date_returned.data < date.today() - timedelta(BACKWARD_INPUT_LIMIT):
-            raise ValidationError(_l('Book return date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days') + '.')
+            raise ValidationError(_l('Date cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days') + '.')
         elif date_returned.data < self.date_rented:
-            raise ValidationError(_l('Book cannot be returned before its rental') + '.')
+            raise ValidationError(_l('Return date can not be set before rent date') + '.')
 
 class RentFilterForm(FlaskForm):
     book_id = StringField(_l('Book id'))
     member_id = StringField(_l('Member id'))
-    is_terminated = SelectField(_l('Is returned'), choices=[('none', '('+_l('Not selected')+')'), ('yes', _l('Yes')), ('no', _l('No'))])
-    is_deadlime_passed = SelectField(_l('Is deadline passed'), choices=[('none', '('+_l('Not selected')+')'), ('yes', _l('Yes')), ('no', _l('No'))])
+    is_terminated = SelectField(_l('Is returned'), choices=[('none', _l('Not selected')), ('yes', _l('Yes')), ('no', _l('No'))])
+    is_deadlime_passed = SelectField(_l('Is deadline passed'), choices=[('none', _l('Not selected')), ('yes', _l('Yes')), ('no', _l('No'))])
     date_performed_from = StringField(_l('Rent date after'))
     date_performed_to = StringField(_l('Rent date before'))
     date_deadline_from = StringField(_l('Deadline date after'))

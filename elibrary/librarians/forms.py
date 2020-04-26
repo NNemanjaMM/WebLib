@@ -19,8 +19,8 @@ class LibrarianBaseForm(FlaskForm):
     last_name = StringField(_l('Last name'), validators=[required_cust(), length_cust(max=30), string_cust()])
 
 class LibrarianForm(LibrarianBaseForm):
-    email = StringField(_l('E-mail'), validators=[optional_cust(), email_cust(), length_cust(max=50)])
-    phone = StringField(_l('Phone number'), validators=[required_cust(), phone_cust()])
+    email = StringField(_l('E-mail address'), validators=[optional_cust(), email_cust(), length_cust(max=50)])
+    phone = StringField(_l('Phone'), validators=[required_cust(), phone_cust()])
     address = StringField(_l('Address'), validators=[required_cust(), length_cust(max=60), string_cust()])
 
     def validate_username(self, username):
@@ -38,16 +38,16 @@ class LibrarianCreateForm(LibrarianForm):
 
     def validate_date_registered(self, date_registered):
         if date_registered.data > date.today():
-            raise ValidationError(_l('Registration date') + ' '+ _l('cannot be set in future') + '.')
+            raise ValidationError(_l('Date can not be set in future') + '.')
         elif date_registered.data < date.today() - timedelta(BACKWARD_INPUT_LIMIT):
-            raise ValidationError(_l('Registration date') + ' '+ _l('cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days') + '.')
+            raise ValidationError(_l('Date cannot be set in past for more than') + ' ' + str(BACKWARD_INPUT_LIMIT) + ' ' + _l('days') + '.')
 
 class LibrarianUpdateForm(LibrarianForm):
     submit = SubmitField(_l('Update librarian'))
 
 class LibrarianRequestChangePasswordForm(LibrarianBaseForm):
     username = StringField(_l('Username'), validators=[required_cust(), length_cust(min=6, max=30), username_cust()])
-    submit = SubmitField(_l('Request password change'))
+    submit = SubmitField(_l('Send request'))
 
 class LibrarianChangePasswordForm(FlaskForm):
     new_password = PasswordField(_l('Password'), validators=[required_cust(), length_cust(min=6)])

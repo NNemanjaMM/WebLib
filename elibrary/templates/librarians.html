@@ -3,7 +3,7 @@
 
 <h1>{{ gettext('Librarians') }}</h1>
 
-<a href="{{ url_for('librarians.librarians_create') }}">{{ gettext('Add new librarian') }}</a>
+<a href="{{ url_for('librarians.librarians_create') }}">{{ gettext('Add librarian') }}</a>
 <br/>
 
 {% if include_disabled %}
@@ -45,7 +45,7 @@
         {% endif %}
 
         {% if not librarian.is_operational %}
-            <span>{{ gettext('Is not operational') }}</span>
+            <span>{{ gettext('Is not active') }}</span>
         {% endif %}
 
         {% if librarian.change_password %}
