@@ -1,5 +1,5 @@
-from datetime import date, timedelta
-from elibrary.models import Librarian, Member, ExtensionPrice, Book, Extension, Rental
+from datetime import date, datetime, timedelta
+from elibrary.models import Librarian, Member, ExtensionPrice, Book, Extension, Rental, Event, EventType
 from elibrary import db, create_app, bcrypt
 
 app = create_app()
@@ -14,6 +14,7 @@ with app.app_context():
     admin2 = Librarian(first_name='Pera', last_name='Perić', username='pera.peric', password=pass2, phone='0651128767', address='Peroslava Perića 5, Bileća', is_admin=True, date_registered=date(1991, 7, 23))
     admin1 = Librarian(first_name='Mika', last_name='Mikić', username='mika.mikic', password=pass1, email='mikam@gmail.com', phone='+387664408404', address='Milivoja Mikića 3, Nevesinje', date_registered=date(2013, 9, 3))
     admin3 = Librarian(first_name='Đoka', last_name='Đokić', username='djoka.djokic', password=pass3, email='djoka.kralj@outlook.com', phone='0591128767', address='Đorđija Đokića 21, Istočno Sarajevo', date_registered=date(2002, 11, 14), is_active=False)
+        
     db.session.add(admin1)
     db.session.add(admin2)
     db.session.add(admin3)
@@ -37,16 +38,17 @@ with app.app_context():
     book2 = Book(id=2, signature='21.125-123-55', inv_number='45', title='Prokleta avlija', author='Ivo Andrić', is_rented=True, has_error=False)
     book3 = Book(id=3, signature='21.125-123-76', inv_number='76', title='Znamenje anđela', author='Dejan Stojiljković', is_rented=True, has_error=False)
     book4 = Book(id=4, signature='23.543-321-77', inv_number='104', title='Olujni bedem', author='Dejan Stojiljković', is_rented=False, has_error=False)
-    book5 = Book(id=5, signature='64.243-987-02', inv_number='176', title='Stefan Prvovenčani', author='Luka Mičeta', is_rented=True, has_error=True)
-    book6 = Book(id=6, signature='64.243-879-27', inv_number='176', title='Stefan Nemanja', author='Luka Mičeta', is_rented=False, has_error=True)
+    book5 = Book(id=5, signature='64.243-987-02', inv_number='175', title='Stefan Prvovenčani', author='Luka Mičeta', is_rented=True, has_error=False)
+    book6 = Book(id=6, signature='64.243-879-27', inv_number='176', title='Stefan Nemanja', author='Luka Mičeta', is_rented=False, has_error=False)
     book7 = Book(id=7, signature='18.723-908-41', inv_number='608', title='Savršeno sećanje na smrt', author='Radoslav Petković', is_rented=False, has_error=False)
     book8 = Book(id=8, signature='15.127-436-13', inv_number='732', title='Simeonov pečat', author='Vanja Bulić', is_rented=True, has_error=False)
-    book9 = Book(id=9, signature='96.598-702-48', inv_number='828', title='Dnevnik jednog čarobnjaka', author='Paolo Koeljo', is_rented=False, has_error=False)
+    book9 = Book(id=9, signature='96.598-702-48', inv_number='732', title='Dnevnik jednog čarobnjaka', author='Paolo Koeljo', is_rented=False, has_error=True)
     book10 = Book(id=10, signature='15.127-809-43', inv_number='1004', title='Kada govori mrtav kralj', author='Ivan Miladinović', is_rented=True, has_error=False)
     book11 = Book(id=11, signature='74.183-704-33', inv_number='3298', title='Nulta krvna grupa', author='Slavko Nikić', is_rented=True, has_error=False)
     book12 = Book(id=12, signature='96.598-702-48', inv_number='3305', title='Peta Gora', author='Paolo Koeljo', is_rented=False, has_error=False)
     book13 = Book(id=13, signature='38.563-123-78', inv_number='6987', title='Komitet 300', author='Džon Kolman', is_rented=True, has_error=False)
-    book14 = Book(id=14, signature='96.598-702-48', inv_number='10238', title='Peta Gora', author='Paolo Koeljo', is_rented=True, has_error=False)
+    book14 = Book(id=14, signature='96.598-702-48', inv_number='10238', title='Peta Gora', author='Paolo Koeljo', is_rented=True, has_error=False)  
+
     db.session.add(book1)
     db.session.add(book2)
     db.session.add(book3)
@@ -62,10 +64,11 @@ with app.app_context():
     db.session.add(book13)
     db.session.add(book14)
 
-    price1 = ExtensionPrice(id=1, price_value=0.0, currency='KM', note="Besplatno")
-    price2 = ExtensionPrice(id=2, price_value=7.99, currency='KM', note="Letnji popust", is_enabled=False)
-    price3 = ExtensionPrice(id=3, price_value=10.0, currency='KM')
+    price1 = ExtensionPrice(id=1, price_value=10.00, currency='KM')
+    price2 = ExtensionPrice(id=2, price_value=0.00, currency='KM', note="Besplatno")
+    price3 = ExtensionPrice(id=3, price_value=7.99, currency='KM', note="Letnji popust", is_enabled=False)
     price4 = ExtensionPrice(id=4, price_value=14.00, currency='KM', note="Novogodišnja akcija - dve članarine", is_enabled=False)
+        
     db.session.add(price1)
     db.session.add(price2)
     db.session.add(price3)
@@ -85,6 +88,7 @@ with app.app_context():
     extension12 = Extension(note='Član 104 ne plaća jer ovaj član plaća iznos akcije', price=14.00, date_performed=date(2019, 12, 30), date_extended=date(2020, 12, 30), price_id=4, member_id=103, price_details=price4, member=member6)
     extension13 = Extension(note='Ovaj član ne plaća članarinu, jer član 103 plaća iznos akcije', price=0.00, date_performed=date(2019, 12, 30), date_extended=date(2020, 12, 30), price_id=1, member_id=104, price_details=price1, member=member7)
     extension14 = Extension(note='', price=10.00, date_performed=date(2020, 2, 24), date_extended=date(2021, 2, 24), price_id=3, member_id=3, price_details=price3, member=member1)
+       
     db.session.add(extension1)
     db.session.add(extension2)
     db.session.add(extension3)
@@ -124,6 +128,7 @@ with app.app_context():
     rental22 = Rental(date_performed=date.today()-timedelta(5), date_deadline=date.today()+timedelta(9), date_termination=None, is_terminated=False, book_id=12, member_id=103, book=book12, member=member6)
     rental23 = Rental(date_performed=date.today()-timedelta(1), date_deadline=date.today()+timedelta(13), date_termination=None, is_terminated=False, book_id=14, member_id=76, book=book14, member=member5)
     rental24 = Rental(date_performed=date.today(), date_deadline=date.today()+timedelta(14), date_termination=None, is_terminated=False, book_id=2, member_id=103, book=book2, member=member6)
+    
     db.session.add(rental1)
     db.session.add(rental2)
     db.session.add(rental3)
@@ -148,5 +153,114 @@ with app.app_context():
     db.session.add(rental22)
     db.session.add(rental23)
     db.session.add(rental24)
-
+    
+    events = [
+        Event(time=datetime(1998,2,12,8,12), type=41, librarian='djoka.djokic', message='Cena sa oznakom 1 i iznosom 0.00 KM je dodata.'),
+        Event(time=datetime(1998,2,14,10,42), type=1, librarian='djoka.djokic', message='Knjiga sa oznakom 2 je dodata.'),
+        Event(time=datetime(1998,2,14,10,53), type=1, librarian='djoka.djokic', message='Knjiga sa oznakom 3 je dodata.'),
+        Event(time=datetime(1998,2,14,10,53), type=3, librarian='djoka.djokic', message='Knjiga sa oznakom 3 je označena sa greškom inventarnog broja koji je postavljen na "75"'),
+        Event(time=datetime(1998,2,14,10,59), type=1, librarian='djoka.djokic', message='Knjiga sa oznakom 6 je dodata.'),
+        Event(time=datetime(1998,2,14,11,4), type=1, librarian='djoka.djokic', message='Knjiga sa oznakom 7 je dodata.'),
+        Event(time=datetime(1998,2,14,11,7), type=1, librarian='djoka.djokic', message='Knjiga sa oznakom 10 je dodata.'),
+        Event(time=datetime(1999, 3, 23,15,49), type=31, librarian='djoka.djokic', message='Članstvo je produženo za člana sa članskim brojem 24 po ceni od 10.00 KM.'),
+        Event(time=datetime(1999, 8, 8,13,13), type=11, librarian='djoka.djokic', message='Knjiga sa oznakom 3 iznajmljena je članu sa članskim brojem 24.'),
+        Event(time=datetime(1999, 8, 31,9,45), type=12, librarian='djoka.djokic', message='Knjiga sa oznakom 3 je vraćena od strane člana sa članskim brojem 24.'),
+        Event(time=datetime(2001,5,17,10,21), type=41, librarian='djoka.djokic', message='Cena sa oznakom 2 i iznosom 0.00 KM je dodata.'),            
+        Event(time=datetime(2005,4,29,13,43), type=52, librarian='djoka.djokic', message='Bibliotekar je promeio svoju lozinku.'),
+        Event(time=datetime(2006,5,16,8,52), type=50, librarian='djoka.djokic', message='Bibliotekar sa korisničkim imenom mika.mikic je dodat.'),
+        Event(time=datetime(2008,8,20,15,15), type=51, librarian='mika.mikic', message='Bibliotekar je promenio sledeći podatak "Adresa" iz "Dobrovoljačka 21, Nevesinje" u "Milivoja Mikića 3, Nevesinje"'),        
+        Event(time=datetime(2010, 1, 3,13,40), type=31, librarian='mika.mikic', message='Članstvo je produženo za člana sa članskim brojem 42 po ceni od 0.00 KM.'),
+        Event(time=datetime(2010, 2,16,10,54), type=11, librarian='mika.mikic', message='Knjiga sa oznakom 7 iznajmljena je članu sa članskim brojem 42.'),
+        Event(time=datetime(2010, 3,12,11,59), type=12, librarian='mika.mikic', message='Knjiga sa oznakom 7 je vraćena od strane člana sa članskim brojem 42.'),
+        Event(time=datetime(2011, 5, 12,8,16), type=31, librarian='djoka.djokic', message='Članstvo je produženo za člana sa članskim brojem 18 po ceni od 10.00 KM.'),
+        Event(time=datetime(2011, 5,15, 9,23), type=11, librarian='mika.mikic', message='Knjiga sa oznakom 6 iznajmljena je članu sa članskim brojem 18.'),
+        Event(time=datetime(2011, 6,29,15,27), type=12, librarian='mika.mikic', message='Knjiga sa oznakom 6 je vraćena od strane člana sa članskim brojem 18.'),
+        Event(time=datetime(2011, 9,28,16,41), type=11, librarian='djoka.djokic', message='Knjiga sa oznakom 10 iznajmljena je članu sa članskim brojem 18.'),
+        Event(time=datetime(2011,12,28,14,10), type=12, librarian='djoka.djokic', message='Knjiga sa oznakom 10 je vraćena od strane člana sa članskim brojem 18.'),
+        Event(time=datetime(2012, 3,15,15,20), type=11, librarian='mika.mikic', message='Knjiga sa oznakom 3 iznajmljena je članu sa članskim brojem 18.'),
+        Event(time=datetime(2012, 8, 1,9,7), type=41, librarian='djoka.djokic', message='Cena sa oznakom 3 i iznosom 7.99 KM je dodata.'),
+        Event(time=datetime(2012, 8, 14,10,31), type=31, librarian='djoka.djokic', message='Članstvo je produženo za člana sa članskim brojem 103 po ceni od 7.99 KM.'),
+        Event(time=datetime(2012, 8, 14,10,32), type=31, librarian='mika.mikic', message='Članstvo je produženo za člana sa članskim brojem 104 po ceni od 7.99 KM.'),
+        Event(time=datetime(2012, 8,14,11,24), type=11, librarian='djoka.djokic', message='Knjiga sa oznakom 2 iznajmljena je članu sa članskim brojem 103.'),
+        Event(time=datetime(2012, 8, 25,8,31), type=12, librarian='mika.mikic', message='Knjiga sa oznakom 2 je vraćena od strane člana sa članskim brojem 103.'),
+        Event(time=datetime(2012, 9,30,8,48), type=43, librarian='djoka.djokic', message='Cena sa oznakom 3 i iznosom 7.99 KM je deaktivirana.'),
+        Event(time=datetime(2012,12,1,9,12), type=41, librarian='djoka.djokic', message='Cena sa oznakom 4 i iznosom 14.00 KM je dodata.'),
+        Event(time=datetime(2012,12,4,9,4), type=50, librarian='djoka.djokic', message='Bibliotekar sa korisničkim imenom pera.peric je dodat.'),  
+        Event(time=datetime(2012,12,4,10,43), type=57, librarian='djoka.djokic', message='Administrator je dodao bibliotekara sa korisničkim imenom pera.peric u administratore.'),
+        Event(time=datetime(2012,12,29,14,32), type=58, librarian='pera.peric', message='Administrator je poslao zahtev da administrator sa korisničkim imenom djoka.djokic bude isključen iz grupe administratora.'),
+        Event(time=datetime(2012,12,30,9,37), type=59, librarian='djoka.djokic', message='Administrator je prihvatio zahtev da bude isključen iz grupe administratora.'),
+        Event(time=datetime(2013,1,5,8,27), type=56, librarian='pera.peric', message='Bibliotekar sa korisničkim imenom djoka.djokic je postavljen kao neaktivan.'),
+        Event(time=datetime(2014,5,12,13,46), type=1, librarian='pera.peric', message='Knjiga sa oznakom 8 je dodata.'),
+        Event(time=datetime(2014,5,12,13,53), type=1, librarian='pera.peric', message='Knjiga sa oznakom 12 je dodata.'),
+        Event(time=datetime(2014,5,12,14,2), type=1, librarian='pera.peric', message='Knjiga sa oznakom 14 je dodata.'),  
+        Event(time=datetime(2014,5,12,14,11), type=2, librarian='pera.peric', message='Knjizi sa oznakom 3 je izmenjen sledeći podatak "Inventarni broj" iz "75" u "76"'),  
+        Event(time=datetime(2014,5,12,14,11), type=4, librarian='pera.peric', message='Knjizi sa oznakom 3 je ispravljena greška inventarnog broja.'),
+        Event(time=datetime(2014,8,21,12,31), type=1, librarian='mika.mikic', message='Knjiga sa oznakom 1 je dodata.'),     
+        Event(time=datetime(2014,8,21,12,31), type=3, librarian='mika.mikic', message='Knjiga sa oznakom 1 je označena sa greškom inventarnog broja koji je postavljen na "11"'),
+        Event(time=datetime(2014,8,22,9,29), type=2, librarian='pera.peric', message='Knjizi sa oznakom 1 je izmenjen sledeći podatak "Inventarni broj" iz "11" u "12"'),
+        Event(time=datetime(2014,8,22,9,29), type=4, librarian='pera.peric', message='Knjizi sa oznakom 1 je ispravljena greška inventarnog broja.'),    
+        Event(time=datetime(2015,6,1,10,00), type=42, librarian='pera.peric', message='Cena sa oznakom 3 i iznosom 7.99 KM je aktivirana.'),
+        Event(time=datetime(2015,9,30,9,42), type=43, librarian='pera.peric', message='Cena sa oznakom 3 i iznosom 7.99 KM je deaktivirana.'),
+        Event(time=datetime(2016, 2, 18,9,27), type=31, librarian='pera.peric', message='Članstvo je produženo za člana sa članskim brojem 3 po ceni od 10.00 KM.'),
+        Event(time=datetime(2016, 3,19,12,15), type=11, librarian='mika.mikic', message='Knjiga sa oznakom 14 iznajmljena je članu sa članskim brojem 3.'),
+        Event(time=datetime(2016, 4, 2,15,42), type=12, librarian='pera.peric', message='Knjiga sa oznakom 14 je vraćena od strane člana sa članskim brojem 3.'),
+        Event(time=datetime(2016, 6,30,14,42), type=11, librarian='mika.mikic', message='Knjiga sa oznakom 8 iznajmljena je članu sa članskim brojem 3.'),
+        Event(time=datetime(2016, 7, 6,16,47), type=12, librarian='mika.mikic', message='Knjiga sa oznakom 8 je vraćena od strane člana sa članskim brojem 3.'),
+        Event(time=datetime(2016,11,15,15,34), type=52, librarian='pera.peric', message='Bibliotekar je promeio svoju lozinku.'),
+        Event(time=datetime(2017,7,18,15,42), type=51, librarian='mika.mikic', message='Bibliotekar je promenio sledeći podatak "Telefon" iz "+387663227893" u "+387664408404"'),
+        Event(time=datetime(2017, 9, 28,11,18), type=31, librarian='pera.peric', message='Članstvo je produženo za člana sa članskim brojem 3 po ceni od 10.00 KM.'),
+        Event(time=datetime(2017,10,11,9,15), type=1, librarian='pera.peric', message='Knjiga sa oznakom 11 je dodata.'),
+        Event(time=datetime(2017,10,11,9,21), type=1, librarian='mika.mikic', message='Knjiga sa oznakom 4 je dodata.'),
+        Event(time=datetime(2017,10,11,9,23), type=1, librarian='pera.peric', message='Knjiga sa oznakom 13 je dodata.'),
+        Event(time=datetime(2017,10,11,9,28), type=1, librarian='mika.mikic', message='Knjiga sa oznakom 5 je dodata.'),
+        Event(time=datetime(2017,10,11,9,29), type=2, librarian='pera.peric', message='Knjizi sa oznakom 6 je izmenjen sledeći podatak "Naslov" iz "Stefan Nemenja" u "Stefan Nemanja".'),
+        Event(time=datetime(2017,10,11,9,34), type=2, librarian='pera.peric', message='Knjizi sa oznakom 10 je izmenjen sledeći podatak "Autor" iz "Ivan Mladenović" u "Ivan Miladinović".'),
+        Event(time=datetime(2017,11,23,14,31), type=1, librarian='mika.mikic', message='Knjiga sa oznakom 9 je dodata.'),
+        Event(time=datetime(2017,11,23,14,31), type=3, librarian='mika.mikic', message='Knjiga sa oznakom 9 je označena sa greškom inventarnog broja koji je postavljen na "732"'),
+        Event(time=datetime(2018,3,21,15,29), type=51, librarian='pera.peric', message='Bibliotekar je promenio sledeći podatak "Telefon" iz "0650990179" u "0651128767"'),
+        Event(time=datetime(2018,8,7,11,47), type=52, librarian='pera.peric', message='Bibliotekar je promeio svoju lozinku.'),
+        Event(time=datetime(2018, 9, 21,16,11), type=31, librarian='mika.mikic', message='Članstvo je produženo za člana sa članskim brojem 3 po ceni od 10.00 KM.'),
+        Event(time=datetime(2018, 10,7,9,57), type=11, librarian='mika.mikic', message='Knjiga sa oznakom 12 iznajmljena je članu sa članskim brojem 42.'),
+        Event(time=datetime(2018, 10, 7,14,6), type=31, librarian='mika.mikic', message='Članstvo je produženo za člana sa članskim brojem 42 po ceni od 0.00 KM.'),
+        Event(time=datetime(2018,10,13,10,52), type=56, librarian='pera.peric', message='Bibliotekar sa korisničkim imenom mika.mikic je postavljen kao neaktivan.'),
+        Event(time=datetime(2018, 10, 20,9,8), type=12, librarian='pera.peric', message='Knjiga sa oznakom 12 je vraćena od strane člana sa članskim brojem 42.'),
+        Event(time=datetime(2018,12,3,9,48), type=55, librarian='pera.peric', message='Bibliotekar sa korisničkim imenom mika.mikic je postavljen kao aktivan.'),    
+        Event(time=datetime(2018,12,4,8,24), type=53, librarian='mika.mikic', message='Bibliotekar je poslao zahtev za promenu lozinke.'),
+        Event(time=datetime(2018,12,4,9,48), type=54, librarian='pera.peric', message='Administrator je odgovorio na zahtev i promenio lozinku bibliotekara.'),
+        Event(time=datetime(2018,12,4,9,54), type=52, librarian='mika.mikic', message='Bibliotekar je promeio svoju lozinku.'),
+        Event(time=datetime(2018,12,11,10,18), type=11, librarian='pera.peric', message='Knjiga sa oznakom 2 iznajmljena je članu sa članskim brojem 3.'),
+        Event(time=datetime(2019, 1,12,11,19), type=12, librarian='mika.mikic', message='Knjiga sa oznakom 2 je vraćena od strane člana sa članskim brojem 3.'),
+        Event(time=datetime(2019, 4,16,11,40), type=11, librarian='pera.peric', message='Knjiga sa oznakom 10 iznajmljena je članu sa članskim brojem 42.'),
+        Event(time=datetime(2019, 4, 29,8,52), type=12, librarian='pera.peric', message='Knjiga sa oznakom 10 je vraćena od strane člana sa članskim brojem 42.'),
+        Event(time=datetime(2019, 5, 25,12,37), type=31, librarian='mika.mikic', message='Članstvo je produženo za člana sa članskim brojem 24 po ceni od 10.00 KM.'),
+        Event(time=datetime(2019,6,1,9,19), type=42, librarian='pera.peric', message='Cena sa oznakom 3 i iznosom 7.99 KM je aktivirana.'),
+        Event(time=datetime(2019, 7, 23,9,18), type=31, librarian='pera.peric', message='Članstvo je produženo za člana sa članskim brojem 76 po ceni od 7.99 KM.'),
+        Event(time=datetime(2019,9,20,8,31), type=43, librarian='pera.peric', message='Cena sa oznakom 3 i iznosom 7.99 KM je deaktivirana.'),
+        Event(time=datetime(2019,10, 2,13,38), type=11, librarian='mika.mikic', message='Knjiga sa oznakom 7 iznajmljena je članu sa članskim brojem 76.'),
+        Event(time=datetime(2019,10,15,14,33), type=12, librarian='mika.mikic', message='Knjiga sa oznakom 7 je vraćena od strane člana sa članskim brojem 76.'),
+        Event(time=datetime(2019,12,1,9,3), type=42, librarian='pera.peric', message='Cena sa oznakom 4 i iznosom 14.00 KM je aktivirana.'),
+        Event(time=datetime(2019,12,16,15,36), type=11, librarian='pera.peric', message='Knjiga sa oznakom 10 iznajmljena je članu sa članskim brojem 24.'),
+        Event(time=datetime(2019, 12,30,10,9), type=31, librarian='pera.peric', message='Članstvo je produženo za člana sa članskim brojem 103 po ceni od 14.00 KM.'),
+        Event(time=datetime(2019, 12,30,10,10), type=31, librarian='mika.mikic', message='Članstvo je produženo za člana sa članskim brojem 104 po ceni od 0.00 KM.'),
+        Event(time=datetime(2019,12,30,10,12), type=11, librarian='mika.mikic', message='Knjiga sa oznakom 1 iznajmljena je članu sa članskim brojem 103.'),
+        Event(time=datetime(2020, 1, 9,15,45), type=12, librarian='pera.peric', message='Knjiga sa oznakom 1 je vraćena od strane člana sa članskim brojem 103.'),
+        Event(time=datetime(2020, 1,13,16,4), type=11, librarian='pera.peric', message='Knjiga sa oznakom 4 iznajmljena je članu sa članskim brojem 103.'),
+        Event(time=datetime(2020, 1,20, 9,39), type=11, librarian='pera.peric', message='Knjiga sa oznakom 13 iznajmljena je članu sa članskim brojem 103.'),
+        Event(time=datetime(2020, 1,27,16,20), type=12, librarian='pera.peric', message='Knjiga sa oznakom 4 je vraćena od strane člana sa članskim brojem 103.'),
+        Event(time=datetime(2020, 1,31,12,13), type=12, librarian='mika.mikic', message='Knjiga sa oznakom 13 je vraćena od strane člana sa članskim brojem 103.'),
+        Event(time=datetime(2020, 2,1,8,38), type=43, librarian='pera.peric', message='Cena sa oznakom 4 i iznosom 14.00 KM je deaktivirana.'),
+        Event(time=datetime(2020, 2, 1, 8,41), type=11, librarian='mika.mikic', message='Knjiga sa oznakom 8 iznajmljena je članu sa članskim brojem 103.'),
+        Event(time=datetime(2020, 2, 10,12,5), type=12, librarian='mika.mikic', message='Knjiga sa oznakom 10 je vraćena od strane člana sa članskim brojem 24.'),
+        Event(time=datetime(2020, 2, 24,12,15), type=31, librarian='pera.peric', message='Članstvo je produženo za člana sa članskim brojem 3 po ceni od 10.00 KM.'),
+        Event(time=datetime(2020, 3,18,14,29), type=11, librarian='pera.peric', message='Knjiga sa oznakom 10 iznajmljena je članu sa članskim brojem 76.'),
+        Event(time=datetime(2020,date.today().month,date.today().day,12,33)-timedelta(15), type=11, librarian='pera.peric', message='Knjiga sa oznakom 11 iznajmljena je članu sa članskim brojem 3.'),
+        Event(time=datetime(2020,date.today().month,date.today().day,11,56)-timedelta(14), type=11, librarian='mika.mikic', message='Knjiga sa oznakom 5 iznajmljena je članu sa članskim brojem 24.'),
+        Event(time=datetime(2020,date.today().month,date.today().day,9,2)-timedelta(10), type=11, librarian='pera.peric', message='Knjiga sa oznakom 1 iznajmljena je članu sa članskim brojem 103.'),
+        Event(time=datetime(2020,date.today().month,date.today().day,16,48)-timedelta(5), type=11, librarian='mika.mikic', message='Knjiga sa oznakom 12 iznajmljena je članu sa članskim brojem 103.'),
+        Event(time=datetime(2020,date.today().month,date.today().day,13,7)-timedelta(1), type=11, librarian='mika.mikic', message='Knjiga sa oznakom 14 iznajmljena je članu sa članskim brojem 76.'),
+        Event(time=datetime(2020,date.today().month,date.today().day, 8,30), type=11, librarian='pera.peric', message='Knjiga sa oznakom 2 iznajmljena je članu sa članskim brojem 103.')]
+  
+    for event in events:
+        db.session.add(event)
+    
     db.session.commit()

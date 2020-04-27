@@ -1,7 +1,8 @@
+import enum
 from datetime import date, timedelta
 from flask_login import UserMixin
 from elibrary import db, login_manager
-from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT, BOOK_RENT_PERIOD
+from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT, DATETIME_FORMAT, BOOK_RENT_PERIOD
 from flask_babel import gettext
 
 @login_manager.user_loader
@@ -168,3 +169,41 @@ class Rental(db.Model):
             return gettext('Yes')
         else:
             return gettext('No')
+
+
+class Event(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    time = db.Column(db.DateTime, nullable=True)
+    type = db.Column(db.Integer, nullable=False)
+    librarian = db.Column(db.String(30), nullable=False)
+    message = db.Column(db.String(300), nullable=False)
+
+    @property
+    def date_deadline_print(self):
+        return self.time.strftime(DATETIME_FORMAT)
+
+class EventType(enum.Enum):
+   book_add = 1
+   book_update = 2
+   book_error_add = 3
+   book_error_remove = 4
+   rent_rent = 11
+   rent_return = 12
+   member_add = 21
+   member_update = 22
+   extension_add = 31
+   price_add = 41
+   price_enabled = 42
+   price_disabled = 43
+   librarian_add = 50
+   librarian_update = 51
+   librarian_password = 52
+   librarian_password_request = 53
+   librarian_password_response = 54
+   librarian_activate = 55
+   librarian_deactivate = 56
+   librarian_set_admin = 57
+   librarian_remove_admin_request = 58
+   librarian_remove_admin_response = 59
+# print (EventCategory[4].name) = "Price"
+# print (EventCategory.Price.value) = 4

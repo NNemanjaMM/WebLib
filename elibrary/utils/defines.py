@@ -6,4 +6,5 @@ PAGINATION = 5
 MAXIMUM_NUMBER = 50000
 MAX_RENTED_BOOKS = 5
 DATE_FORMAT = '%d.%m.%Y.'
+DATETIME_FORMAT = "%d.%m.%Y %H:%M"
 MINIMUM_DATE = '01.01.1980.'    # !!!!!!!! Update if DATE_FORMAT changed
