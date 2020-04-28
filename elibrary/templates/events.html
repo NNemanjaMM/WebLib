@@ -3,4 +3,114 @@
 
 <h1>{{ gettext('Events') }}</h1>
 
+<div>
+    <form method="GET" action="{{ url_for('events.eventss') }}">
+        <fieldset>
+            <div>
+                {{ form.date_from.label }}
+                {{ form.date_from }}
+                {% if form.date_from.errors %}
+                    <div>
+                        {% for error in form.date_from.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.date_to.label }}
+                {{ form.date_to }}
+                {% if form.date_to.errors %}
+                    <div>
+                        {% for error in form.date_to.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.librarian.label }}
+                {{ form.librarian }}
+                {% if form.librarian.errors %}
+                    <div>
+                        {% for error in form.librarian.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.type.label }}
+                {{ form.type }}
+            </div>
+            <div>
+                {{ form.object_id.label }}
+                {{ form.object_id }}
+                {% if form.object_id.errors %}
+                    <div>
+                        {% for error in form.object_id.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </fieldset>
+        <div>
+            {{ form.submit }}
+            <a href="{{ url_for('books.bookss') }}">{{ gettext('Clear filter') }}</a>
+        </div>
+    </form>
+</div>
+
+<p>
+    <span>
+        {{ gettext('Date and time') }}
+        <a href="{{ url_for('events.eventss', sort_by='time', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('events.eventss', sort_by='time', direction='down', **extra_filter_args) }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Librarian') }}
+        <a href="{{ url_for('events.eventss', sort_by='librarian', direction='up', **extra_filter_args) }}"> &uarr; </a>
+        <a href="{{ url_for('events.eventss', sort_by='librarian', direction='down', **extra_filter_args) }}"> &darr; </a>
+    </span>
+    <span>
+        {{ gettext('Type') }}
+        <a href="{{ url_for('events.eventss', sort_by='type', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('events.eventss', sort_by='type', direction='down', **extra_filter_args) }}"> &or;</a>
+    </span>
+    <span>
+        {{ gettext('Object id') }}
+        <a href="{{ url_for('events.eventss', sort_by='object_id', direction='up', **extra_filter_args) }}"> &and; </a>
+        <a href="{{ url_for('events.eventss', sort_by='object_id', direction='down', **extra_filter_args) }}"> &or;</a>
+    </span>
+</p>
+
+{% for event in events_list.items %}
+    <p>
+        <span>{{ event.time_print }}</span>
+        <span>{{ event.librarian }}</span>
+        <span>{{ event.type_print }}</span>
+        <span>{{ event.object_id_print }}</span>
+        <span>{{ event.message }}</span>
+        <span><a href="{{ url_for('events.event_details', event_id=event.id) }}">{{ gettext('Event details') }}</a></span>
+    </p>
+{% endfor %}
+
+<p>
+    {{ gettext('Number of items in list') }}
+    {{ count_filtered }}
+</p>
+
+{% for page_num in events_list.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=3) %}
+    {% if page_num %}
+        {% if events_list.page == page_num %}
+            <a style="color: red" href="{{ url_for('events.eventss', page=page_num, **extra_sort_and_filter_args) }}">{{ page_num }}</a>
+        {% else %}
+            <a href="{{ url_for('events.eventss', page=page_num, **extra_sort_and_filter_args) }}">{{ page_num }}</a>
+        {% endif %}
+    {% else %}
+        ...
+    {% endif %}
+{% endfor %}
+
 {% endblock content %}

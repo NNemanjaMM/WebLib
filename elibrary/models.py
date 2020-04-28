@@ -170,19 +170,7 @@ class Rental(db.Model):
         else:
             return gettext('No')
 
-
-class Event(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    time = db.Column(db.DateTime, nullable=True)
-    type = db.Column(db.Integer, nullable=False)
-    librarian = db.Column(db.String(30), nullable=False)
-    message = db.Column(db.String(300), nullable=False)
-
-    @property
-    def date_deadline_print(self):
-        return self.time.strftime(DATETIME_FORMAT)
-
-class EventType(enum.Enum):
+class EventType():
    book_add = 1
    book_update = 2
    book_error_add = 3
@@ -205,5 +193,59 @@ class EventType(enum.Enum):
    librarian_set_admin = 57
    librarian_remove_admin_request = 58
    librarian_remove_admin_response = 59
-# print (EventCategory[4].name) = "Price"
-# print (EventCategory.Price.value) = 4
+
+   type_text = {
+       book_add: gettext('Book add'),
+       book_update: gettext('Book update'),
+       book_error_add: gettext('Book error add'),
+       book_error_remove: gettext('Book error remove'),
+       rent_rent: gettext('Book rent'),
+       rent_return: gettext('Book return'),
+       member_add: gettext('Member add'),
+       member_update: gettext('Member update'),
+       extension_add: gettext('Membership extension'),
+       price_add: gettext('Price add'),
+       price_enabled: gettext('Price activation'),
+       price_disabled: gettext('Price deactivation'),
+       librarian_add: gettext('Librarian add'),
+       librarian_update: gettext('Librarian update'),
+       librarian_password: gettext('Librarian password change'),
+       librarian_password_request: gettext('Librarian password change request'),
+       librarian_password_response: gettext('Librarian password change response'),
+       librarian_activate: gettext('Librarian activation'),
+       librarian_deactivate: gettext('Librarian deactivation'),
+       librarian_set_admin: gettext('Librarian set as admin'),
+       librarian_remove_admin_request: gettext('Librarian remove admin request'),
+       librarian_remove_admin_response: gettext('Librarian remove admin response'),
+   };
+
+   @staticmethod
+   def get_type_text(id):
+       return EventType.type_text[id]
+
+class Event(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    time = db.Column(db.DateTime, nullable=True)
+    librarian = db.Column(db.String(30), nullable=False)
+    type = db.Column(db.Integer, nullable=False)
+    object_id = db.Column(db.Integer, nullable=True)
+    message = db.Column(db.String(300), nullable=False)
+
+    @property
+    def type_print(self):
+        return EventType.get_type_text(self.type)
+
+    @property
+    def time_print(self):
+        return self.time.strftime(DATETIME_FORMAT)
+
+    @property
+    def object_id_print(self):
+        if(self.type < 20):
+            return gettext('Book with id') + ' ' + str(self.object_id)
+        elif(self.type < 40):
+            return gettext('Member with id') + ' ' + str(self.object_id)
+        elif(self.type < 50):
+            return gettext('Price with id') + ' ' + str(self.object_id)
+        elif(self.type < 60):
+            return ''
