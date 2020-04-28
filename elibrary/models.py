@@ -126,6 +126,10 @@ class Extension(db.Model):
     def price_print(self):
         return "{:.2f}".format(self.price)
 
+    @property
+    def price_and_currency_print(self):
+        return "{:.2f}".format(self.price) + " " + self.price_details.currency
+
 class Rental(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date_performed = db.Column(db.Date, nullable=False, default=date.today())

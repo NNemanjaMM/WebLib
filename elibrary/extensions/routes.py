@@ -121,7 +121,7 @@ def prices_add():
         price.price_value = form.price_value.data
         price.currency = form.currency.data
         price.note = form.note.data
-        price.is_enabled = form.is_enabled.data
+        price.is_enabled = True
         db.session.add(price)
         db.session.commit()
         flash(gettext('Price is successfully added'), 'info')
