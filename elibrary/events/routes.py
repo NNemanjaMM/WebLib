@@ -1,8 +1,11 @@
 from flask import render_template, url_for, request, flash, redirect, abort, Blueprint
 from flask_login import login_required, current_user
+from flask_babel import gettext
 from elibrary import db
 from elibrary.models import Event
 from elibrary.events.forms import FilterForm
+from elibrary.utils.common import CommonFilter
+from elibrary.utils.custom_validations import string_cust, length_cust_max, numeric_cust, signature_cust, length_cust_max_15, FieldValidator
 from elibrary.utils.defines import PAGINATION
 from sqlalchemy import desc
 
@@ -25,6 +28,26 @@ def eventss():
     args_filter = {}
     form = FilterForm()
     my_query = db.session.query(Event)
+    f_date_from = request.args.get('date_from')
+    f_date_to = request.args.get('date_to')
+    f_librarian = request.args.get('librarian')
+    f_object_id = request.args.get('object_id')
+    f_type = request.args.get('type')
+
+    my_query, args_filter, filter_has_errors = CommonFilter.process_related_date_filters(my_query,
+        args_filter, filter_has_errors, form.date_from,
+        form.date_to, f_date_from, f_date_to,
+        'date_from', 'date_to', Event, 'time', False)
+
+    my_query, args_filter, filter_has_errors = CommonFilter.process_like_filter(my_query, args_filter,
+        filter_has_errors, form, form.librarian, f_librarian, 'librarian', [string_cust, length_cust_max], Event, 'librarian')
+
+    my_query, args_filter, filter_has_errors = CommonFilter.process_equal_number_filter(my_query, args_filter,
+        filter_has_errors, form.object_id, f_object_id, 'object_id', Event, 'object_id')
+
+    if not (f_type == None or f_type == '0'):
+        form.type.data = f_type
+        my_query = my_query.filter(Event.type == f_type)
 
     count_filtered = my_query.count()
     if filter_has_errors:

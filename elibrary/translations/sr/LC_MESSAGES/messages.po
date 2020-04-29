@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-04-26 16:19+0200\n"
+"POT-Creation-Date: 2020-04-29 20:47+0200\n"
 "PO-Revision-Date: 2020-04-25 14:59+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: sr\n"
@@ -20,18 +20,123 @@ msgstr ""
 "Generated-By: Babel 2.8.0\n"
 
 #: books/forms.py:15 books/forms.py:16 books/forms.py:65 books/forms.py:66
-#: members/forms.py:43 models.py:168 templates/account.html:63
+#: members/forms.py:43 models.py:169 templates/account.html:63
 #: templates/account.html:74 templates/books.html:121
 #: templates/extension_prices.html:38 templates/members.html:205
 msgid "Yes"
 msgstr "Da"
 
 #: books/forms.py:15 books/forms.py:16 books/forms.py:65 books/forms.py:66
-#: members/forms.py:43 models.py:170 templates/account.html:65
+#: members/forms.py:43 models.py:171 templates/account.html:65
 #: templates/account.html:76 templates/books.html:123
 #: templates/extension_prices.html:40 templates/members.html:207
 msgid "No"
 msgstr "Ne"
+
+#: books/forms.py:15 books/forms.py:16 books/forms.py:65 books/forms.py:66
+#: extensions/forms.py:40 members/forms.py:43 members/forms.py:44 models.py:198
+msgid "Not selected"
+msgstr "Nije odabrano"
+
+#: models.py:199
+msgid "Book add"
+msgstr "Knjiga - dodavanje"
+
+#: models.py:200
+msgid "Book update"
+msgstr "Knjiga - izmena"
+
+#: models.py:201
+msgid "Book error add"
+msgstr "Knjiga - dodavanje greške"
+
+#: models.py:202
+msgid "Book error remove"
+msgstr "Knjiga - uklanjanje greške"
+
+#: models.py:203
+msgid "Book rent"
+msgstr "Knjiga - iznajmljivanje"
+
+#: models.py:204
+msgid "Book return"
+msgstr "Knjiga - vraćanje"
+
+#: models.py:205
+msgid "Member add"
+msgstr "Član - dodavanje"
+
+#: models.py:206
+msgid "Member update"
+msgstr "Član - izmena"
+
+#: models.py:207 templates/extension_add.html:4
+msgid "Membership extension"
+msgstr "Članstvo - produženje"
+
+#: models.py:208
+msgid "Price add"
+msgstr "Cena - dodavanje"
+
+#: models.py:209
+msgid "Price activation"
+msgstr "Cena - onemogućavanje"
+
+#: models.py:210
+msgid "Price deactivation"
+msgstr "Cena - omogućavanje"
+
+#: models.py:211
+msgid "Librarian add"
+msgstr "Bibliotekar - dodavanje"
+
+#: models.py:212
+msgid "Librarian update"
+msgstr "Bibliotekar - izmena"
+
+#: models.py:213
+msgid "Librarian password change"
+msgstr "Bibliotekar - izmena lozinke"
+
+#: models.py:214
+msgid "Librarian password change request"
+msgstr "Bibliotekar - slanje zahteva za izmenu lozinke"
+
+#: models.py:215
+msgid "Librarian password change response"
+msgstr "Bibliotekar - odgovor na zahtev za izmenu lozinke"
+
+#: models.py:216
+msgid "Librarian activation"
+msgstr "Bibliotekar - aktiviranje naloga"
+
+#: models.py:217
+msgid "Librarian deactivation"
+msgstr "Bibliotekar - deaktiviranje naloga"
+
+#: models.py:218
+msgid "Librarian set as admin"
+msgstr "Bibliotekar - dodavanje u administratore"
+
+#: models.py:219
+msgid "Librarian remove admin request"
+msgstr "Bibliotekar - zahtev za dodavanje u administratore"
+
+#: models.py:220
+msgid "Librarian remove admin response"
+msgstr "Bibliotekar - uklanjanje iz administratora"
+
+#: models.py:246
+msgid "Book with id"
+msgstr "Oznaka knjige"
+
+#: models.py:248
+msgid "Member with id"
+msgstr "Broj članske karte"
+
+#: models.py:250
+msgid "Price with id"
+msgstr "Oznaka cene"
 
 #: books/forms.py:11 books/forms.py:24 books/forms.py:42
 #: templates/books.html:93
@@ -57,17 +162,12 @@ msgstr "Autor"
 msgid "Is rented"
 msgstr "Je iznajmljena"
 
-#: books/forms.py:15 books/forms.py:16 books/forms.py:65 books/forms.py:66
-#: extensions/forms.py:40 members/forms.py:43 members/forms.py:44
-msgid "Not selected"
-msgstr "Nije odabrano"
-
 #: books/forms.py:16 books/forms.py:28 templates/books.html:126
 msgid "Has error"
 msgstr "Ima grešku"
 
-#: books/forms.py:17 books/forms.py:73 extensions/forms.py:42
-#: members/forms.py:45
+#: books/forms.py:17 books/forms.py:73 events/forms.py:12
+#: extensions/forms.py:42 members/forms.py:45
 msgid "Filter"
 msgstr "Filtriraj"
 
@@ -104,8 +204,7 @@ msgstr "već postoji"
 msgid "Rent date"
 msgstr "Datum iznajmljivanja"
 
-#: books/forms.py:46 templates/member.html:112
-#: templates/renting.html:4
+#: books/forms.py:46 templates/member.html:112 templates/renting.html:4
 msgid "Rent book"
 msgstr "Iznajmi knjigu"
 
@@ -178,12 +277,14 @@ msgstr "Datum vraćanja nakon"
 msgid "Returned date before"
 msgstr "Datum vraćanja pre"
 
-#: books/routes.py:90 books/routes.py:310 extensions/routes.py:64
-#: members/routes.py:168
+#: books/routes.py:90 books/routes.py:310 events/routes.py:53
+#: extensions/routes.py:64 members/routes.py:168
 msgid ""
 "There are filter values with errors. However, valid filter values are "
 "applied."
-msgstr "Neki od filtera imju grešku u unosu. Filteri sa ispravnim unosom će biti primenjeni."
+msgstr ""
+"Neki od filtera imju grešku u unosu. Filteri sa ispravnim unosom će biti "
+"primenjeni."
 
 #: books/routes.py:121
 msgid "Book data is successfully updated"
@@ -216,6 +317,26 @@ msgstr "Knjiga je uspešno iznajmljena"
 #: books/routes.py:226
 msgid "Book is successfully returned"
 msgstr "Knjiga je uspešno vraćena"
+
+#: events/forms.py:7
+msgid "Event date after"
+msgstr "Datum događaja nakon"
+
+#: events/forms.py:8
+msgid "Event date before"
+msgstr "Datum događaja pre"
+
+#: events/forms.py:9 templates/events.html:72
+msgid "Librarian"
+msgstr "Bibliotekar"
+
+#: events/forms.py:10 templates/event.html:21
+msgid "Event type"
+msgstr "Tip događaja"
+
+#: events/forms.py:11 templates/events.html:82
+msgid "Object id"
+msgstr "Objekat akcije"
 
 #: extensions/forms.py:14 extensions/forms.py:40 extensions/forms.py:49
 #: templates/extensions.html:107
@@ -262,7 +383,7 @@ msgstr "Članstvo ističe nakon"
 msgid "Membership expires before"
 msgstr "Članstvo ističe pre"
 
-#: extensions/forms.py:46
+#: extensions/forms.py:46 main/forms.py:7
 msgid "Approve"
 msgstr "Potvrdi"
 
@@ -289,7 +410,9 @@ msgstr "Cena ne može biti veće od stotine"
 
 #: extensions/forms.py:63
 msgid "Price value already exists, please consider activating the existing one"
-msgstr "Unesena kombinacija cene i valute već postoji, razmotrite aktiviranje postojeće"
+msgstr ""
+"Unesena kombinacija cene i valute već postoji, razmotrite aktiviranje "
+"postojeće"
 
 #: extensions/routes.py:92
 msgid "Membership is successfully extended to"
@@ -466,7 +589,9 @@ msgstr "Zahtev za Vaše isključivanje iz administratora"
 
 #: librarians/routes.py:229
 msgid "Please approve or reject your removal from administrators"
-msgstr "Potvrdite ili odbijte zahtev za Vašim isključivanjem iz grupe administratora"
+msgstr ""
+"Potvrdite ili odbijte zahtev za Vašim isključivanjem iz grupe "
+"administratora"
 
 #: librarians/routes.py:243
 msgid "Librarian is successfully promoted to the administrator"
@@ -476,7 +601,9 @@ msgstr "Bibliotekar je uspešno uključen u grupu administratora"
 msgid ""
 "You successfully created a request to remove librarian from the "
 "administrators"
-msgstr "Uspešno set kreirali zahtev za isključivanje bibliotekara iz grupe administratora"
+msgstr ""
+"Uspešno set kreirali zahtev za isključivanje bibliotekara iz grupe "
+"administratora"
 
 #: librarians/routes.py:250
 msgid "You are successfully removed from the administrators"
@@ -688,8 +815,9 @@ msgstr "Odjava"
 msgid "Clear search"
 msgstr "Očisti pretragu"
 
-#: templates/books.html:86 templates/extensions.html:85
-#: templates/members.html:154 templates/rents.html:113
+#: templates/books.html:86 templates/events.html:60
+#: templates/extensions.html:85 templates/members.html:154
+#: templates/rents.html:113
 msgid "Clear filter"
 msgstr "Očisti filtere"
 
@@ -697,8 +825,9 @@ msgstr "Očisti filtere"
 msgid "Rent details"
 msgstr "Detalji iznajmljivanja"
 
-#: templates/books.html:137 templates/extensions.html:126
-#: templates/members.html:230 templates/rents.html:165
+#: templates/books.html:137 templates/events.html:100
+#: templates/extensions.html:126 templates/members.html:230
+#: templates/rents.html:165
 msgid "Number of items in list"
 msgstr "Broj stavki u listi"
 
@@ -710,13 +839,29 @@ msgstr "Knjiga ima problem sa inventarnim brojem"
 msgid "Please uncheck if the problem with inventory number is resolved"
 msgstr "Molimo Vas odznačite ukoliko je problem sa inventarnim brojem rešen"
 
-#: templates/event.html:4
+#: templates/event.html:4 templates/events.html:95
 msgid "Event details"
 msgstr "Detalji događaja"
 
-#: templates/extension_add.html:4
-msgid "Membership extension"
-msgstr "Produženje članstva"
+#: templates/event.html:7 templates/events.html:67
+msgid "Date and time"
+msgstr "Datum i vreme"
+
+#: templates/event.html:14
+msgid "Performed by"
+msgstr "Akciju izvršio"
+
+#: templates/event.html:28
+msgid "Performed on"
+msgstr "Objekat akcije"
+
+#: templates/event.html:35
+msgid "Description"
+msgstr "Opis akcije"
+
+#: templates/events.html:77
+msgid "Type"
+msgstr "Tip"
 
 #: templates/extension_add.html:7
 msgid "For a member"
@@ -1103,7 +1248,8 @@ msgstr "Vrednost ne odgovara očekivanom formatu broja telefona"
 msgid ""
 "E.g. 069/1128767, 0691128767, +387691128767, 059/343565, 059343565, "
 "+38759343565"
-msgstr "Npr. 069/1128767, 0691128767, +387691128767, 059/343565, 059343565, "
+msgstr ""
+"Npr. 069/1128767, 0691128767, +387691128767, 059/343565, 059343565, "
 "+38759343565"
 
 #: utils/custom_validations.py:32

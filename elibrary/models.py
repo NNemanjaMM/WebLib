@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from flask_login import UserMixin
 from elibrary import db, login_manager
 from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT, DATETIME_FORMAT, BOOK_RENT_PERIOD
-from flask_babel import gettext
+from flask_babel import gettext, lazy_gettext as _l
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -166,9 +166,9 @@ class Rental(db.Model):
     @property
     def is_terminated_print(self):
         if self.is_terminated:
-            return gettext('Yes')
+            return _l('Yes')
         else:
-            return gettext('No')
+            return _l('No')
 
 class EventType():
    book_add = 1
@@ -195,28 +195,29 @@ class EventType():
    librarian_remove_admin_response = 59
 
    type_text = {
-       book_add: gettext('Book add'),
-       book_update: gettext('Book update'),
-       book_error_add: gettext('Book error add'),
-       book_error_remove: gettext('Book error remove'),
-       rent_rent: gettext('Book rent'),
-       rent_return: gettext('Book return'),
-       member_add: gettext('Member add'),
-       member_update: gettext('Member update'),
-       extension_add: gettext('Membership extension'),
-       price_add: gettext('Price add'),
-       price_enabled: gettext('Price activation'),
-       price_disabled: gettext('Price deactivation'),
-       librarian_add: gettext('Librarian add'),
-       librarian_update: gettext('Librarian update'),
-       librarian_password: gettext('Librarian password change'),
-       librarian_password_request: gettext('Librarian password change request'),
-       librarian_password_response: gettext('Librarian password change response'),
-       librarian_activate: gettext('Librarian activation'),
-       librarian_deactivate: gettext('Librarian deactivation'),
-       librarian_set_admin: gettext('Librarian set as admin'),
-       librarian_remove_admin_request: gettext('Librarian remove admin request'),
-       librarian_remove_admin_response: gettext('Librarian remove admin response'),
+       0: _l('Not selected'),
+       book_add: _l('Book add'),
+       book_update: _l('Book update'),
+       book_error_add: _l('Book error add'),
+       book_error_remove: _l('Book error remove'),
+       rent_rent: _l('Book rent'),
+       rent_return: _l('Book return'),
+       member_add: _l('Member add'),
+       member_update: _l('Member update'),
+       extension_add: _l('Membership extension'),
+       price_add: _l('Price add'),
+       price_enabled: _l('Price activation'),
+       price_disabled: _l('Price deactivation'),
+       librarian_add: _l('Librarian add'),
+       librarian_update: _l('Librarian update'),
+       librarian_password: _l('Librarian password change'),
+       librarian_password_request: _l('Librarian password change request'),
+       librarian_password_response: _l('Librarian password change response'),
+       librarian_activate: _l('Librarian activation'),
+       librarian_deactivate: _l('Librarian deactivation'),
+       librarian_set_admin: _l('Librarian set as admin'),
+       librarian_remove_admin_request: _l('Librarian remove admin request'),
+       librarian_remove_admin_response: _l('Librarian remove admin response'),
    };
 
    @staticmethod
@@ -242,10 +243,10 @@ class Event(db.Model):
     @property
     def object_id_print(self):
         if(self.type < 20):
-            return gettext('Book with id') + ' ' + str(self.object_id)
+            return _l('Book with id') + ' ' + str(self.object_id)
         elif(self.type < 40):
-            return gettext('Member with id') + ' ' + str(self.object_id)
+            return _l('Member with id') + ' ' + str(self.object_id)
         elif(self.type < 50):
-            return gettext('Price with id') + ' ' + str(self.object_id)
+            return _l('Price with id') + ' ' + str(self.object_id)
         elif(self.type < 60):
             return ''
