@@ -50,18 +50,22 @@ def members_update(member_id):
     member = Member.query.get_or_404(member_id)
     form = MemberUpdateForm()
     if form.validate_on_submit():
-        from_value = member.log_data()
-        member.first_name = form.first_name.data
-        member.last_name = form.last_name.data
-        member.father_name = form.father_name.data
-        member.profession = form.profession.data
-        member.email = form.email.data
-        member.phone = form.phone.data.replace("/", "")
-        member.address = form.address.data
-        EventWriter.write(EventType.member_update, member.id, _g('Following member is updated')+' ('+_g('Member id')+': '+str(member.id)+'):'+from_value+'<br/>'+_g('To new values')+':'+member.log_data())
-        db.session.commit()
-        flash(_g('Member data is successfully updated')+'.', 'success')
-        return redirect(url_for('members.members_details',member_id=member.id))
+        if has_new_values(member, form):
+            from_value = member.log_data()
+            member.first_name = form.first_name.data
+            member.last_name = form.last_name.data
+            member.father_name = form.father_name.data
+            member.profession = form.profession.data
+            member.email = form.email.data
+            member.phone = form.phone.data.replace("/", "")
+            member.address = form.address.data
+            EventWriter.write(EventType.member_update, member.id, _g('Following member is updated')+' ('+_g('Member id')+': '+str(member.id)+'):'+from_value+'<br/>'+_g('To new values')+':'+member.log_data())
+            db.session.commit()
+            flash(_g('Member data is successfully updated')+'.', 'success')
+            return redirect(url_for('members.members_details',member_id=member.id))
+        else:
+            flash(_g('Member data')+' '+_g('is not changed, as typed values are the same as previous')+'.', 'info')
+            return redirect(url_for('members.members_details',member_id=member.id))
     elif request.method == 'GET':
         form.first_name.data = member.first_name
         form.last_name.data = member.last_name
@@ -186,3 +190,7 @@ def membersr():
 @login_required
 def membersf():
     return memberss(True, False)
+
+def has_new_values(member, form):
+    return not (member.first_name == form.first_name.data and member.last_name == form.last_name.data and member.father_name == form.father_name.data \
+            and member.profession == form.profession.data and member.email == form.email.data and member.phone == form.phone.data.replace("/", "") and member.address == form.address.data)

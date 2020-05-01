@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-05-01 22:42+0200\n"
+"POT-Creation-Date: 2020-05-01 23:48+0200\n"
 "PO-Revision-Date: 2020-04-25 14:59+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: sr\n"
@@ -253,12 +253,12 @@ msgstr "Izmeni knjigu"
 msgid "Add book"
 msgstr "Dodaj knjigu"
 
-#: books/forms.py:38 books/routes.py:176 books/routes.py:181
-#: books/routes.py:196 books/routes.py:207
+#: books/forms.py:38 books/routes.py:180 books/routes.py:185
+#: books/routes.py:200 books/routes.py:211
 msgid "Book with this inventory number"
 msgstr "Knjiga sa ovim inventarnim brojem"
 
-#: books/forms.py:38 books/routes.py:196
+#: books/forms.py:38 books/routes.py:200
 msgid "already exists"
 msgstr "već postoji"
 
@@ -297,15 +297,15 @@ msgstr "dana"
 msgid "Return date can not be set before rent date"
 msgstr "Datum vraćanja ne može biti postavljen pre datuma iznajmljivanja"
 
-#: books/forms.py:63 books/routes.py:124 books/routes.py:126
-#: books/routes.py:128 books/routes.py:152 books/routes.py:211
-#: books/routes.py:212 books/routes.py:225 books/routes.py:244
+#: books/forms.py:63 books/routes.py:125 books/routes.py:127
+#: books/routes.py:129 books/routes.py:156 books/routes.py:215
+#: books/routes.py:216 books/routes.py:229 books/routes.py:248
 msgid "Book id"
 msgstr "Oznaka knjige"
 
-#: books/forms.py:64 books/routes.py:225 books/routes.py:244
+#: books/forms.py:64 books/routes.py:229 books/routes.py:248
 #: extensions/forms.py:41 extensions/routes.py:92 members/forms.py:40
-#: members/routes.py:41 members/routes.py:61 templates/extensions.html:97
+#: members/routes.py:41 members/routes.py:62 templates/extensions.html:97
 #: templates/member.html:16 templates/members.html:161
 msgid "Member id"
 msgstr "Broj članske karte"
@@ -342,8 +342,8 @@ msgstr "Datum vraćanja nakon"
 msgid "Returned date before"
 msgstr "Datum vraćanja pre"
 
-#: books/routes.py:90 books/routes.py:330 events/routes.py:66
-#: extensions/routes.py:64 members/routes.py:172
+#: books/routes.py:90 books/routes.py:334 events/routes.py:66
+#: extensions/routes.py:64 members/routes.py:176
 msgid ""
 "There are filter values with errors. However, valid filter values are "
 "applied."
@@ -351,67 +351,75 @@ msgstr ""
 "Neki od filtera imju grešku u unosu. Filteri sa ispravnim unosom će biti "
 "primenjeni."
 
-#: books/routes.py:124 books/routes.py:211
+#: books/routes.py:125 books/routes.py:215
 msgid "An error is set to the following book"
 msgstr "Greška je postavljena na sledeću knjigu"
 
-#: books/routes.py:126
+#: books/routes.py:127
 msgid "An error is removed from the following book"
 msgstr "Greška je ukonjena sa prethodne knjige"
 
-#: books/routes.py:128
+#: books/routes.py:129
 msgid "Following book is updated"
 msgstr "Podaci sledeće knjige su izmenjeni"
 
-#: books/routes.py:128 librarians/routes.py:79 members/routes.py:61
+#: books/routes.py:129 librarians/routes.py:80 members/routes.py:62
 msgid "To new values"
 msgstr "Na nove vrednosti"
 
-#: books/routes.py:130
+#: books/routes.py:131
 msgid "Book data is successfully updated"
 msgstr "Podaci o knjizi su uspešno izmenjeni"
 
-#: books/routes.py:152 books/routes.py:212
+#: books/routes.py:134
+msgid "Book data"
+msgstr "Podaci o knjizi"
+
+#: books/routes.py:134 librarians/routes.py:85 members/routes.py:67
+msgid "is not changed, as typed values are the same as previous"
+msgstr "nisu izmenjeni, jer se unešeni podaci poklapaju sa trenutnim vrednostima"
+
+#: books/routes.py:156 books/routes.py:216
 msgid "Following book is added"
 msgstr "Sledeća knjiga je dodata"
 
-#: books/routes.py:154 books/routes.py:216
+#: books/routes.py:158 books/routes.py:220
 msgid "Book is successfully added"
 msgstr "Knjiga je uspešno dodata"
 
-#: books/routes.py:176 books/routes.py:207
+#: books/routes.py:180 books/routes.py:211
 msgid "is already rented"
 msgstr "je već iznajmljena"
 
-#: books/routes.py:176
+#: books/routes.py:180
 msgid "Please check your inventory number and then continue"
 msgstr "Proverite inventarni broj i pokušajte ponovo"
 
-#: books/routes.py:181
+#: books/routes.py:185
 msgid "was not found"
 msgstr "nije pronađena"
 
-#: books/routes.py:207
+#: books/routes.py:211
 msgid "An error flag is set to the books with same inventory number"
 msgstr "Oznaka greške je postavljena na knjige sa istim inventarnim brojem"
 
-#: books/routes.py:225 books/routes.py:244
+#: books/routes.py:229 books/routes.py:248
 msgid "Following book"
 msgstr "Sledeća knjiga"
 
-#: books/routes.py:225
+#: books/routes.py:229
 msgid "Is rented to following member"
 msgstr "Je iznajmljena sledećem članu"
 
-#: books/routes.py:227
+#: books/routes.py:231
 msgid "Book is successfully rented"
 msgstr "Knjiga je uspešno iznajmljena"
 
-#: books/routes.py:244
+#: books/routes.py:248
 msgid "Is returned from following member"
 msgstr "Je vraćena od strane sledećeg člana"
 
-#: books/routes.py:246
+#: books/routes.py:250
 msgid "Book is successfully returned"
 msgstr "Knjiga je uspešno vraćena"
 
@@ -610,10 +618,10 @@ msgstr "Proverite korisničko ime i lozinku"
 msgid "Following librarian requested password change"
 msgstr "Sledeći bibliotekar je zahtevao promenu lozinke"
 
-#: librarians/routes.py:52 librarians/routes.py:79 librarians/routes.py:98
-#: librarians/routes.py:158 librarians/routes.py:178 librarians/routes.py:199
-#: librarians/routes.py:201 librarians/routes.py:255 librarians/routes.py:259
-#: librarians/routes.py:264 librarians/routes.py:268
+#: librarians/routes.py:52 librarians/routes.py:80 librarians/routes.py:102
+#: librarians/routes.py:162 librarians/routes.py:182 librarians/routes.py:203
+#: librarians/routes.py:205 librarians/routes.py:259 librarians/routes.py:263
+#: librarians/routes.py:268 librarians/routes.py:272
 msgid "Librarian username"
 msgstr "Korisničko ime"
 
@@ -633,93 +641,99 @@ msgstr "Proverite unos i pokušajte ponovo"
 msgid "Password change request"
 msgstr "Zahtev za promenu lozinke"
 
-#: librarians/routes.py:79
+#: librarians/routes.py:80
 msgid "Following librarian account is updated"
 msgstr "Nalog sledećeg bibliotekara je izmenjen"
 
-#: librarians/routes.py:81
+#: librarians/routes.py:82
 msgid "Account data is successfully updated"
 msgstr "Podaci naloga su uspešno izmenjeni"
 
-#: librarians/routes.py:98
+#: librarians/routes.py:85
+msgid "Account data"
+msgstr "Podaci o nalogu"
+
+#: librarians/routes.py:102
 msgid "Following librarian changed it's password"
 msgstr "Sledeći bibliotekar je promenio svoju lozinku"
 
-#: librarians/routes.py:101 librarians/routes.py:180
+#: librarians/routes.py:105 librarians/routes.py:184
 msgid "Account password is successfully updated"
 msgstr "Lozinka naloga je uspešno izmenjena"
 
-#: librarians/routes.py:104
+#: librarians/routes.py:108
 msgid "Current password value is not correct"
 msgstr "Trenutna lozinka nije ispravna"
 
-#: librarians/routes.py:158
+#: librarians/routes.py:162
 msgid "Following librarian is added"
 msgstr "Sledeći bibliotekar je dodat"
 
-#: librarians/routes.py:160
+#: librarians/routes.py:164
 msgid "Account is successfully added"
 msgstr "Nalog je uspešno dodat"
 
-#: librarians/routes.py:178
+#: librarians/routes.py:182
 msgid "Following librarian's password is changed on request"
 msgstr "Lozinka sledećeg bibliotekara je promenjena na njegov zahtev"
 
-#: librarians/routes.py:195
+#: librarians/routes.py:199
 msgid "Account availability is not updated"
 msgstr "Dostupnost naloga nije promenjena"
 
-#: librarians/routes.py:199
+#: librarians/routes.py:203
 msgid "Following librarian's account is activated"
 msgstr "Nalog sledećeg bibliotekara je aktiviran"
 
-#: librarians/routes.py:201
+#: librarians/routes.py:205
 msgid "Following librarian's account is deactivated"
 msgstr "Nalog sledećeg bibliotekara je deaktiviran"
 
-#: librarians/routes.py:202
+#: librarians/routes.py:206
 msgid "Account availability is successfully updated"
 msgstr "Dostupnost naloga je uspešno promenjena"
 
-#: librarians/routes.py:232
+#: librarians/routes.py:236
 msgid "Add librarian as administrator"
 msgstr "Dodaj bilbiotekara u administratore"
 
-#: librarians/routes.py:233
+#: librarians/routes.py:237
 msgid "Please approve setting this librarian as the administrator"
 msgstr "Potvrdite dodavanje bibliotekara u administratore"
 
-#: librarians/routes.py:236
+#: librarians/routes.py:240
 msgid "Librarian removal from administrators request"
 msgstr "Zahtev za isključivanje bibliotekara iz administratora"
 
-#: librarians/routes.py:237
+#: librarians/routes.py:241
 msgid "Please approve your request to remove this librarian from administrators"
 msgstr "Potvrdite zahtev za isključivanje ovog bibliotekara iz administratora"
 
-#: librarians/routes.py:240
+#: librarians/routes.py:244
 msgid "Your removal from administrators request"
 msgstr "Zahtev za Vaše isključivanje iz administratora"
 
-#: librarians/routes.py:241
+#: librarians/routes.py:245
 msgid "Please approve or reject your removal from administrators"
 msgstr ""
 "Potvrdite ili odbijte zahtev za Vašim isključivanjem iz grupe "
 "administratora"
 
-#: librarians/routes.py:255
+#: librarians/routes.py:259
 msgid "Following librarian's account is set as administrator"
 msgstr "Nalog sledećeg bibliotekara je postavljen kao administratorski"
 
-#: librarians/routes.py:256
+#: librarians/routes.py:260
 msgid "Librarian is successfully promoted to the administrator"
 msgstr "Bibliotekar je uspešno uključen u grupu administratora"
 
-#: librarians/routes.py:259
+#: librarians/routes.py:263
 msgid "Following librarian is requested to be removed from the administrators"
-msgstr "Sledećem bibliotekaru je poslat zahtev za uklanjanje iz grupe administratora"
+msgstr ""
+"Sledećem bibliotekaru je poslat zahtev za uklanjanje iz grupe "
+"administratora"
 
-#: librarians/routes.py:260
+#: librarians/routes.py:264
 msgid ""
 "You successfully created a request to remove librarian from the "
 "administrators"
@@ -727,23 +741,27 @@ msgstr ""
 "Uspešno set kreirali zahtev za isključivanje bibliotekara iz grupe "
 "administratora"
 
-#: librarians/routes.py:264
-msgid ""
-"Following librarian's request to be removed from administrators is "
-"approved"
-msgstr "Zahtev za uklanjanje sledećeg bibliotekara iz grupe administratora je odobren"
-
-#: librarians/routes.py:265
-msgid "You are successfully removed from the administrators"
-msgstr "Uspešno ste isključeni iz grupe administratora"
-
 #: librarians/routes.py:268
 msgid ""
 "Following librarian's request to be removed from administrators is "
-"rejected"
-msgstr "Zahtev za uklanjanje sledećeg bibliotekara iz grupe administratora je odbijen"
+"approved"
+msgstr ""
+"Zahtev za uklanjanje sledećeg bibliotekara iz grupe administratora je "
+"odobren"
 
 #: librarians/routes.py:269
+msgid "You are successfully removed from the administrators"
+msgstr "Uspešno ste isključeni iz grupe administratora"
+
+#: librarians/routes.py:272
+msgid ""
+"Following librarian's request to be removed from administrators is "
+"rejected"
+msgstr ""
+"Zahtev za uklanjanje sledećeg bibliotekara iz grupe administratora je "
+"odbijen"
+
+#: librarians/routes.py:273
 msgid "You successfully rejected request to be removed from the administrators"
 msgstr "Uspešno ste odbili zahtev za Vašim isključivanjem iz grupe administratora"
 
@@ -803,13 +821,17 @@ msgstr "Sledeći član je dodat"
 msgid "Member is successfully added"
 msgstr "Član je uspešno dodat"
 
-#: members/routes.py:61
+#: members/routes.py:62
 msgid "Following member is updated"
 msgstr "Podaci sledećeg člana su izmenjeni"
 
-#: members/routes.py:63
+#: members/routes.py:64
 msgid "Member data is successfully updated"
 msgstr "Podaci o članu su uspešno izmenjeni"
+
+#: members/routes.py:67
+msgid "Member data"
+msgstr "Podaci o članu"
 
 #: templates/account.html:5
 msgid "Account details"

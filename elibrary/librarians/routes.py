@@ -70,16 +70,20 @@ def account():
 def account_change():
     form = LibrarianUpdateForm()
     if form.validate_on_submit():
-        from_value = current_user.log_data()
-        current_user.first_name = form.first_name.data
-        current_user.last_name = form.last_name.data
-        current_user.email = form.email.data
-        current_user.phone = form.phone.data.replace("/", "")
-        current_user.address = form.address.data
-        EventWriter.write(EventType.librarian_update, current_user.id, _g('Following librarian account is updated')+' ('+_g('Librarian username')+': '+current_user.username+'):'+from_value+'<br/>'+_g('To new values')+':'+current_user.log_data())
-        db.session.commit()
-        flash(_g('Account data is successfully updated')+'.', 'success')
-        return redirect(url_for('librarians.account'))
+        if has_new_values(current_user, form):
+            from_value = current_user.log_data()
+            current_user.first_name = form.first_name.data
+            current_user.last_name = form.last_name.data
+            current_user.email = form.email.data
+            current_user.phone = form.phone.data.replace("/", "")
+            current_user.address = form.address.data
+            EventWriter.write(EventType.librarian_update, current_user.id, _g('Following librarian account is updated')+' ('+_g('Librarian username')+': '+current_user.username+'):'+from_value+'<br/>'+_g('To new values')+':'+current_user.log_data())
+            db.session.commit()
+            flash(_g('Account data is successfully updated')+'.', 'success')
+            return redirect(url_for('librarians.account'))
+        else:
+            flash(_g('Account data')+' '+_g('is not changed, as typed values are the same as previous')+'.', 'info')
+            return redirect(url_for('librarians.account'))
     elif request.method == 'GET':
         form.first_name.data = current_user.first_name
         form.last_name.data = current_user.last_name
@@ -269,3 +273,7 @@ def librarians_administrate(librarian_id):
             flash(_g('You successfully rejected request to be removed from the administrators')+'.', 'info')
         db.session.commit()
     return redirect(url_for('librarians.librarianss'))
+
+def has_new_values(user, form):
+    return not (user.first_name == form.first_name.data and user.last_name == form.last_name.data and user.email == form.email.data and \
+            user.phone == form.phone.data.replace("/", "") and user.address == form.address.data)

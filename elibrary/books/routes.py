@@ -111,24 +111,28 @@ def books_update(book_id):
     form = BookUpdateForm()
     book = Book.query.get_or_404(book_id)
     if form.validate_on_submit():
-        was_error = book.has_error
-        from_value = book.log_data()
-        book.inv_number = form.inv_number.data
-        book.signature = form.signature.data
-        book.title = form.title.data
-        book.author = form.author.data
-        if current_user.is_admin:
-            book.has_error = form.has_error.data
-            if not was_error == book.has_error:
-                if book.has_error:
-                    EventWriter.write(EventType.book_error_add, book_id, _g('An error is set to the following book')+' ('+_g('Book id')+': '+str(book.id)+'):'+book.log_data())
-                else:
-                    EventWriter.write(EventType.book_error_remove, book_id, _g('An error is removed from the following book')+' ('+_g('Book id')+': '+str(book.id)+'):'+book.log_data())
-        db.session.flush()
-        EventWriter.write(EventType.book_update, book.id, _g('Following book is updated')+' ('+_g('Book id')+': '+str(book.id)+'):'+from_value+'<br/>'+_g('To new values')+':'+book.log_data())
-        db.session.commit()
-        flash(_g('Book data is successfully updated')+'.', 'success')
-        return redirect(url_for('books.bookss'))
+        if has_new_values(book, form):
+            was_error = book.has_error
+            from_value = book.log_data()
+            book.inv_number = form.inv_number.data
+            book.signature = form.signature.data
+            book.title = form.title.data
+            book.author = form.author.data
+            if current_user.is_admin:
+                book.has_error = form.has_error.data
+                if not was_error == book.has_error:
+                    if book.has_error:
+                        EventWriter.write(EventType.book_error_add, book_id, _g('An error is set to the following book')+' ('+_g('Book id')+': '+str(book.id)+'):'+book.log_data())
+                    else:
+                        EventWriter.write(EventType.book_error_remove, book_id, _g('An error is removed from the following book')+' ('+_g('Book id')+': '+str(book.id)+'):'+book.log_data())
+            db.session.flush()
+            EventWriter.write(EventType.book_update, book.id, _g('Following book is updated')+' ('+_g('Book id')+': '+str(book.id)+'):'+from_value+'<br/>'+_g('To new values')+':'+book.log_data())
+            db.session.commit()
+            flash(_g('Book data is successfully updated')+'.', 'success')
+            return redirect(url_for('books.bookss'))
+        else:
+            flash(_g('Book data')+' '+_g('is not changed, as typed values are the same as previous')+'.', 'info')
+            return redirect(url_for('books.bookss'))
     elif request.method == 'GET':
         form.inv_number.data = book.inv_number
         form.signature.data = book.signature
@@ -336,3 +340,6 @@ def book_rents():
         list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     args_filter_and_sort = {**args_filter, **args_sort}
     return render_template('rents.html', form=form, rents_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, count_filtered = count_filtered)
+
+def has_new_values(book, form):
+    return not (book.has_error == form.has_error.data and book.inv_number == form.inv_number.data and book.signature == form.signature.data and book.title == form.title.data and book.author == form.author.data)
