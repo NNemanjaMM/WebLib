@@ -5,8 +5,9 @@ from elibrary import bcrypt, db
 from elibrary.librarians.forms import (LibrarianCreateForm, LibrarianUpdateForm, LoginForm,
         LibrarianUpdatePasswordForm, LibrarianChangePasswordForm, LibrarianRequestChangePasswordForm)
 from elibrary.utils.defines import DATE_FORMAT
+from elibrary.utils.common import EventWriter
 from elibrary.main.forms import AcceptRejectForm
-from elibrary.models import Librarian
+from elibrary.models import Librarian, EventType
 from sqlalchemy import desc
 
 librarians = Blueprint('librarians', __name__)

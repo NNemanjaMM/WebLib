@@ -101,7 +101,6 @@
         {% endif %}
         <span>{{ event.type_print }}</span>
         <span>{{ event.object_id_print }}</span>
-        <span>{{ event.message }}</span>
         <span><a href="{{ url_for('events.event_details', event_id=event.id) }}">{{ gettext('Event details') }}</a></span>
         {% if not event.is_seen %}
             <span><a href="{{ url_for('events.event_seen', event_id=event.id, **extra_sort_and_filter_args) }}">{{ gettext('Mark as seen') }}</a></span>

@@ -2,7 +2,7 @@ import enum
 from datetime import date, timedelta
 from flask_login import UserMixin
 from elibrary import db, login_manager
-from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT, DATETIME_FORMAT, BOOK_RENT_PERIOD
+from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT, DATETIME_FORMAT, DATETIME_ALL_FORMAT, BOOK_RENT_PERIOD
 from flask_babel import gettext, lazy_gettext as _l
 
 @login_manager.user_loader
@@ -18,6 +18,12 @@ class Book(db.Model):
     is_rented = db.Column(db.Boolean, default=False)
     has_error = db.Column(db.Boolean, default=False)
 
+    def log_data(self):
+        return '<br/>'+_l('Inventory number')+': '+self.inv_number+\
+                '<br/>'+_l('Signature')+': '+self.signature+\
+                '<br/>'+_l('Title')+': '+self.title+\
+                '<br/>'+_l('Author')+': '+self.author
+
 class Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(20), nullable=False)
@@ -31,6 +37,14 @@ class Member(db.Model):
     date_expiration = db.Column(db.Date, nullable=True, default=date.today())
     total_books_rented = db.Column(db.Integer, nullable=False, default=0)
     number_of_rented_books = db.Column(db.Integer, nullable=False, default=0)
+
+    def log_data(self):
+        return '<br/>'+_l('First name')+': '+self.first_name+\
+                '<br/>'+_l('Father name')+': '+self.father_name+\
+                '<br/>'+_l('Last name')+': '+self.last_name+\
+                '<br/>'+_l('Profession')+': '+self.profession+\
+                '<br/>'+_l('Phone')+': '+self.phone+\
+                '<br/>'+_l('Address')+': '+self.address
 
     @property
     def is_membership_expired(self):
@@ -74,6 +88,13 @@ class Librarian(db.Model, UserMixin):
     change_admin = db.Column(db.Boolean, default=False)
     change_password = db.Column(db.Boolean, default=False)
 
+    def log_data(self):
+        return '<br/>'+_l('First name')+': '+self.first_name+\
+                '<br/>'+_l('Last name')+': '+self.last_name+\
+                '<br/>'+_l('Phone')+': '+self.phone+\
+                '<br/>'+_l('Address')+': '+self.address+\
+                '<br/>'+_l('E-mail address')+': '+self.email
+
     @property
     def phone_print(self):
         if "+" in self.phone:
@@ -96,6 +117,11 @@ class ExtensionPrice(db.Model):
     currency = db.Column(db.String(3), nullable=False)
     note = db.Column(db.String(150), nullable=True)
     is_enabled = db.Column(db.Boolean, nullable=False, default=True)
+
+    def log_data(self):
+        return '<br/>'+_l('Id')+': '+str(self.id)+\
+                '<br/>'+_l('Price')+': '+self.price_value_print+' '+self.currency+\
+                '<br/>'+_l('Note')+': '+self.note
 
     @property
     def price_value_print(self):
@@ -126,6 +152,10 @@ class Extension(db.Model):
     @property
     def price_print(self):
         return "{:.2f}".format(self.price)
+
+    @property
+    def price_and_currency_print(self):
+        return "{:.2f}".format(self.price) + " " + self.price_details.currency
 
 class Rental(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -240,6 +270,10 @@ class Event(db.Model):
     @property
     def time_print(self):
         return self.time.strftime(DATETIME_FORMAT)
+
+    @property
+    def time_all_print(self):
+        return self.time.strftime(DATETIME_ALL_FORMAT)
 
     @property
     def object_id_print(self):

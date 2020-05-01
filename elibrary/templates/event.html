@@ -6,7 +6,7 @@
 <p>
     {{ gettext('Date and time') }}
     <strong>
-        {{ event.time_print }}
+        {{ event.time_all_print }}
     </strong>
 </p>
 
@@ -20,7 +20,7 @@
 <p>
     {{ gettext('Event type') }}
     <strong>
-        {{ event.type }} - {{ event.type_print }}
+        {{ event.type_print }}
     </strong>
 </p>
 
@@ -34,7 +34,9 @@
 <p>
     {{ gettext('Description') }}
     <strong>
-        {{ event.message }}
+        {% autoescape false %}
+            {{ event.message }}
+        {% endautoescape %}
     </strong>
 </p>
 

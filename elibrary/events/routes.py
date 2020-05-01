@@ -78,6 +78,7 @@ def event_details(event_id):
     if not event.is_seen:
         event.is_seen = True
         db.session.commit()
+    print(event.message)
     return render_template('event.html', event=event)
 
 @events.route("/events/see/<int:event_id>")

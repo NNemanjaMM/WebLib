@@ -3,8 +3,8 @@ from flask import render_template, url_for, request, flash, redirect, abort, Blu
 from flask_login import login_required, current_user
 from flask_babel import gettext
 from elibrary import db
-from elibrary.models import Book, Member, Rental
-from elibrary.utils.common import CommonFilter
+from elibrary.models import Book, Member, Rental, EventType
+from elibrary.utils.common import CommonFilter, EventWriter
 from elibrary.utils.defines import PAGINATION, MAX_RENTED_BOOKS, RENTAL_DATE_LIMIT, DATE_FORMAT, BOOK_RENT_PERIOD
 from elibrary.utils.custom_validations import string_cust, length_cust_max, numeric_cust, signature_cust, length_cust_max_15, FieldValidator
 from elibrary.books.forms import FilterForm, SearchForm, BookUpdateForm, BookCreateForm, RentForm, RentTerminationForm, RentFilterForm

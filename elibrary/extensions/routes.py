@@ -4,11 +4,11 @@ from flask import render_template, url_for, Blueprint, request, flash, redirect,
 from flask_login import login_required,current_user
 from flask_babel import gettext
 from elibrary import db
-from elibrary.models import Extension, ExtensionPrice, Member
+from elibrary.models import Extension, ExtensionPrice, Member, EventType
 from elibrary.utils.custom_validations import FieldValidator, string_cust, length_cust_max
 from elibrary.extensions.forms import FilterForm, ExtensionForm, PriceUpdate, PriceAdd
 from elibrary.utils.defines import PAGINATION
-from elibrary.utils.common import CommonFilter, CommonDate
+from elibrary.utils.common import CommonFilter, CommonDate, EventWriter
 
 extensions = Blueprint('extensions', __name__)
 sort_extensions_values = ['date_performed', 'member_id', 'date_extended', 'price']
@@ -88,6 +88,7 @@ def extensions_add(member_id):
             extension.price_id = form.price.data.id
             db.session.add(extension)
             member.date_expiration = extension.date_extended
+            EventWriter.write(EventType.extension_add, member_id, gettext('Membership is extended for a user with a member id')+' '+member_id+'. '+gettext('Extension price was')+' '+extension.price_and_currency_print)
             db.session.commit()
             flash(gettext('Membership is successfully extended to') + ' ' + member.date_expiration_print, 'info')
             return redirect(url_for('members.members_details', member_id=member.id))
@@ -123,6 +124,8 @@ def prices_add():
         price.note = form.note.data
         price.is_enabled = form.is_enabled.data
         db.session.add(price)
+        db.session.flush()
+        EventWriter.write(EventType.price_add, price.id, gettext('Following price is added')+':\n'+price.log_data())
         db.session.commit()
         flash(gettext('Price is successfully added'), 'info')
         return redirect(url_for('extensions.prices'))
@@ -138,6 +141,10 @@ def prices_update(price_id):
     if form.validate_on_submit():
         price.note = form.note.data
         price.is_enabled = not price.is_enabled
+        if price.is_enabled:
+            EventWriter.write(EventType.price_enabled, price.id, gettext('Following price is activated')+':\n'+price.log_data())
+        else:
+            EventWriter.write(EventType.price_enabled, price.id, gettext('Following price is deactivated')+':\n'+price.log_data())
         db.session.commit()
         flash(gettext('Price availability is successfully updated')+'.', 'success')
         return redirect(url_for('extensions.prices'))

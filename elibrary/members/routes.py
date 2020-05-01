@@ -4,11 +4,11 @@ from flask import render_template, url_for, redirect, request, flash, Blueprint
 from flask_login import current_user, login_required
 from flask_babel import gettext
 from elibrary import db
-from elibrary.models import Member, Extension, Rental
+from elibrary.models import Member, Extension, Rental, EventType
 from elibrary.utils.custom_validations import (string_cust, length_cust_max, FieldValidator)
 from elibrary.members.forms import MemberCreateForm, MemberUpdateForm, FilterForm, ShortFilterForm
 from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, PAGINATION, DATE_FORMAT, MAX_RENTED_BOOKS
-from elibrary.utils.common import CommonFilter
+from elibrary.utils.common import CommonFilter, EventWriter
 
 members = Blueprint('members', __name__)
 sort_member_values = ['id', 'first_name', 'last_name', 'total_books_rented', 'number_of_rented_books', 'date_registered', 'date_expiration']
