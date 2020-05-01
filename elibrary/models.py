@@ -19,7 +19,9 @@ class Book(db.Model):
     has_error = db.Column(db.Boolean, default=False)
 
     def log_data(self):
-        return '<br/>'+_l('Inventory number')+': '+self.inv_number+\
+        if not (self.inv_number and self.signature and self.title and self.author):
+            return '<br/>'+_l('More data is currently unavailable')
+        return '<br/>'+_l('Inventory number')+': '+str(self.inv_number)+\
                 '<br/>'+_l('Signature')+': '+self.signature+\
                 '<br/>'+_l('Title')+': '+self.title+\
                 '<br/>'+_l('Author')+': '+self.author
@@ -39,12 +41,15 @@ class Member(db.Model):
     number_of_rented_books = db.Column(db.Integer, nullable=False, default=0)
 
     def log_data(self):
+        if not (self.first_name and self.father_name and self.last_name and self.profession and self.phone and self.address and self.email):
+            return '<br/>'+_l('More data is currently unavailable')
         return '<br/>'+_l('First name')+': '+self.first_name+\
                 '<br/>'+_l('Father name')+': '+self.father_name+\
                 '<br/>'+_l('Last name')+': '+self.last_name+\
                 '<br/>'+_l('Profession')+': '+self.profession+\
                 '<br/>'+_l('Phone')+': '+self.phone+\
-                '<br/>'+_l('Address')+': '+self.address
+                '<br/>'+_l('Address')+': '+self.address+\
+                '<br/>'+_l('E-mail address')+': '+self.email
 
     @property
     def is_membership_expired(self):
@@ -79,9 +84,9 @@ class Librarian(db.Model, UserMixin):
     last_name = db.Column(db.String(30), nullable=False)
     username = db.Column(db.String(30), nullable=False)
     password = db.Column(db.String(60), nullable=False)
-    email = db.Column(db.String(50), nullable=True)
+    email = db.Column(db.String(40), nullable=True)
     phone = db.Column(db.String(15), nullable=False)
-    address = db.Column(db.String(60), nullable=False)
+    address = db.Column(db.String(50), nullable=False)
     date_registered = db.Column(db.Date, nullable=False, default=date.today())
     is_admin = db.Column(db.Boolean, default=False)
     is_active = db.Column(db.Boolean, default=True)
@@ -89,6 +94,8 @@ class Librarian(db.Model, UserMixin):
     change_password = db.Column(db.Boolean, default=False)
 
     def log_data(self):
+        if not (self.first_name and self.last_name and self.phone and self.address and self.email):
+            return '<br/>'+_l('More data is currently unavailable')
         return '<br/>'+_l('First name')+': '+self.first_name+\
                 '<br/>'+_l('Last name')+': '+self.last_name+\
                 '<br/>'+_l('Phone')+': '+self.phone+\
@@ -119,8 +126,7 @@ class ExtensionPrice(db.Model):
     is_enabled = db.Column(db.Boolean, nullable=False, default=True)
 
     def log_data(self):
-        return '<br/>'+_l('Id')+': '+str(self.id)+\
-                '<br/>'+_l('Price')+': '+self.price_value_print+' '+self.currency+\
+        return '<br/>'+_l('Price')+': '+self.price_value_print+' '+self.currency+\
                 '<br/>'+_l('Note')+': '+self.note
 
     @property
@@ -221,8 +227,8 @@ class EventType():
    librarian_activate = 55
    librarian_deactivate = 56
    librarian_set_admin = 57
-   librarian_remove_admin_request = 58
-   librarian_remove_admin_response = 59
+   librarian_remove_admin_request = 58  #
+   librarian_remove_admin_response = 59 #
 
    type_text = {
        0: _l('Not selected'),
@@ -260,7 +266,7 @@ class Event(db.Model):
     librarian = db.Column(db.String(30), nullable=False)
     type = db.Column(db.Integer, nullable=False)
     object_id = db.Column(db.Integer, nullable=True)
-    message = db.Column(db.String(300), nullable=False)
+    message = db.Column(db.String(450), nullable=False)
     is_seen = db.Column(db.Boolean, default=False)
 
     @property
@@ -284,4 +290,6 @@ class Event(db.Model):
         elif(self.type < 50):
             return _l('Price with id') + ' ' + str(self.object_id)
         elif(self.type < 60):
+            return _l('Librarian with id') + ' ' + str(self.object_id)
+        else:
             return ''

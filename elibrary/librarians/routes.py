@@ -49,6 +49,7 @@ def login_password_reset():
         if librarian:
             if librarian.first_name == form.first_name.data and librarian.last_name == form.last_name.data:
                 librarian.change_password = True
+                EventWriter.write_user(EventType.librarian_password_request, librarian.id, gettext('Following librarian requested password change')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data(), librarian.username)
                 db.session.commit()
                 flash(gettext('Reset password request is successfully sent to the administrator')+'.', 'success')
                 return redirect(url_for('librarians.login'))
@@ -69,11 +70,13 @@ def account():
 def account_change():
     form = LibrarianUpdateForm()
     if form.validate_on_submit():
+        from_value = current_user.log_data()
         current_user.first_name = form.first_name.data
         current_user.last_name = form.last_name.data
         current_user.email = form.email.data
         current_user.phone = form.phone.data.replace("/", "")
         current_user.address = form.address.data
+        EventWriter.write(EventType.librarian_update, current_user.id, gettext('Following librarian account is updated')+' ('+gettext('Librarian username')+': '+current_user.username+'):'+from_value+'<br/>'+gettext('To new values')+':'+current_user.log_data())
         db.session.commit()
         flash(gettext('Account data is successfully updated')+'.', 'success')
         return redirect(url_for('librarians.account'))
@@ -92,6 +95,7 @@ def account_password():
     if form.validate_on_submit():
         if bcrypt.check_password_hash(current_user.password, form.old_password.data):
             current_user.password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
+            EventWriter.write(EventType.librarian_password, current_user.id, gettext('Following librarian changed it\'s password')+' ('+gettext('Librarian username')+': '+current_user.username+'):'+current_user.log_data())
             current_user.change_password = False
             db.session.commit()
             flash(gettext('Account password is successfully updated')+'.', 'success')
@@ -150,6 +154,8 @@ def librarians_create():
         librarian.password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         librarian.is_admin = form.is_administrator.data
         db.session.add(librarian)
+        db.session.flush()
+        EventWriter.write(EventType.librarian_add, librarian.id, gettext('Following librarian is added')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
         db.session.commit()
         flash(gettext('Account is successfully added')+'.', 'success')
         return redirect(url_for('librarians.librarianss'))
@@ -169,6 +175,7 @@ def librarians_password(librarian_id):
     if form.validate_on_submit():
         librarian.password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
         librarian.change_password = False
+        EventWriter.write(EventType.librarian_password_response, librarian.id, gettext('Following librarian\'s password is changed on request')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
         db.session.commit()
         flash(gettext('Account password is successfully updated')+'.', 'success')
         return redirect(url_for('librarians.librarians_details', librarian_id=librarian.id))
@@ -188,6 +195,10 @@ def librarians_availability(librarian_id):
             flash(gettext('Account availability is not updated')+'.', 'info')
         elif form_decide.approve.data and form_decide.validate():
             librarian.is_active = not librarian.is_active
+            if librarian.is_active:
+                EventWriter.write(EventType.librarian_activate, librarian.id, gettext('Following librarian\'s account is activated')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
+            else:
+                EventWriter.write(EventType.librarian_deactivate, librarian.id, gettext('Following librarian\'s account is deactivated')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
             flash(gettext('Account availability is successfully updated')+'.', 'info')
         db.session.commit()
         return redirect(url_for('librarians.librarianss'))
@@ -241,16 +252,20 @@ def librarians_administrate(librarian_id):
     if success:
         if ch_regular_to_admin and response:
             librarian.is_admin = True
+            EventWriter.write(EventType.librarian_set_admin, librarian.id, gettext('Following librarian\'s account is set as administrator')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
             flash(gettext('Librarian is successfully promoted to the administrator')+'.', 'info')
         elif ch_admin_disable_req and response:
             librarian.change_admin = True
+            EventWriter.write(EventType.librarian_remove_admin_request, librarian.id, gettext('Following librarian is requested to be removed from the administrators')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
             flash(gettext('You successfully created a request to remove librarian from the administrators')+'.', 'info')
         elif ch_admin_disable_resp and response:
             librarian.is_admin = False
             librarian.change_admin = False
+            EventWriter.write(EventType.librarian_remove_admin_response, librarian.id, gettext('Following librarian\'s request to be removed from administrators is approved')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
             flash(gettext('You are successfully removed from the administrators')+'.', 'info')
         elif ch_admin_disable_resp and not response:
             librarian.change_admin = False
+            EventWriter.write(EventType.librarian_remove_admin_response, librarian.id, gettext('Following librarian\'s request to be removed from administrators is rejected')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
             flash(gettext('You successfully rejected request to be removed from the administrators')+'.', 'info')
         db.session.commit()
     return redirect(url_for('librarians.librarianss'))

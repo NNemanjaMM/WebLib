@@ -23,6 +23,16 @@ class CommonDate:
 
 class EventWriter:
     @staticmethod
+    def write_user(type, object_id, message, user):
+        event = Event()
+        event.time = datetime.now()
+        event.librarian = user
+        event.type = type
+        event.object_id = object_id
+        event.message = message
+        db.session.add(event)
+
+    @staticmethod
     def write(type, object_id, message):
         event = Event()
         event.time = datetime.now()

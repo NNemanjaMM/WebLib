@@ -38,7 +38,7 @@ class BookCreateForm(BookCUForm):
             raise ValidationError(_l('Book with this inventory number') + ' ' +_l('already exists'))
 
 class RentForm(FlaskForm):
-    date_rented = StringField(_l('Rent date'))
+    date_rented = StringField(_l('Rent date'), default=date.today().strftime(DATE_FORMAT))
     inv_number = StringField(_l('Inventory number'))
     signature = StringField(_l('Signature'))
     title = StringField(_l('Title'))
@@ -48,7 +48,7 @@ class RentForm(FlaskForm):
 
 class RentTerminationForm(FlaskForm):
     date_rented = None
-    date_returned = DateField(_l('Return date'), validators=[required_cust_date()], format=DATE_FORMAT)
+    date_returned = DateField(_l('Return date'), validators=[required_cust_date()], format=DATE_FORMAT, default=date.today())
     submit = SubmitField(_l('Return book'))
 
     def validate_date_returned(self, date_returned):

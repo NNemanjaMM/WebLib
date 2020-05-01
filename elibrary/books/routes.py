@@ -111,12 +111,21 @@ def books_update(book_id):
     form = BookUpdateForm()
     book = Book.query.get_or_404(book_id)
     if form.validate_on_submit():
+        was_error = book.has_error
+        from_value = book.log_data()
         book.inv_number = form.inv_number.data
         book.signature = form.signature.data
         book.title = form.title.data
         book.author = form.author.data
         if current_user.is_admin:
             book.has_error = form.has_error.data
+            if not was_error == book.has_error:
+                if book.has_error:
+                    EventWriter.write(EventType.book_error_add, book_id, gettext('An error is set to the following book')+' ('+gettext('Book id')+': '+str(book.id)+'):'+book.log_data())
+                else:
+                    EventWriter.write(EventType.book_error_remove, book_id, gettext('An error is removed from the following book')+' ('+gettext('Book id')+': '+str(book.id)+'):'+book.log_data())
+        db.session.flush()
+        EventWriter.write(EventType.book_update, book.id, gettext('Following book is updated')+' ('+gettext('Book id')+': '+str(book.id)+'):'+from_value+'<br/>'+gettext('To new values')+':'+book.log_data())
         db.session.commit()
         flash(gettext('Book data is successfully updated')+'.', 'success')
         return redirect(url_for('books.bookss'))
@@ -139,6 +148,8 @@ def books_add():
         book.title = form.title.data
         book.author = form.author.data
         db.session.add(book)
+        db.session.flush()
+        EventWriter.write(EventType.book_add, book.id, gettext('Following book is added')+' ('+gettext('Book id')+': '+str(book.id)+'):'+book.log_data())
         db.session.commit()
         flash(gettext('Book is successfully added')+'.', 'success')
         return redirect(url_for('books.bookss'))
@@ -176,10 +187,12 @@ def book_rent(member_id):
         date_value = FieldValidator.convert_and_validate_date(form.date_rented, False, (date.today()-timedelta(RENTAL_DATE_LIMIT)).strftime(DATE_FORMAT))
         if not (failed_1 or failed_2 or failed_3 or failed_4 or date_value == None):
             book_id = None
+            rented_book = None
             book_duplicate = Book.query.filter(Book.inv_number==form.inv_number.data).first()
             if book_duplicate and not book_duplicate.is_rented:
                 book_id = book_duplicate.id
                 book_duplicate.is_rented = True
+                rented_book = book_duplicate
                 flash(gettext('Book with this inventory number') + ' ' +gettext('already exists')+'.', 'info')
             else:
                 new_book = Book()
@@ -193,8 +206,13 @@ def book_rent(member_id):
                     new_book.has_error = True
                     flash(gettext('Book with this inventory number') + ' ' +gettext('is already rented')+'! '+gettext('An error flag is set to the books with same inventory number')+'.', 'warning')
                 db.session.add(new_book)
+                db.session.flush()
+                if new_book.has_error:
+                    EventWriter.write(EventType.book_error_add, new_book.id, gettext('An error is set to the following book')+' ('+gettext('Book id')+': '+str(new_book.id)+'):'+new_book.log_data())
+                EventWriter.write(EventType.book_add, new_book.id, gettext('Following book is added')+' ('+gettext('Book id')+': '+str(new_book.id)+'):'+new_book.log_data())
                 db.session.commit()
                 book_id = new_book.id
+                rented_book = new_book
                 flash(gettext('Book is successfully added')+'.', 'info')
             rental = Rental()
             rental.date_performed = date_value
@@ -204,6 +222,7 @@ def book_rent(member_id):
             db.session.add(rental)
             member.number_of_rented_books = db.session.query(func.count(Rental.id)).filter(and_(Rental.member_id == member_id, Rental.is_terminated == False)).scalar()
             member.total_books_rented = db.session.query(func.count(Rental.id)).filter(Rental.member_id == member_id).scalar()
+            EventWriter.write(EventType.rent_rent, rented_book.id, gettext('Following book')+' ('+gettext('Book id')+': '+str(rented_book.id)+'):'+rented_book.log_data()+'<br/>'+gettext('Is rented to following member')+' ('+gettext('Member id')+' '+str(member.id)+'):'+member.log_data())
             db.session.commit()
             flash(gettext('Book is successfully rented')+'.', 'info')
             return redirect(url_for('members.members_details', member_id=member_id))
@@ -222,6 +241,7 @@ def book_rents_details(rent_id):
         rent.date_termination = form.date_returned.data
         member.number_of_rented_books = db.session.query(func.count(Rental.id)).filter(and_(Rental.member_id == member.id, Rental.is_terminated == False)).scalar()
         book.is_rented = False
+        EventWriter.write(EventType.rent_return, book_id, gettext('Following book')+' ('+gettext('Book id')+': '+str(book.id)+'):'+book.log_data()+'<br/>'+gettext('Is returned from following member')+' ('+gettext('Member id')+' '+str(member.id)+'):'+member.log_data())
         db.session.commit()
         flash(gettext('Book is successfully returned')+'.', 'info')
         return redirect(url_for('members.members_details', member_id=member.id))

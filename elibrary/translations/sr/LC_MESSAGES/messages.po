@@ -80,11 +80,11 @@ msgstr "Cena - dodavanje"
 
 #: models.py:209
 msgid "Price activation"
-msgstr "Cena - onemogućavanje"
+msgstr "Cena - omogućavanje"
 
 #: models.py:210
 msgid "Price deactivation"
-msgstr "Cena - omogućavanje"
+msgstr "Cena - onemogućavanje"
 
 #: models.py:211
 msgid "Librarian add"
@@ -120,11 +120,11 @@ msgstr "Bibliotekar - dodavanje u administratore"
 
 #: models.py:219
 msgid "Librarian remove admin request"
-msgstr "Bibliotekar - zahtev za dodavanje u administratore"
+msgstr "Bibliotekar - zahtev za uklanjanje iz administratora"
 
 #: models.py:220
 msgid "Librarian remove admin response"
-msgstr "Bibliotekar - uklanjanje iz administratora"
+msgstr "Bibliotekar - odgovor na zahtev za uklanjanje iz administratora"
 
 #: models.py:246
 msgid "Book with id"
@@ -961,7 +961,7 @@ msgstr "Ova cena će postati"
 
 #: templates/extension_prices_update.html:54
 msgid "and the comment will be updated"
-msgstr "i komentar će biti izmenjen"
+msgstr "i komentar će biti ažuriran"
 
 #: templates/extension_prices_update.html:58
 msgid "Please approve or reject action"

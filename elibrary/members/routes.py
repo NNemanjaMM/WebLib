@@ -37,6 +37,8 @@ def members_create():
         member.date_registered = form.date_registered.data
         member.date_expiration = form.date_registered.data
         db.session.add(member)
+        db.session.flush()
+        EventWriter.write(EventType.member_add, member.id, gettext('Following member is added')+' ('+gettext('Member id')+': '+str(member.id)+'):'+member.log_data())
         db.session.commit()
         flash(gettext('Member is successfully added')+'.', 'success')
         return redirect(url_for('members.members_details', member_id=member.id))
@@ -48,6 +50,7 @@ def members_update(member_id):
     member = Member.query.get_or_404(member_id)
     form = MemberUpdateForm()
     if form.validate_on_submit():
+        from_value = member.log_data()
         member.first_name = form.first_name.data
         member.last_name = form.last_name.data
         member.father_name = form.father_name.data
@@ -55,6 +58,7 @@ def members_update(member_id):
         member.email = form.email.data
         member.phone = form.phone.data.replace("/", "")
         member.address = form.address.data
+        EventWriter.write(EventType.member_update, member.id, gettext('Following member is updated')+' ('+gettext('Member id')+': '+str(member.id)+'):'+from_value+'<br/>'+gettext('To new values')+':'+member.log_data())
         db.session.commit()
         flash(gettext('Member data is successfully updated')+'.', 'success')
         return redirect(url_for('members.members_details',member_id=member.id))
