@@ -231,6 +231,7 @@ class Event(db.Model):
     type = db.Column(db.Integer, nullable=False)
     object_id = db.Column(db.Integer, nullable=True)
     message = db.Column(db.String(300), nullable=False)
+    is_seen = db.Column(db.Boolean, default=False)
 
     @property
     def type_print(self):

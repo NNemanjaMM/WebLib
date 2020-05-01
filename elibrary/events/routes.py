@@ -33,6 +33,7 @@ def eventss():
     f_librarian = request.args.get('librarian')
     f_object_id = request.args.get('object_id')
     f_type = request.args.get('type')
+    f_is_seen = request.args.get('is_seen')
 
     my_query, args_filter, filter_has_errors = CommonFilter.process_related_date_filters(my_query,
         args_filter, filter_has_errors, form.date_from,
@@ -48,6 +49,15 @@ def eventss():
     if not (f_type == None or f_type == '0'):
         form.type.data = f_type
         my_query = my_query.filter(Event.type == f_type)
+
+    if not (f_is_seen == None or f_is_seen == ""):
+        form.is_seen.data = f_is_seen
+        if f_is_seen == 'yes':
+            my_query = my_query.filter(Event.is_seen == True)
+            args_filter['is_seen'] = f_is_seen
+        elif f_is_seen == 'no':
+            my_query = my_query.filter(Event.is_seen == False)
+            args_filter['is_seen'] = f_is_seen
 
     count_filtered = my_query.count()
     if filter_has_errors:
@@ -65,4 +75,27 @@ def event_details(event_id):
     if not current_user.is_admin:
         abort(403)
     event = Event.query.get_or_404(event_id)
+    if not event.is_seen:
+        event.is_seen = True
+        db.session.commit()
     return render_template('event.html', event=event)
+
+@events.route("/events/see/<int:event_id>")
+@login_required
+def event_seen(event_id):
+    if not current_user.is_admin:
+        abort(403)
+    event = Event.query.get_or_404(event_id)
+    event.is_seen = True
+    db.session.commit()
+    return eventss()
+
+@events.route("/events/unsee/<int:event_id>")
+@login_required
+def event_unseen(event_id):
+    if not current_user.is_admin:
+        abort(403)
+    event = Event.query.get_or_404(event_id)
+    event.is_seen = False
+    db.session.commit()
+    return eventss()

@@ -9,4 +9,5 @@ class FilterForm(FlaskForm):
     librarian = StringField(_l('Librarian'))
     type = SelectField(_l('Event type'), choices=list(EventType.type_text.items()))
     object_id = StringField(_l('Object id'))
+    is_seen = SelectField(_l('Is seen'), choices=[('none', _l('Not selected')), ('yes', _l('Yes')), ('no', _l('No'))])
     submit = SubmitField(_l('Filter'))

@@ -54,10 +54,14 @@
                     </div>
                 {% endif %}
             </div>
+            <div>
+                {{ form.is_seen.label }}
+                {{ form.is_seen }}
+            </div>
         </fieldset>
         <div>
             {{ form.submit }}
-            <a href="{{ url_for('books.bookss') }}">{{ gettext('Clear filter') }}</a>
+            <a href="{{ url_for('events.eventss') }}">{{ gettext('Clear filter') }}</a>
         </div>
     </form>
 </div>
@@ -87,12 +91,21 @@
 
 {% for event in events_list.items %}
     <p>
+        {% if not event.is_seen %}
+            <b>
+        {% endif %}
         <span>{{ event.time_print }}</span>
         <span>{{ event.librarian }}</span>
+        {% if not event.is_seen %}
+            </b>
+        {% endif %}
         <span>{{ event.type_print }}</span>
         <span>{{ event.object_id_print }}</span>
         <span>{{ event.message }}</span>
         <span><a href="{{ url_for('events.event_details', event_id=event.id) }}">{{ gettext('Event details') }}</a></span>
+        {% if not event.is_seen %}
+            <span><a href="{{ url_for('events.event_seen', event_id=event.id, **extra_sort_and_filter_args) }}">{{ gettext('Mark as seen') }}</a></span>
+        {% endif %}
     </p>
 {% endfor %}
 
