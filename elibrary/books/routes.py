@@ -342,4 +342,4 @@ def book_rents():
     return render_template('rents.html', form=form, rents_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, count_filtered = count_filtered)
 
 def has_new_values(book, form):
-    return not (book.has_error == form.has_error.data and book.inv_number == form.inv_number.data and book.signature == form.signature.data and book.title == form.title.data and book.author == form.author.data)
+    return not (book.has_error == form.has_error.data and book.inv_number == int(form.inv_number.data) and book.signature == form.signature.data and book.title == form.title.data and book.author == form.author.data)
