@@ -49,7 +49,6 @@ class PriceAdd(FlaskForm):
     price_value = DecimalField(_l('Price'), validators=[required_cust_decimal()], places=2)
     currency = StringField(_l('Currency'), validators=[required_cust(), char_cust(), length_cust(max=3)])
     note = TextAreaField(_l('Note'), validators=[optional_cust(), string_cust(), length_cust(max=150)])
-    is_enabled = BooleanField(_l('Enable price upon creation'))
     submit = SubmitField(_l('Add price'))
 
     def validate_price_value(self, price_value):
