@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from sqlalchemy import desc, or_, and_
 from flask import render_template, url_for, redirect, request, flash, Blueprint
 from flask_login import current_user, login_required
-from flask_babel import gettext
+from flask_babel import gettext as _g
 from elibrary import db
 from elibrary.models import Member, Extension, Rental, EventType
 from elibrary.utils.custom_validations import (string_cust, length_cust_max, FieldValidator)
@@ -38,9 +38,9 @@ def members_create():
         member.date_expiration = form.date_registered.data
         db.session.add(member)
         db.session.flush()
-        EventWriter.write(EventType.member_add, member.id, gettext('Following member is added')+' ('+gettext('Member id')+': '+str(member.id)+'):'+member.log_data())
+        EventWriter.write(EventType.member_add, member.id, _g('Following member is added')+' ('+_g('Member id')+': '+str(member.id)+'):'+member.log_data())
         db.session.commit()
-        flash(gettext('Member is successfully added')+'.', 'success')
+        flash(_g('Member is successfully added')+'.', 'success')
         return redirect(url_for('members.members_details', member_id=member.id))
     return render_template('member_cu.html', form=form, is_creating=True)
 
@@ -58,9 +58,9 @@ def members_update(member_id):
         member.email = form.email.data
         member.phone = form.phone.data.replace("/", "")
         member.address = form.address.data
-        EventWriter.write(EventType.member_update, member.id, gettext('Following member is updated')+' ('+gettext('Member id')+': '+str(member.id)+'):'+from_value+'<br/>'+gettext('To new values')+':'+member.log_data())
+        EventWriter.write(EventType.member_update, member.id, _g('Following member is updated')+' ('+_g('Member id')+': '+str(member.id)+'):'+from_value+'<br/>'+_g('To new values')+':'+member.log_data())
         db.session.commit()
-        flash(gettext('Member data is successfully updated')+'.', 'success')
+        flash(_g('Member data is successfully updated')+'.', 'success')
         return redirect(url_for('members.members_details',member_id=member.id))
     elif request.method == 'GET':
         form.first_name.data = member.first_name
@@ -169,7 +169,7 @@ def memberss(filtering = False, searching = False):
 
     count_filtered = my_query.count()
     if filter_has_errors:
-        flash(gettext('There are filter values with errors. However, valid filter values are applied.'), 'warning')
+        flash(_g('There are filter values with errors. However, valid filter values are applied.'), 'warning')
     if sort_direction == 'up':
         list = my_query.order_by(sort_criteria).paginate(page=page, per_page=PAGINATION)
     else:

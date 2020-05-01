@@ -1,6 +1,6 @@
 from flask import render_template, url_for, redirect, request, flash, Blueprint, abort
 from flask_login import login_user, current_user, logout_user, login_required
-from flask_babel import gettext
+from flask_babel import gettext as _g
 from elibrary import bcrypt, db
 from elibrary.librarians.forms import (LibrarianCreateForm, LibrarianUpdateForm, LoginForm,
         LibrarianUpdatePasswordForm, LibrarianChangePasswordForm, LibrarianRequestChangePasswordForm)
@@ -32,12 +32,12 @@ def login():
                 next_page = request.args.get('next')
                 return redirect(next_page) if next_page else redirect(url_for('main.home'))
             else:
-                flash(gettext('Login unsuccessfull')+'. ', 'danger')
-                flash(gettext('This user is inactive. For the activation consult the administrator.'), 'danger')
+                flash(_g('Login unsuccessfull')+'. ', 'danger')
+                flash(_g('This user is inactive. For the activation consult the administrator.'), 'danger')
         else:
-            flash(gettext('Login unsuccessfull')+'. '+gettext('Please check username and password')+'.', 'danger')
+            flash(_g('Login unsuccessfull')+'. '+_g('Please check username and password')+'.', 'danger')
     form.username.data=''
-    return render_template('login.html', title=gettext('Login'), form=form)
+    return render_template('login.html', title=_g('Login'), form=form)
 
 @librarians.route("/login/password", methods=['GET', 'POST'])
 def login_password_reset():
@@ -49,16 +49,16 @@ def login_password_reset():
         if librarian:
             if librarian.first_name == form.first_name.data and librarian.last_name == form.last_name.data:
                 librarian.change_password = True
-                EventWriter.write_user(EventType.librarian_password_request, librarian.id, gettext('Following librarian requested password change')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data(), librarian.username)
+                EventWriter.write_user(EventType.librarian_password_request, librarian.id, _g('Following librarian requested password change')+' ('+_g('Librarian username')+': '+librarian.username+'):'+librarian.log_data(), librarian.username)
                 db.session.commit()
-                flash(gettext('Reset password request is successfully sent to the administrator')+'.', 'success')
+                flash(_g('Reset password request is successfully sent to the administrator')+'.', 'success')
                 return redirect(url_for('librarians.login'))
-        flash(gettext('Combination of the username, first name and last name does not exist')+'.', 'error')
-        flash(gettext('Please check your input and try again')+'.', 'error')
+        flash(_g('Combination of the username, first name and last name does not exist')+'.', 'error')
+        flash(_g('Please check your input and try again')+'.', 'error')
     form.username.data=''
     form.first_name.data=''
     form.last_name.data=''
-    return render_template('login_password_reset.html', form=form, title=gettext('Password change request'))
+    return render_template('login_password_reset.html', form=form, title=_g('Password change request'))
 
 @librarians.route("/account")
 @login_required
@@ -76,9 +76,9 @@ def account_change():
         current_user.email = form.email.data
         current_user.phone = form.phone.data.replace("/", "")
         current_user.address = form.address.data
-        EventWriter.write(EventType.librarian_update, current_user.id, gettext('Following librarian account is updated')+' ('+gettext('Librarian username')+': '+current_user.username+'):'+from_value+'<br/>'+gettext('To new values')+':'+current_user.log_data())
+        EventWriter.write(EventType.librarian_update, current_user.id, _g('Following librarian account is updated')+' ('+_g('Librarian username')+': '+current_user.username+'):'+from_value+'<br/>'+_g('To new values')+':'+current_user.log_data())
         db.session.commit()
-        flash(gettext('Account data is successfully updated')+'.', 'success')
+        flash(_g('Account data is successfully updated')+'.', 'success')
         return redirect(url_for('librarians.account'))
     elif request.method == 'GET':
         form.first_name.data = current_user.first_name
@@ -95,13 +95,13 @@ def account_password():
     if form.validate_on_submit():
         if bcrypt.check_password_hash(current_user.password, form.old_password.data):
             current_user.password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
-            EventWriter.write(EventType.librarian_password, current_user.id, gettext('Following librarian changed it\'s password')+' ('+gettext('Librarian username')+': '+current_user.username+'):'+current_user.log_data())
+            EventWriter.write(EventType.librarian_password, current_user.id, _g('Following librarian changed it\'s password')+' ('+_g('Librarian username')+': '+current_user.username+'):'+current_user.log_data())
             current_user.change_password = False
             db.session.commit()
-            flash(gettext('Account password is successfully updated')+'.', 'success')
+            flash(_g('Account password is successfully updated')+'.', 'success')
             return redirect(url_for('librarians.account'))
         else:
-            flash(gettext('Current password value is not correct')+'.', 'error')
+            flash(_g('Current password value is not correct')+'.', 'error')
     return render_template('account_password_change.html', form=form)
 
 @librarians.route("/librarians")
@@ -155,9 +155,9 @@ def librarians_create():
         librarian.is_admin = form.is_administrator.data
         db.session.add(librarian)
         db.session.flush()
-        EventWriter.write(EventType.librarian_add, librarian.id, gettext('Following librarian is added')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
+        EventWriter.write(EventType.librarian_add, librarian.id, _g('Following librarian is added')+' ('+_g('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
         db.session.commit()
-        flash(gettext('Account is successfully added')+'.', 'success')
+        flash(_g('Account is successfully added')+'.', 'success')
         return redirect(url_for('librarians.librarianss'))
     return render_template('account_cu.html', form=form, is_creating=True)
 
@@ -175,9 +175,9 @@ def librarians_password(librarian_id):
     if form.validate_on_submit():
         librarian.password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
         librarian.change_password = False
-        EventWriter.write(EventType.librarian_password_response, librarian.id, gettext('Following librarian\'s password is changed on request')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
+        EventWriter.write(EventType.librarian_password_response, librarian.id, _g('Following librarian\'s password is changed on request')+' ('+_g('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
         db.session.commit()
-        flash(gettext('Account password is successfully updated')+'.', 'success')
+        flash(_g('Account password is successfully updated')+'.', 'success')
         return redirect(url_for('librarians.librarians_details', librarian_id=librarian.id))
     return render_template('account_password_change_request.html', form=form, librarian=librarian)
 
@@ -192,14 +192,14 @@ def librarians_availability(librarian_id):
     form_decide = AcceptRejectForm()
     if not request.method == 'GET':
         if form_decide.reject.data and form_decide.validate():
-            flash(gettext('Account availability is not updated')+'.', 'info')
+            flash(_g('Account availability is not updated')+'.', 'info')
         elif form_decide.approve.data and form_decide.validate():
             librarian.is_active = not librarian.is_active
             if librarian.is_active:
-                EventWriter.write(EventType.librarian_activate, librarian.id, gettext('Following librarian\'s account is activated')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
+                EventWriter.write(EventType.librarian_activate, librarian.id, _g('Following librarian\'s account is activated')+' ('+_g('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
             else:
-                EventWriter.write(EventType.librarian_deactivate, librarian.id, gettext('Following librarian\'s account is deactivated')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
-            flash(gettext('Account availability is successfully updated')+'.', 'info')
+                EventWriter.write(EventType.librarian_deactivate, librarian.id, _g('Following librarian\'s account is deactivated')+' ('+_g('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
+            flash(_g('Account availability is successfully updated')+'.', 'info')
         db.session.commit()
         return redirect(url_for('librarians.librarianss'))
     return render_template('account_availability.html', form=form_decide, librarian=librarian)
@@ -229,16 +229,16 @@ def librarians_administrate(librarian_id):
 
     if not librarian.is_admin:  # treba da postane administrator
         ch_regular_to_admin = True
-        msg_title = gettext('Add librarian as administrator')
-        msg_approve = gettext('Please approve setting this librarian as the administrator')+'?'
+        msg_title = _g('Add librarian as administrator')
+        msg_approve = _g('Please approve setting this librarian as the administrator')+'?'
     elif librarian.is_admin and not current_user.id == librarian_id: # trazimo da se iskljuci admin
         ch_admin_disable_req = True
-        msg_title = gettext('Librarian removal from administrators request')
-        msg_approve = gettext('Please approve your request to remove this librarian from administrators')+'.'
+        msg_title = _g('Librarian removal from administrators request')
+        msg_approve = _g('Please approve your request to remove this librarian from administrators')+'.'
     elif librarian.is_admin and current_user.id == librarian_id and librarian.change_admin: # odlucuje da li ce prestati da bude admin
         ch_admin_disable_resp = True
-        msg_title = gettext('Your removal from administrators request')
-        msg_approve = gettext('Please approve or reject your removal from administrators')+'.'
+        msg_title = _g('Your removal from administrators request')
+        msg_approve = _g('Please approve or reject your removal from administrators')+'.'
 
     if request.method == 'GET':
         return render_template('account_administrate_request.html', form=form_decide, librarian=librarian, title=msg_title, text=msg_approve)
@@ -252,20 +252,20 @@ def librarians_administrate(librarian_id):
     if success:
         if ch_regular_to_admin and response:
             librarian.is_admin = True
-            EventWriter.write(EventType.librarian_set_admin, librarian.id, gettext('Following librarian\'s account is set as administrator')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
-            flash(gettext('Librarian is successfully promoted to the administrator')+'.', 'info')
+            EventWriter.write(EventType.librarian_set_admin, librarian.id, _g('Following librarian\'s account is set as administrator')+' ('+_g('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
+            flash(_g('Librarian is successfully promoted to the administrator')+'.', 'info')
         elif ch_admin_disable_req and response:
             librarian.change_admin = True
-            EventWriter.write(EventType.librarian_remove_admin_request, librarian.id, gettext('Following librarian is requested to be removed from the administrators')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
-            flash(gettext('You successfully created a request to remove librarian from the administrators')+'.', 'info')
+            EventWriter.write(EventType.librarian_remove_admin_request, librarian.id, _g('Following librarian is requested to be removed from the administrators')+' ('+_g('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
+            flash(_g('You successfully created a request to remove librarian from the administrators')+'.', 'info')
         elif ch_admin_disable_resp and response:
             librarian.is_admin = False
             librarian.change_admin = False
-            EventWriter.write(EventType.librarian_remove_admin_response, librarian.id, gettext('Following librarian\'s request to be removed from administrators is approved')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
-            flash(gettext('You are successfully removed from the administrators')+'.', 'info')
+            EventWriter.write(EventType.librarian_remove_admin_response, librarian.id, _g('Following librarian\'s request to be removed from administrators is approved')+' ('+_g('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
+            flash(_g('You are successfully removed from the administrators')+'.', 'info')
         elif ch_admin_disable_resp and not response:
             librarian.change_admin = False
-            EventWriter.write(EventType.librarian_remove_admin_response, librarian.id, gettext('Following librarian\'s request to be removed from administrators is rejected')+' ('+gettext('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
-            flash(gettext('You successfully rejected request to be removed from the administrators')+'.', 'info')
+            EventWriter.write(EventType.librarian_remove_admin_response, librarian.id, _g('Following librarian\'s request to be removed from administrators is rejected')+' ('+_g('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
+            flash(_g('You successfully rejected request to be removed from the administrators')+'.', 'info')
         db.session.commit()
     return redirect(url_for('librarians.librarianss'))

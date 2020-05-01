@@ -2,7 +2,7 @@ from datetime import date
 from sqlalchemy import desc, func, or_
 from flask import render_template, url_for, Blueprint, request, flash, redirect, abort
 from flask_login import login_required,current_user
-from flask_babel import gettext
+from flask_babel import gettext as _g
 from elibrary import db
 from elibrary.models import Extension, ExtensionPrice, Member, EventType
 from elibrary.utils.custom_validations import FieldValidator, string_cust, length_cust_max
@@ -61,7 +61,7 @@ def extensionss():
 
     count_filtered = my_query.count()
     if filter_has_errors:
-        flash(gettext('There are filter values with errors. However, valid filter values are applied.'), 'warning')
+        flash(_g('There are filter values with errors. However, valid filter values are applied.'), 'warning')
     if sort_direction == 'up':
         list = my_query.order_by(sort_criteria).paginate(page=page, per_page=PAGINATION)
     else:
@@ -89,9 +89,9 @@ def extensions_add(member_id):
             db.session.add(extension)
             member.date_expiration = extension.date_extended
             db.session.flush()
-            EventWriter.write(EventType.extension_add, member_id, gettext('Membership is extended for the following member')+' ('+gettext('Member id')+': '+str(member.id)+'):'+member.log_data()+'<br/>'+gettext('Extension price was')+' '+extension.price_and_currency_print)
+            EventWriter.write(EventType.extension_add, member_id, _g('Membership is extended for the following member')+' ('+_g('Member id')+': '+str(member.id)+'):'+member.log_data()+'<br/>'+_g('Extension price was')+' '+extension.price_and_currency_print)
             db.session.commit()
-            flash(gettext('Membership is successfully extended to') + ' ' + member.date_expiration_print, 'info')
+            flash(_g('Membership is successfully extended to') + ' ' + member.date_expiration_print, 'info')
             return redirect(url_for('members.members_details', member_id=member.id))
     return render_template('extension_add.html', form=form, member=member)
 
@@ -126,9 +126,9 @@ def prices_add():
         price.is_enabled = form.is_enabled.data
         db.session.add(price)
         db.session.flush()
-        EventWriter.write(EventType.price_add, price.id, gettext('Following price is added')+':'+price.log_data())
+        EventWriter.write(EventType.price_add, price.id, _g('Following price is added')+':'+price.log_data())
         db.session.commit()
-        flash(gettext('Price is successfully added'), 'info')
+        flash(_g('Price is successfully added'), 'info')
         return redirect(url_for('extensions.prices'))
     return render_template('extension_prices_add.html', form=form)
 
@@ -143,11 +143,11 @@ def prices_update(price_id):
         price.note = form.note.data
         price.is_enabled = not price.is_enabled
         if price.is_enabled:
-            EventWriter.write(EventType.price_enabled, price.id, gettext('Following price is activated')+':'+price.log_data())
+            EventWriter.write(EventType.price_enabled, price.id, _g('Following price is activated')+':'+price.log_data())
         else:
-            EventWriter.write(EventType.price_disabled, price.id, gettext('Following price is deactivated')+':'+price.log_data())
+            EventWriter.write(EventType.price_disabled, price.id, _g('Following price is deactivated')+':'+price.log_data())
         db.session.commit()
-        flash(gettext('Price availability is successfully updated')+'.', 'success')
+        flash(_g('Price availability is successfully updated')+'.', 'success')
         return redirect(url_for('extensions.prices'))
     elif request.method == 'GET':
         form.note.data = price.note

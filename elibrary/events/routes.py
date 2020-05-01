@@ -1,6 +1,6 @@
 from flask import render_template, url_for, request, flash, redirect, abort, Blueprint
 from flask_login import login_required, current_user
-from flask_babel import gettext
+from flask_babel import gettext as _g
 from elibrary import db
 from elibrary.models import Event
 from elibrary.events.forms import FilterForm
@@ -63,7 +63,7 @@ def eventss():
 
     count_filtered = my_query.count()
     if filter_has_errors:
-        flash(gettext('There are filter values with errors. However, valid filter values are applied.'), 'warning')
+        flash(_g('There are filter values with errors. However, valid filter values are applied.'), 'warning')
     if sort_direction == 'up':
         list = my_query.order_by(sort_criteria).paginate(page=page, per_page=PAGINATION)
     else:
