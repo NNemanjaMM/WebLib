@@ -21,6 +21,7 @@ def eventss():
     sort_criteria = request.args.get('sort_by', 'time', type=str)
     sort_direction = request.args.get('direction', 'down', type=str)
     args_sort = {'sort_by': sort_criteria, 'direction': sort_direction}
+    args_page = {'page': page}
     if not sort_criteria in sort_events_values:
         sort_criteria = 'time'
 
@@ -49,6 +50,7 @@ def eventss():
     if not (f_type == None or f_type == '0'):
         form.type.data = f_type
         my_query = my_query.filter(Event.type == f_type)
+        args_filter['type'] = f_type
 
     if not (f_is_seen == None or f_is_seen == ""):
         form.is_seen.data = f_is_seen
@@ -67,7 +69,8 @@ def eventss():
     else:
         list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     args_filter_and_sort = {**args_filter, **args_sort}
-    return render_template('events.html', form=form, events_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, count_filtered=count_filtered)
+    args_filter_sort_page = {**args_filter_and_sort, **args_page}
+    return render_template('events.html', form=form, events_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, extra_sort_filter_page_args=args_filter_sort_page, count_filtered=count_filtered)
 
 @events.route("/events/details/<int:event_id>")
 @login_required
@@ -89,7 +92,7 @@ def event_seen(event_id):
     event = Event.query.get_or_404(event_id)
     event.is_seen = True
     db.session.commit()
-    return eventss()
+    return redirect(url_for('events.eventss', **request.args))
 
 @events.route("/events/unsee/<int:event_id>")
 @login_required
@@ -99,4 +102,4 @@ def event_unseen(event_id):
     event = Event.query.get_or_404(event_id)
     event.is_seen = False
     db.session.commit()
-    return eventss()
+    return redirect(url_for('events.eventss'))
