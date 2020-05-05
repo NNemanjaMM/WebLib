@@ -19,9 +19,9 @@ class LibrarianBaseForm(FlaskForm):
     last_name = StringField(_l('Last name'), validators=[required_cust(), length_cust(max=30), string_cust()])
 
 class LibrarianForm(LibrarianBaseForm):
-    email = StringField(_l('E-mail address'), validators=[optional_cust(), email_cust(), length_cust(max=50)])
+    email = StringField(_l('E-mail address'), validators=[optional_cust(), email_cust(), length_cust(max=40)])
     phone = StringField(_l('Phone'), validators=[required_cust(), phone_cust()])
-    address = StringField(_l('Address'), validators=[required_cust(), length_cust(max=60), string_cust()])
+    address = StringField(_l('Address'), validators=[required_cust(), length_cust(max=50), string_cust()])
 
     def validate_username(self, username):
         librarian = Librarian.query.filter_by(username=username.data).first()

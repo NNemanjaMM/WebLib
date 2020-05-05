@@ -138,7 +138,7 @@
     {{ count_filtered }}
 </p>
 
-{% for page_num in books_list.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+{% for page_num in books_list.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=3) %}
     {% if page_num %}
         {% if books_list.page == page_num %}
             <a style="color: red" href="{{ url_for('books.bookss', page=page_num, **extra_sort_and_filter_args) }}">{{ page_num }}</a>

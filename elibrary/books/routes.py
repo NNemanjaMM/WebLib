@@ -1,10 +1,10 @@
 from datetime import date, timedelta
 from flask import render_template, url_for, request, flash, redirect, abort, Blueprint
 from flask_login import login_required, current_user
-from flask_babel import gettext
+from flask_babel import gettext as _g
 from elibrary import db
-from elibrary.models import Book, Member, Rental
-from elibrary.utils.common import CommonFilter
+from elibrary.models import Book, Member, Rental, EventType
+from elibrary.utils.common import CommonFilter, EventWriter
 from elibrary.utils.defines import PAGINATION, MAX_RENTED_BOOKS, RENTAL_DATE_LIMIT, DATE_FORMAT, BOOK_RENT_PERIOD
 from elibrary.utils.custom_validations import string_cust, length_cust_max, numeric_cust, signature_cust, length_cust_max_15, FieldValidator
 from elibrary.books.forms import FilterForm, SearchForm, BookUpdateForm, BookCreateForm, RentForm, RentTerminationForm, RentFilterForm
@@ -87,7 +87,7 @@ def bookss(filtering = False, searching = False):
 
     count_filtered = my_query.count()
     if filter_has_errors:
-        flash(gettext('There are filter values with errors. However, valid filter values are applied.'), 'warning')
+        flash(_g('There are filter values with errors. However, valid filter values are applied.'), 'warning')
     if sort_direction == 'up':
         list = my_query.order_by(sort_criteria).paginate(page=page, per_page=PAGINATION)
     else:
@@ -111,15 +111,28 @@ def books_update(book_id):
     form = BookUpdateForm()
     book = Book.query.get_or_404(book_id)
     if form.validate_on_submit():
-        book.inv_number = form.inv_number.data
-        book.signature = form.signature.data
-        book.title = form.title.data
-        book.author = form.author.data
-        if current_user.is_admin:
-            book.has_error = form.has_error.data
-        db.session.commit()
-        flash(gettext('Book data is successfully updated')+'.', 'success')
-        return redirect(url_for('books.bookss'))
+        if has_new_values(book, form):
+            was_error = book.has_error
+            from_value = book.log_data()
+            book.inv_number = form.inv_number.data
+            book.signature = form.signature.data
+            book.title = form.title.data
+            book.author = form.author.data
+            if current_user.is_admin:
+                book.has_error = form.has_error.data
+                if not was_error == book.has_error:
+                    if book.has_error:
+                        EventWriter.write(EventType.book_error_add, book_id, _g('An error is set to the following book')+' ('+_g('Book id')+': '+str(book.id)+'):'+book.log_data())
+                    else:
+                        EventWriter.write(EventType.book_error_remove, book_id, _g('An error is removed from the following book')+' ('+_g('Book id')+': '+str(book.id)+'):'+book.log_data())
+            db.session.flush()
+            EventWriter.write(EventType.book_update, book.id, _g('Following book is updated')+' ('+_g('Book id')+': '+str(book.id)+'):'+from_value+'<br/>'+_g('To new values')+':'+book.log_data())
+            db.session.commit()
+            flash(_g('Book data is successfully updated')+'.', 'success')
+            return redirect(url_for('books.bookss'))
+        else:
+            flash(_g('Book data')+' '+_g('is not changed, as typed values are the same as previous')+'.', 'info')
+            return redirect(url_for('books.bookss'))
     elif request.method == 'GET':
         form.inv_number.data = book.inv_number
         form.signature.data = book.signature
@@ -139,8 +152,10 @@ def books_add():
         book.title = form.title.data
         book.author = form.author.data
         db.session.add(book)
+        db.session.flush()
+        EventWriter.write(EventType.book_add, book.id, _g('Following book is added')+' ('+_g('Book id')+': '+str(book.id)+'):'+book.log_data())
         db.session.commit()
-        flash(gettext('Book is successfully added')+'.', 'success')
+        flash(_g('Book is successfully added')+'.', 'success')
         return redirect(url_for('books.bookss'))
     return render_template('books_cu.html', form=form, is_creating=True)
 
@@ -162,12 +177,12 @@ def book_rent(member_id):
                 form.title.data = book.title
                 form.author.data = book.author
                 if book.is_rented:
-                    message = gettext('Book with this inventory number') + ' ' +gettext('is already rented') + '. ' +gettext('Please check your inventory number and then continue') + '.'
+                    message = _g('Book with this inventory number') + ' ' +_g('is already rented') + '. ' +_g('Please check your inventory number and then continue') + '.'
             else:
                 form.signature.data = None
                 form.title.data = None
                 form.author.data = None
-                message = gettext('Book with this inventory number') + ' ' +gettext('was not found')
+                message = _g('Book with this inventory number') + ' ' +_g('was not found')
     elif form.submit.data and form.validate():
         failed_1 = not FieldValidator.convert_and_validate_number(form.inv_number)
         failed_2 = not FieldValidator.validate_required_field(form, form.signature, [signature_cust, length_cust_max_15])
@@ -176,11 +191,13 @@ def book_rent(member_id):
         date_value = FieldValidator.convert_and_validate_date(form.date_rented, False, (date.today()-timedelta(RENTAL_DATE_LIMIT)).strftime(DATE_FORMAT))
         if not (failed_1 or failed_2 or failed_3 or failed_4 or date_value == None):
             book_id = None
+            rented_book = None
             book_duplicate = Book.query.filter(Book.inv_number==form.inv_number.data).first()
             if book_duplicate and not book_duplicate.is_rented:
                 book_id = book_duplicate.id
                 book_duplicate.is_rented = True
-                flash(gettext('Book with this inventory number') + ' ' +gettext('already exists')+'.', 'info')
+                rented_book = book_duplicate
+                flash(_g('Book with this inventory number') + ' ' +_g('already exists')+'.', 'info')
             else:
                 new_book = Book()
                 new_book.inv_number = form.inv_number.data
@@ -191,11 +208,16 @@ def book_rent(member_id):
                 if book_duplicate and book_duplicate.is_rented:
                     book_duplicate.has_error = True
                     new_book.has_error = True
-                    flash(gettext('Book with this inventory number') + ' ' +gettext('is already rented')+'! '+gettext('An error flag is set to the books with same inventory number')+'.', 'warning')
+                    flash(_g('Book with this inventory number') + ' ' +_g('is already rented')+'! '+_g('An error flag is set to the books with same inventory number')+'.', 'warning')
                 db.session.add(new_book)
+                db.session.flush()
+                if new_book.has_error:
+                    EventWriter.write(EventType.book_error_add, new_book.id, _g('An error is set to the following book')+' ('+_g('Book id')+': '+str(new_book.id)+'):'+new_book.log_data())
+                EventWriter.write(EventType.book_add, new_book.id, _g('Following book is added')+' ('+_g('Book id')+': '+str(new_book.id)+'):'+new_book.log_data())
                 db.session.commit()
                 book_id = new_book.id
-                flash(gettext('Book is successfully added')+'.', 'info')
+                rented_book = new_book
+                flash(_g('Book is successfully added')+'.', 'info')
             rental = Rental()
             rental.date_performed = date_value
             rental.date_deadline = date_value + timedelta(BOOK_RENT_PERIOD)
@@ -204,8 +226,9 @@ def book_rent(member_id):
             db.session.add(rental)
             member.number_of_rented_books = db.session.query(func.count(Rental.id)).filter(and_(Rental.member_id == member_id, Rental.is_terminated == False)).scalar()
             member.total_books_rented = db.session.query(func.count(Rental.id)).filter(Rental.member_id == member_id).scalar()
+            EventWriter.write(EventType.rent_rent, rented_book.id, _g('Following book')+' ('+_g('Book id')+': '+str(rented_book.id)+'):'+rented_book.log_data()+'<br/>'+_g('Is rented to following member')+' ('+_g('Member id')+' '+str(member.id)+'):'+member.log_data())
             db.session.commit()
-            flash(gettext('Book is successfully rented')+'.', 'info')
+            flash(_g('Book is successfully rented')+'.', 'info')
             return redirect(url_for('members.members_details', member_id=member_id))
     return render_template('renting.html', form=form, message=message)
 
@@ -222,8 +245,9 @@ def book_rents_details(rent_id):
         rent.date_termination = form.date_returned.data
         member.number_of_rented_books = db.session.query(func.count(Rental.id)).filter(and_(Rental.member_id == member.id, Rental.is_terminated == False)).scalar()
         book.is_rented = False
+        EventWriter.write(EventType.rent_return, book_id, _g('Following book')+' ('+_g('Book id')+': '+str(book.id)+'):'+book.log_data()+'<br/>'+_g('Is returned from following member')+' ('+_g('Member id')+' '+str(member.id)+'):'+member.log_data())
         db.session.commit()
-        flash(gettext('Book is successfully returned')+'.', 'info')
+        flash(_g('Book is successfully returned')+'.', 'info')
         return redirect(url_for('members.members_details', member_id=member.id))
     return render_template('rent.html', form=form, rent=rent)
 
@@ -307,7 +331,7 @@ def book_rents():
 
     count_filtered = my_query.count()
     if filter_has_errors:
-        flash(gettext('There are filter values with errors. However, valid filter values are applied.'), 'warning')
+        flash(_g('There are filter values with errors. However, valid filter values are applied.'), 'warning')
     if not can_sort:
         list = my_query.paginate(page=page, per_page=PAGINATION)
     elif sort_direction == 'up':
@@ -316,3 +340,6 @@ def book_rents():
         list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     args_filter_and_sort = {**args_filter, **args_sort}
     return render_template('rents.html', form=form, rents_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, count_filtered = count_filtered)
+
+def has_new_values(book, form):
+    return not (book.has_error == form.has_error.data and book.inv_number == int(form.inv_number.data) and book.signature == form.signature.data and book.title == form.title.data and book.author == form.author.data)

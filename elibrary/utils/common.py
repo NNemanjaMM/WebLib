@@ -1,4 +1,7 @@
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+from flask_login import current_user
+from elibrary import db
+from elibrary.models import Event, EventType
 from elibrary.utils.custom_validations import FieldValidator
 
 class CommonDate:
@@ -17,6 +20,28 @@ class CommonDate:
             return value + timedelta(366)
         else:
             return value + timedelta(365)
+
+class EventWriter:
+    @staticmethod
+    def write_user(type, object_id, message, user):
+        event = Event()
+        event.time = datetime.now()
+        event.librarian = user
+        event.type = type
+        event.object_id = object_id
+        event.message = message
+        db.session.add(event)
+
+    @staticmethod
+    def write(type, object_id, message):
+        event = Event()
+        event.time = datetime.now()
+        event.librarian = current_user.username
+        event.type = type
+        event.object_id = object_id
+        event.message = message
+        db.session.add(event)
+        # bez db.session.commit() jer ce se onsvakako uraditi za upis podatka u bazu
 
 class CommonFilter:
     @staticmethod

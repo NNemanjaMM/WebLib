@@ -3,4 +3,45 @@
 
 <h1>{{ gettext('Event details') }}</h1>
 
+<p>
+    {{ gettext('Date and time') }}
+    <strong>
+        {{ event.time_all_print }}
+    </strong>
+</p>
+
+<p>
+    {{ gettext('Performed by') }}
+    <strong>
+        {{ event.librarian }}
+    </strong>
+</p>
+
+<p>
+    {{ gettext('Event type') }}
+    <strong>
+        {{ event.type_print }}
+    </strong>
+</p>
+
+<p>
+    {{ gettext('Performed on') }}
+    <strong>
+        {{ event.object_id_print }}
+    </strong>
+</p>
+
+<p>
+    {{ gettext('Description') }}
+    <strong>
+        {% autoescape false %}
+            {{ event.message }}
+        {% endautoescape %}
+    </strong>
+</p>
+
+<p>
+    <a href="{{ url_for('events.event_unseen', event_id=event.id) }}">{{ gettext('Mark event as not seen') }}</a>
+</p>
+
 {% endblock content %}
