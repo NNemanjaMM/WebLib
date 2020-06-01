@@ -2,6 +2,7 @@ from flask import render_template, url_for, redirect, request, flash, Blueprint,
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_babel import gettext as _g
 from elibrary import bcrypt, db
+from elibrary.config import Config
 from elibrary.librarians.forms import (LibrarianCreateForm, LibrarianUpdateForm, LoginForm,
         LibrarianUpdatePasswordForm, LibrarianChangePasswordForm, LibrarianRequestChangePasswordForm)
 from elibrary.utils.defines import DATE_FORMAT
@@ -22,7 +23,7 @@ sort_librarian_values = ['first_name', 'last_name', 'date_registered']
 @login_required
 def logout():
     logout_user()
-    # todo delete master key from app
+    # todo delete master key from app -  can I do this if another user stays logged in?
     return redirect(url_for('librarians.login'))
 
 @librarians.route("/login", methods=['GET', 'POST'])
@@ -36,7 +37,7 @@ def login():
             if admin.is_active and bcrypt.check_password_hash(admin.password, form.password.data):
                 login_user(admin)
                 master_key = decrypt_master_key_for_user(form.password.data.encode('utf-8'), admin.password.encode('utf-8'), admin.user_key.encode('utf-8'))
-                # todo add master key to app
+                Config.MASTER_KEY = master_key
                 next_page = request.args.get('next')
                 return redirect(next_page) if next_page else redirect(url_for('main.home'))
             else:
@@ -299,8 +300,7 @@ def encrypt_master_key_for_user(b_password, b_hash):
     kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=b_hash, iterations=300000, backend=default_backend())
     b_encription_key = base64.urlsafe_b64encode(kdf.derive(b_password))
     cypher = Fernet(b_encription_key)
-    b_master_key = b'MASTER_KEY' # todo retreive master key from app
-    b_encrypted_key = cypher.encrypt(b_master_key)
+    b_encrypted_key = cypher.encrypt(Config.MASTER_KEY)
     return b_encrypted_key
 
 def decrypt_master_key_for_user(b_password, b_hash, b_encrypted_key):
