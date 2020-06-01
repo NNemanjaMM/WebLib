@@ -1,6 +1,11 @@
 from datetime import date, datetime, timedelta
 from elibrary.models import Librarian, Member, ExtensionPrice, Book, Extension, Rental, Event, EventType
 from elibrary import db, create_app, bcrypt
+from cryptography.fernet import Fernet
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+import base64
 
 app = create_app()
 
@@ -8,12 +13,22 @@ with app.app_context():
     db.drop_all()
     db.create_all()
 
-    pass1 = bcrypt.generate_password_hash('mikamika').decode('utf-8')
-    pass2 = bcrypt.generate_password_hash('perapera').decode('utf-8')
-    pass3 = bcrypt.generate_password_hash('djokadjoka').decode('utf-8')
-    admin2 = Librarian(first_name='Pera', last_name='Perić', username='pera.peric', password=pass2, phone='0651128767', address='Peroslava Perića 5, Bileća', is_admin=True, date_registered=date(1991, 7, 23))
-    admin1 = Librarian(first_name='Mika', last_name='Mikić', username='mika.mikic', password=pass1, email='mikam@gmail.com', phone='+387664408404', address='Milivoja Mikića 3, Nevesinje', date_registered=date(2013, 9, 3))
-    admin3 = Librarian(first_name='Đoka', last_name='Đokić', username='djoka.djokic', password=pass3, email='djoka.kralj@outlook.com', phone='0591128767', address='Đorđija Đokića 21, Istočno Sarajevo', date_registered=date(2002, 11, 14), is_active=False)
+    pass1 = bcrypt.generate_password_hash('mikamika')
+    pass2 = bcrypt.generate_password_hash('perapera')
+    pass3 = bcrypt.generate_password_hash('djokadjoka')
+    
+    master=b'Sk01D4ythc2MzLP_dAEFFt6cZtpu6mGSYjlfzG6qI-M='    
+    
+    kdf1 = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=pass1, iterations=300000, backend=default_backend())
+    key1 = base64.urlsafe_b64encode(kdf1.derive(b'mikamika'))
+    mast_key1 = Fernet(key1).encrypt(master).decode('utf-8')
+    kdf2 = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=pass2, iterations=300000, backend=default_backend())
+    key2 = base64.urlsafe_b64encode(kdf2.derive(b'perapera'))
+    mast_key2 = Fernet(key2).encrypt(master).decode('utf-8')
+    
+    admin1 = Librarian(first_name='Mika', last_name='Mikić', username='mika.mikic', password=pass1.decode('utf-8'), email='mikam@gmail.com', phone='+387664408404', address='Milivoja Mikića 3, Nevesinje', date_registered=date(2013, 9, 3), user_key=mast_key1)
+    admin2 = Librarian(first_name='Pera', last_name='Perić', username='pera.peric', password=pass2.decode('utf-8'), phone='0651128767', address='Peroslava Perića 5, Bileća', is_admin=True, date_registered=date(1991, 7, 23), user_key=mast_key2)
+    admin3 = Librarian(first_name='Đoka', last_name='Đokić', username='djoka.djokic', password=pass3.decode('utf-8'), email='djoka.kralj@outlook.com', phone='0591128767', address='Đorđija Đokića 21, Istočno Sarajevo', date_registered=date(2002, 11, 14), is_active=False, user_key=None)
         
     db.session.add(admin1)
     db.session.add(admin2)

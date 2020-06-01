@@ -92,6 +92,7 @@ class Librarian(db.Model, UserMixin):
     is_active = db.Column(db.Boolean, default=True)
     change_admin = db.Column(db.Boolean, default=False)
     change_password = db.Column(db.Boolean, default=False)
+    user_key = db.Column(db.String(160), nullable=True)
 
     def log_data(self):
         if not (self.first_name and self.last_name and self.phone and self.address and self.email):

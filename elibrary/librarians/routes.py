@@ -9,6 +9,11 @@ from elibrary.utils.common import EventWriter
 from elibrary.main.forms import AcceptRejectForm
 from elibrary.models import Librarian, EventType
 from sqlalchemy import desc
+from cryptography.fernet import Fernet
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+import base64
 
 librarians = Blueprint('librarians', __name__)
 sort_librarian_values = ['first_name', 'last_name', 'date_registered']
@@ -17,6 +22,7 @@ sort_librarian_values = ['first_name', 'last_name', 'date_registered']
 @login_required
 def logout():
     logout_user()
+    # todo delete master key from app
     return redirect(url_for('librarians.login'))
 
 @librarians.route("/login", methods=['GET', 'POST'])
@@ -29,6 +35,8 @@ def login():
         if admin:
             if admin.is_active and bcrypt.check_password_hash(admin.password, form.password.data):
                 login_user(admin)
+                master_key = decrypt_master_key_for_user(form.password.data.encode('utf-8'), admin.password.encode('utf-8'), admin.user_key.encode('utf-8'))
+                # todo add master key to app
                 next_page = request.args.get('next')
                 return redirect(next_page) if next_page else redirect(url_for('main.home'))
             else:
@@ -98,7 +106,10 @@ def account_password():
     form = LibrarianUpdatePasswordForm()
     if form.validate_on_submit():
         if bcrypt.check_password_hash(current_user.password, form.old_password.data):
-            current_user.password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
+            password_hash = bcrypt.generate_password_hash(form.new_password.data)
+            key = encrypt_master_key_for_user(form.new_password.data.encode('utf-8'), password_hash)
+            current_user.password = password_hash.decode('utf-8')
+            current_user.user_key = key.decode('utf-8')
             EventWriter.write(EventType.librarian_password, current_user.id, _g('Following librarian changed it\'s password')+' ('+_g('Librarian username')+': '+current_user.username+'):'+current_user.log_data())
             current_user.change_password = False
             db.session.commit()
@@ -155,8 +166,11 @@ def librarians_create():
         librarian.address = form.address.data
         librarian.date_registered = form.date_registered.data
         librarian.username = form.username.data
-        librarian.password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         librarian.is_admin = form.is_administrator.data
+        password_hash = bcrypt.generate_password_hash(form.password.data)
+        key = encrypt_master_key_for_user(form.password.data.encode('utf-8'), password_hash)
+        librarian.password = password_hash.decode('utf-8')
+        librarian.user_key = key.decode('utf-8')
         db.session.add(librarian)
         db.session.flush()
         EventWriter.write(EventType.librarian_add, librarian.id, _g('Following librarian is added')+' ('+_g('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
@@ -177,7 +191,10 @@ def librarians_password(librarian_id):
         abort(405)
     form = LibrarianChangePasswordForm()
     if form.validate_on_submit():
-        librarian.password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
+        password_hash = bcrypt.generate_password_hash(form.new_password.data)
+        key = encrypt_master_key_for_user(form.new_password.data.encode('utf-8'), password_hash)
+        librarian.password = password_hash.decode('utf-8')
+        librarian.user_key = key.decode('utf-8')
         librarian.change_password = False
         EventWriter.write(EventType.librarian_password_response, librarian.id, _g('Following librarian\'s password is changed on request')+' ('+_g('Librarian username')+': '+librarian.username+'):'+librarian.log_data())
         db.session.commit()
@@ -277,3 +294,18 @@ def librarians_administrate(librarian_id):
 def has_new_values(user, form):
     return not (user.first_name == form.first_name.data and user.last_name == form.last_name.data and user.email == form.email.data and \
             user.phone == form.phone.data.replace("/", "") and user.address == form.address.data)
+
+def encrypt_master_key_for_user(b_password, b_hash):
+    kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=b_hash, iterations=300000, backend=default_backend())
+    b_encription_key = base64.urlsafe_b64encode(kdf.derive(b_password))
+    cypher = Fernet(b_encription_key)
+    b_master_key = b'MASTER_KEY' # todo retreive master key from app
+    b_encrypted_key = cypher.encrypt(b_master_key)
+    return b_encrypted_key
+
+def decrypt_master_key_for_user(b_password, b_hash, b_encrypted_key):
+    kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=b_hash, iterations=300000, backend=default_backend())
+    b_encription_key = base64.urlsafe_b64encode(kdf.derive(b_password))
+    cypher = Fernet(b_encription_key)
+    b_master_key = cypher.decrypt(b_encrypted_key)
+    return b_master_key
