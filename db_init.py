@@ -5,20 +5,22 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from elibrary.config import Config
 import base64
 
 app = create_app()
 
 with app.app_context():
+    master=b'Sk01D4ythc2MzLP_dAEFFt6cZtpu6mGSYjlfzG6qI-M='    
+    Config.MASTER_KEY = master
+
     db.drop_all()
     db.create_all()
 
     pass1 = bcrypt.generate_password_hash('mikamika')
     pass2 = bcrypt.generate_password_hash('perapera')
     pass3 = bcrypt.generate_password_hash('djokadjoka')
-    
-    master=b'Sk01D4ythc2MzLP_dAEFFt6cZtpu6mGSYjlfzG6qI-M='    
-    
+        
     kdf1 = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=pass1, iterations=300000, backend=default_backend())
     key1 = base64.urlsafe_b64encode(kdf1.derive(b'mikamika'))
     mast_key1 = Fernet(key1).encrypt(master).decode('utf-8')

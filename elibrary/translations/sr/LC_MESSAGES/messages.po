@@ -1017,7 +1017,7 @@ msgstr "Opis akcije"
 
 #: templates/event.html:44
 msgid "Mark event as not seen"
-msgstr "Označi događaj kao pročitan"
+msgstr "Označi događaj kao nepročitan"
 
 #: templates/events.html:81
 msgid "Type"

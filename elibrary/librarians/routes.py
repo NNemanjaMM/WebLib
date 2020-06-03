@@ -23,7 +23,6 @@ sort_librarian_values = ['first_name', 'last_name', 'date_registered']
 @login_required
 def logout():
     logout_user()
-    # todo delete master key from app -  can I do this if another user stays logged in?
     return redirect(url_for('librarians.login'))
 
 @librarians.route("/login", methods=['GET', 'POST'])
@@ -36,8 +35,8 @@ def login():
         if admin:
             if admin.is_active and bcrypt.check_password_hash(admin.password, form.password.data):
                 login_user(admin)
-                master_key = decrypt_master_key_for_user(form.password.data.encode('utf-8'), admin.password.encode('utf-8'), admin.user_key.encode('utf-8'))
-                Config.MASTER_KEY = master_key
+                if not Config.MASTER_KEY:
+                    Config.MASTER_KEY = decrypt_master_key_for_user(form.password.data.encode('utf-8'), admin.password.encode('utf-8'), admin.user_key.encode('utf-8'))
                 next_page = request.args.get('next')
                 return redirect(next_page) if next_page else redirect(url_for('main.home'))
             else:
