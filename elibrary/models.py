@@ -97,13 +97,17 @@ class User(db.Model, UserMixin):
     change_password = db.Column(db.Boolean, default=False)
     details = db.relationship("UserData", uselist=False, back_populates="static")
 
-class UserData(db.Model, UserMixin):
+    @property
+    def date_registered_print(self):
+        return self.date_registered.strftime(DATE_FORMAT)
+
+    def __repr__(self):
+        return f"User('{self.id}', '{self.details.first_name}', '{self.details.last_name}', '{self.username}', \
+                      '{self.details.email}', '{self.phone_print}', '{self.details.address}', '{self.date_registered}', \
+                      '{self.is_admin}', '{self.is_active}', '{self.change_password}')"
+
+class UserData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-#    first_name = db.Column(db.String(20), nullable=False)
-#    last_name = db.Column(db.String(30), nullable=False)
-#    email = db.Column(db.String(40), nullable=True)
-#    phone = db.Column(db.String(15), nullable=False)
-#    address = db.Column(db.String(50), nullable=False)
     first_name = db.Column(EncryptedType(db.String(20), get_key, FernetEngine), nullable=False)
     last_name = db.Column(EncryptedType(db.String(30), get_key, FernetEngine), nullable=False)
     email = db.Column(EncryptedType(db.String(40), get_key, FernetEngine), nullable=True)
@@ -111,6 +115,13 @@ class UserData(db.Model, UserMixin):
     address = db.Column(EncryptedType(db.String(50), get_key, FernetEngine), nullable=False)
     static_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     static = db.relationship("User", back_populates="details")
+
+    @property
+    def phone_print(self):
+        if "+" in self.phone:
+            return self.phone
+        else:
+            return self.phone[:3] + '/' + self.phone[3:]
 
     def log_data(self):
         if not (self.first_name and self.last_name and self.phone and self.address and self.email):
@@ -120,22 +131,6 @@ class UserData(db.Model, UserMixin):
                 '<br/>'+_l('Phone')+': '+self.phone+\
                 '<br/>'+_l('Address')+': '+self.address+\
                 '<br/>'+_l('E-mail address')+': '+self.email
-
-    @property
-    def phone_print(self):
-        if "+" in self.phone:
-            return self.phone
-        else:
-            return self.phone[:3] + '/' + self.phone[3:]
-
-    @property
-    def date_registered_print(self):
-        return self.date_registered.strftime(DATE_FORMAT)
-
-    def __repr__(self):
-        return f"User('{self.id}', '{self.first_name}', '{self.last_name}', '{self.username}', '{self.email}', \
-                      '{self.phone_print}', '{self.address}', '{self.date_registered}', '{self.is_admin}', \
-                      '{self.is_active}', '{self.change_password}')"
 
 class ExtensionPrice(db.Model):
     id = db.Column(db.Integer, primary_key=True)

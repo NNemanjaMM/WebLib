@@ -630,8 +630,8 @@ msgid "Reset password request is successfully sent to the administrator"
 msgstr "Zahtev za resetovanje lozinke je uspešno poslat administratoru"
 
 #: librarians/routes.py:56
-msgid "Combination of the username, first name and last name does not exist"
-msgstr "Kombinacija korisničkog imena, imena i prezimena nije prepoznata"
+msgid "Combination of the username, first name and last name does not exist, or the account is inactive"
+msgstr "Kombinacija korisničkog imena, imena i prezimena nije prepoznata, ili je nalog neaktivan"
 
 #: librarians/routes.py:57
 msgid "Please check your input and try again"

@@ -10,35 +10,39 @@
     <p>
         {{ gettext('First name') }}
         <strong>
-            {{ account.first_name }}
+            {{ account.details.first_name }}
         </strong>
     </p>
 
     <p>
         {{ gettext('Last name') }}
         <strong>
-            {{ account.last_name }}
+            {{ account.details.last_name }}
         </strong>
     </p>
 
     <p>
         {{ gettext('Phone') }}
         <strong>
-            {{ account.phone_print }}
+            {{ account.details.phone_print }}
         </strong>
     </p>
 
     <p>
         {{ gettext('Address') }}
         <strong>
-            {{ account.address }}
+            {{ account.details.address }}
         </strong>
     </p>
 
     <p>
         {{ gettext('E-mail address') }}
         <strong>
-            {{ account.email }}
+            {% if account.details.email %}
+                {{ account.details.email }}
+            {% else %}
+                ({{ gettext('Not available') }})
+            {% endif %}
         </strong>
     </p>
 
