@@ -10,7 +10,7 @@ from sqlalchemy_utils.types.encrypted.encrypted_type import FernetEngine
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Librarian.query.get(int(user_id))
+    return User.query.get(int(user_id))
 
 def get_key():
     return Config.MASTER_KEY
@@ -84,27 +84,33 @@ class Member(db.Model):
                       '{self.profession}', '{self.email}', '{self.phone_print}', '{self.address}',\
                       '{self.total_books_rented}', '{self.date_registered}', '{self.date_expiration}')"
 
-class Librarian(db.Model, UserMixin):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(20), nullable=False)
-    last_name = db.Column(db.String(30), nullable=False)
-    email = db.Column(db.String(40), nullable=True)
-    phone = db.Column(db.String(15), nullable=False)
-    address = db.Column(db.String(50), nullable=False)
     username = db.Column(db.String(30), nullable=False)
     password = db.Column(db.String(60), nullable=False)
+    is_active = db.Column(db.Boolean, default=True)
+    user_key = db.Column(db.String(160), nullable=True)
+    is_active = db.Column(db.Boolean, default=True)
     date_registered = db.Column(db.Date, nullable=False, default=date.today())
     is_admin = db.Column(db.Boolean, default=False)
-    is_active = db.Column(db.Boolean, default=True)
     change_admin = db.Column(db.Boolean, default=False)
     change_password = db.Column(db.Boolean, default=False)
-    user_key = db.Column(db.String(160), nullable=True)
+    details = db.relationship("UserData", uselist=False, back_populates="static")
 
-#    first_name = db.Column(EncryptedType(db.String(20), get_key, FernetEngine), nullable=False)
-#    last_name = db.Column(EncryptedType(db.String(30), get_key, FernetEngine), nullable=False)
-#    email = db.Column(EncryptedType(db.String(40), get_key, FernetEngine), nullable=True)
-#    phone = db.Column(EncryptedType(db.String(15), get_key, FernetEngine), nullable=False)
-#    address = db.Column(EncryptedType(db.String(50), get_key, FernetEngine), nullable=False)
+class UserData(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+#    first_name = db.Column(db.String(20), nullable=False)
+#    last_name = db.Column(db.String(30), nullable=False)
+#    email = db.Column(db.String(40), nullable=True)
+#    phone = db.Column(db.String(15), nullable=False)
+#    address = db.Column(db.String(50), nullable=False)
+    first_name = db.Column(EncryptedType(db.String(20), get_key, FernetEngine), nullable=False)
+    last_name = db.Column(EncryptedType(db.String(30), get_key, FernetEngine), nullable=False)
+    email = db.Column(EncryptedType(db.String(40), get_key, FernetEngine), nullable=True)
+    phone = db.Column(EncryptedType(db.String(15), get_key, FernetEngine), nullable=False)
+    address = db.Column(EncryptedType(db.String(50), get_key, FernetEngine), nullable=False)
+    static_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    static = db.relationship("User", back_populates="details")
 
     def log_data(self):
         if not (self.first_name and self.last_name and self.phone and self.address and self.email):

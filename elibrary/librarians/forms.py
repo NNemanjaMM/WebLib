@@ -4,7 +4,7 @@ from flask_babel import gettext, lazy_gettext as _l
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField
 from wtforms.validators import ValidationError
-from elibrary.models import Librarian
+from elibrary.models import User
 from elibrary.utils.defines import BACKWARD_INPUT_LIMIT, DATE_FORMAT
 from elibrary.utils.custom_validations import (required_cust, email_cust, required_cust_date,
         phone_cust, string_cust, username_cust, equal_to_cust, length_cust, optional_cust)
@@ -24,8 +24,8 @@ class LibrarianForm(LibrarianBaseForm):
     address = StringField(_l('Address'), validators=[required_cust(), length_cust(max=50), string_cust()])
 
     def validate_username(self, username):
-        librarian = Librarian.query.filter_by(username=username.data).first()
-        if librarian:
+        user = User.query.filter_by(username=username.data).first()
+        if user:
             raise ValidationError(_l('That username is taken. Please choose a different one')+'.')
 
 class LibrarianCreateForm(LibrarianForm):

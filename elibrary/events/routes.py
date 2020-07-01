@@ -70,7 +70,7 @@ def eventss():
         list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     args_filter_and_sort = {**args_filter, **args_sort}
     args_filter_sort_page = {**args_filter_and_sort, **args_page}
-    return render_template('events.html', form=form, events_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, extra_sort_filter_page_args=args_filter_sort_page, count_filtered=count_filtered)
+    return render_template('events/events.html', form=form, events_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, extra_sort_filter_page_args=args_filter_sort_page, count_filtered=count_filtered)
 
 @events.route("/events/details/<int:event_id>")
 @login_required
@@ -82,7 +82,7 @@ def event_details(event_id):
         event.is_seen = True
         db.session.commit()
     print(event.message)
-    return render_template('event.html', event=event)
+    return render_template('events/event.html', event=event)
 
 @events.route("/events/see/<int:event_id>")
 @login_required

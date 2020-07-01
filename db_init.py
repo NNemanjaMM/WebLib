@@ -1,5 +1,5 @@
 from datetime import date, datetime, timedelta
-from elibrary.models import Librarian, Member, ExtensionPrice, Book, Extension, Rental, Event, EventType
+from elibrary.models import User, Member, ExtensionPrice, Book, Extension, Rental, Event, EventType, UserData
 from elibrary import db, create_app, bcrypt
 from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
@@ -28,13 +28,25 @@ with app.app_context():
     key2 = base64.urlsafe_b64encode(kdf2.derive(b'perapera'))
     mast_key2 = Fernet(key2).encrypt(master).decode('utf-8')
     
-    admin1 = Librarian(first_name='Mika', last_name='Mikić', username='mika.mikic', password=pass1.decode('utf-8'), email='mikam@gmail.com', phone='+387664408404', address='Milivoja Mikića 3, Nevesinje', date_registered=date(2013, 9, 3), user_key=mast_key1)
-    admin2 = Librarian(first_name='Pera', last_name='Perić', username='pera.peric', password=pass2.decode('utf-8'), phone='0651128767', address='Peroslava Perića 5, Bileća', is_admin=True, date_registered=date(1991, 7, 23), user_key=mast_key2)
-    admin3 = Librarian(first_name='Đoka', last_name='Đokić', username='djoka.djokic', password=pass3.decode('utf-8'), email='djoka.kralj@outlook.com', phone='0591128767', address='Đorđija Đokića 21, Istočno Sarajevo', date_registered=date(2002, 11, 14), is_active=False, user_key=None)
+    user1 = User(username='mika.mikic', password=pass1.decode('utf-8'), is_active=True, user_key=mast_key1, date_registered=date(2013, 9, 3))
+    user2 = User(username='pera.peric', password=pass2.decode('utf-8'), is_active=True, user_key=mast_key2, is_admin=True, date_registered=date(1991, 7, 23))
+    user3 = User(username='djoka.djokic', password=pass3.decode('utf-8'), is_active=False, user_key=None, date_registered=date(2002, 11, 14))
+    
+    db.session.add(user1)
+    db.session.add(user2)
+    db.session.add(user3)
+    
+    data1 = UserData(first_name='Mika', last_name='Mikić', email='mikam@gmail.com', phone='+387664408404', address='Milivoja Mikića 3, Nevesinje')
+    data2 = UserData(first_name='Pera', last_name='Perić', phone='0651128767', address='Peroslava Perića 5, Bileća')
+    data3 = UserData(first_name='Đoka', last_name='Đokić', email='djoka.kralj@outlook.com', phone='0591128767', address='Đorđija Đokića 21, Istočno Sarajevo')
         
-    db.session.add(admin1)
-    db.session.add(admin2)
-    db.session.add(admin3)
+    db.session.add(data1)
+    db.session.add(data2)
+    db.session.add(data3)
+    
+    user1.details = data1
+    user2.details = data2
+    user3.details = data3
 
     member1 = Member(id=3, first_name='Steva', last_name='Zikic', father_name='Jovan', profession='dip. Ekonomista', phone='+38763898554', email='steva.zikic22@live.com', address='Zike Zikica 21, Pirot', date_registered=date(2016, 2, 18), total_books_rented=15, date_expiration=date(2021, 2, 24), number_of_rented_books=1)
     member2 = Member(id=18, first_name='Vida', last_name='Stevic', father_name='Petar', profession='dip. Pravnik', phone='0594545332', email='', address='Stevice Stevovica 54, Beograd', date_registered=date(2011, 5, 12), total_books_rented=1, date_expiration=date(2012, 5, 12), number_of_rented_books=1)
