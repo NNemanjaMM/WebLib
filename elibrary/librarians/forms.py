@@ -45,7 +45,7 @@ class LibrarianCreateForm(LibrarianForm):
 class LibrarianUpdateForm(LibrarianForm):
     submit = SubmitField(_l('Update librarian'))
 
-class LibrarianRequestChangePasswordForm(LibrarianBaseForm):
+class LibrarianRequestChangePasswordForm(FlaskForm):
     username = StringField(_l('Username'), validators=[required_cust(), length_cust(min=6, max=30), username_cust()])
     submit = SubmitField(_l('Send request'))
 

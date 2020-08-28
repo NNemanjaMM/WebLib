@@ -47,7 +47,6 @@ def login():
     form.username.data=''
     return render_template('librarians/login.html', title=_g('Login'), form=form)
 
-#TODO change this logic
 @librarians.route("/login/password", methods=['GET', 'POST'])
 def login_password_reset():
     if current_user.is_authenticated:
@@ -55,18 +54,15 @@ def login_password_reset():
     form = LibrarianRequestChangePasswordForm()
     if form.validate_on_submit():
         librarian = User.query.filter_by(username=form.username.data).first()
-        if librarian:
-            if librarian.first_name == form.first_name.data and librarian.last_name == form.last_name.data and librarian.is_active:
-                librarian.change_password = True
-                EventWriter.write_user(EventType.librarian_password_request, librarian.id, _g('Following librarian requested password change')+' ('+_g('Librarian username')+': '+librarian.username+'):'+librarian.details.log_data(), librarian.username)
-                db.session.commit()
-                flash(_g('Reset password request is successfully sent to the administrator')+'.', 'success')
-                return redirect(url_for('librarians.login'))
-        flash(_g('Combination of the username, first name and last name does not exist, or the account is inactive')+'.', 'error')
+        if librarian and librarian.is_active:
+            librarian.change_password = True
+            #EventWriter.write_user(EventType.librarian_password_request, librarian.id, _g('Following librarian requested password change')+' ('+_g('Librarian username')+': '+librarian.username+')', librarian.username)
+            db.session.commit()
+            flash(_g('Reset password request is successfully sent to the administrator')+'.', 'success')
+            return redirect(url_for('librarians.login'))
+        flash(_g('Librarian with the given username does not exist or is inactive')+'.', 'error')
         flash(_g('Please check your input and try again')+'.', 'error')
     form.username.data=''
-    form.first_name.data=''
-    form.last_name.data=''
     return render_template('librarians/login_password_reset.html', form=form, title=_g('Password change request'))
 
 @librarians.route("/account")
@@ -223,6 +219,7 @@ def librarians_availability(librarian_id):
             if librarian.is_active:
                 EventWriter.write(EventType.librarian_activate, librarian.id, _g('Following librarian\'s account is activated')+' ('+_g('Librarian username')+': '+librarian.username+'):'+librarian.details.log_data())
             else:
+                librarian.user_key = None
                 EventWriter.write(EventType.librarian_deactivate, librarian.id, _g('Following librarian\'s account is deactivated')+' ('+_g('Librarian username')+': '+librarian.username+'):'+librarian.details.log_data())
             flash(_g('Account availability is successfully updated')+'.', 'info')
         db.session.commit()
