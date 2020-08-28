@@ -1,13 +1,19 @@
 import enum
+from elibrary.config import Config
 from datetime import date, timedelta
 from flask_login import UserMixin
 from elibrary import db, login_manager
 from elibrary.utils.defines import EXPIRATION_EXTENSION_LIMIT, DATE_FORMAT, DATETIME_FORMAT, DATETIME_ALL_FORMAT, BOOK_RENT_PERIOD
 from flask_babel import gettext, lazy_gettext as _l
+from sqlalchemy_utils import EncryptedType
+from sqlalchemy_utils.types.encrypted.encrypted_type import FernetEngine
 
 @login_manager.user_loader
 def load_user(user_id):
     return Librarian.query.get(int(user_id))
+
+def get_key():
+    return Config.MASTER_KEY
 
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -28,13 +34,13 @@ class Book(db.Model):
 
 class Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(20), nullable=False)
-    last_name = db.Column(db.String(30), nullable=False)
-    father_name = db.Column(db.String(20), nullable=False)
-    profession = db.Column(db.String(50), nullable=True)
-    email = db.Column(db.String(50), nullable=True)
-    phone = db.Column(db.String(15), nullable=False)
-    address = db.Column(db.String(60), nullable=False)
+    first_name = db.Column(EncryptedType(db.String(20), get_key, FernetEngine), nullable=False)
+    last_name = db.Column(EncryptedType(db.String(30), get_key, FernetEngine), nullable=False)
+    father_name = db.Column(EncryptedType(db.String(20), get_key, FernetEngine), nullable=False)
+    profession = db.Column(EncryptedType(db.String(50), get_key, FernetEngine), nullable=True)
+    phone = db.Column(EncryptedType(db.String(15), get_key, FernetEngine), nullable=False)
+    email = db.Column(EncryptedType(db.String(50), get_key, FernetEngine), nullable=True)
+    address = db.Column(EncryptedType(db.String(60), get_key, FernetEngine), nullable=False)
     date_registered = db.Column(db.Date, nullable=False, default=date.today())
     date_expiration = db.Column(db.Date, nullable=True, default=date.today())
     total_books_rented = db.Column(db.Integer, nullable=False, default=0)
@@ -80,13 +86,13 @@ class Member(db.Model):
 
 class Librarian(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(20), nullable=False)
-    last_name = db.Column(db.String(30), nullable=False)
-    username = db.Column(db.String(30), nullable=False)
+    first_name = db.Column(EncryptedType(db.String(20), get_key, FernetEngine), nullable=False)
+    last_name = db.Column(EncryptedType(db.String(30), get_key, FernetEngine), nullable=False)
+    email = db.Column(EncryptedType(db.String(40), get_key, FernetEngine), nullable=True)
+    phone = db.Column(EncryptedType(db.String(15), get_key, FernetEngine), nullable=False)
+    address = db.Column(EncryptedType(db.String(50), get_key, FernetEngine), nullable=False)
+    username = db.Column(EncryptedType(db.String(30), get_key, FernetEngine), nullable=False)
     password = db.Column(db.String(60), nullable=False)
-    email = db.Column(db.String(40), nullable=True)
-    phone = db.Column(db.String(15), nullable=False)
-    address = db.Column(db.String(50), nullable=False)
     date_registered = db.Column(db.Date, nullable=False, default=date.today())
     is_admin = db.Column(db.Boolean, default=False)
     is_active = db.Column(db.Boolean, default=True)
@@ -263,10 +269,10 @@ class EventType():
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     time = db.Column(db.DateTime, nullable=True)
-    librarian = db.Column(db.String(30), nullable=False)
+    librarian = db.Column(EncryptedType(db.String(30), get_key, FernetEngine), nullable=False)
     type = db.Column(db.Integer, nullable=False)
     object_id = db.Column(db.Integer, nullable=True)
-    message = db.Column(db.String(450), nullable=False)
+    message = db.Column(EncryptedType(db.String(450), get_key, FernetEngine), nullable=False)
     is_seen = db.Column(db.Boolean, default=False)
 
     @property

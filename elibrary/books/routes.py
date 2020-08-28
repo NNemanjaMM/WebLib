@@ -93,7 +93,7 @@ def bookss(filtering = False, searching = False):
     else:
         list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     args_filter_and_sort = {**args_filter, **args_sort}
-    return render_template('books.html', form=form, form2=form2, books_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, count_filtered = count_filtered)
+    return render_template('books/books.html', form=form, form2=form2, books_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, count_filtered = count_filtered)
 
 @books.route("/booksr")
 @login_required
@@ -139,7 +139,7 @@ def books_update(book_id):
         form.title.data = book.title
         form.author.data = book.author
         form.has_error.data = book.has_error
-    return render_template('books_cu.html', form=form, is_creating=False)
+    return render_template('books/books_cu.html', form=form, is_creating=False)
 
 @books.route("/books/add", methods=['GET', 'POST'])
 @login_required
@@ -157,7 +157,7 @@ def books_add():
         db.session.commit()
         flash(_g('Book is successfully added')+'.', 'success')
         return redirect(url_for('books.bookss'))
-    return render_template('books_cu.html', form=form, is_creating=True)
+    return render_template('books/books_cu.html', form=form, is_creating=True)
 
 @books.route("/books/rent/<int:member_id>", methods=['GET', 'POST'])
 @login_required
@@ -230,7 +230,7 @@ def book_rent(member_id):
             db.session.commit()
             flash(_g('Book is successfully rented')+'.', 'info')
             return redirect(url_for('members.members_details', member_id=member_id))
-    return render_template('renting.html', form=form, message=message)
+    return render_template('books/renting.html', form=form, message=message)
 
 @books.route("/books/rents/<int:rent_id>", methods=['GET', 'POST'])
 @login_required
@@ -249,7 +249,7 @@ def book_rents_details(rent_id):
         db.session.commit()
         flash(_g('Book is successfully returned')+'.', 'info')
         return redirect(url_for('members.members_details', member_id=member.id))
-    return render_template('rent.html', form=form, rent=rent)
+    return render_template('books/rent.html', form=form, rent=rent)
 
 @books.route("/books/rents/find/<int:book_id>")
 @login_required
@@ -339,7 +339,7 @@ def book_rents():
     else:
         list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     args_filter_and_sort = {**args_filter, **args_sort}
-    return render_template('rents.html', form=form, rents_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, count_filtered = count_filtered)
+    return render_template('books/rents.html', form=form, rents_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, count_filtered = count_filtered)
 
 def has_new_values(book, form):
     return not (book.has_error == form.has_error.data and book.inv_number == int(form.inv_number.data) and book.signature == form.signature.data and book.title == form.title.data and book.author == form.author.data)

@@ -67,7 +67,7 @@ def extensionss():
     else:
         list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     args_filter_and_sort = {**args_filter, **args_sort}
-    return render_template('extensions.html', form=form, extensions_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, count_filtered = count_filtered)
+    return render_template('extensions/extensions.html', form=form, extensions_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, count_filtered = count_filtered)
 
 @extensions.route("/extensions/add/<int:member_id>", methods=['GET', 'POST'])
 @login_required
@@ -93,7 +93,7 @@ def extensions_add(member_id):
             db.session.commit()
             flash(_g('Membership is successfully extended to') + ' ' + member.date_expiration_print, 'info')
             return redirect(url_for('members.members_details', member_id=member.id))
-    return render_template('extension_add.html', form=form, member=member)
+    return render_template('extensions/extension_add.html', form=form, member=member)
 
 @extensions.route("/extensions/prices")
 @login_required
@@ -110,7 +110,7 @@ def prices():
         list = my_query.order_by(sort_criteria).all()
     else:
         list = my_query.order_by(desc(sort_criteria)).all()
-    return render_template('extension_prices.html', prices_list=list)
+    return render_template('extensions/extension_prices.html', prices_list=list)
 
 @extensions.route("/extensions/prices/add", methods=['GET', 'POST'])
 @login_required
@@ -130,7 +130,7 @@ def prices_add():
         db.session.commit()
         flash(_g('Price is successfully added'), 'info')
         return redirect(url_for('extensions.prices'))
-    return render_template('extension_prices_add.html', form=form)
+    return render_template('extensions/extension_prices_add.html', form=form)
 
 @extensions.route("/extensions/prices/<int:price_id>", methods=['GET', 'POST'])
 @login_required
@@ -151,4 +151,4 @@ def prices_update(price_id):
         return redirect(url_for('extensions.prices'))
     elif request.method == 'GET':
         form.note.data = price.note
-    return render_template('extension_prices_update.html', form=form, price=price)
+    return render_template('extensions/extension_prices_update.html', form=form, price=price)

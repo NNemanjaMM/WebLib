@@ -19,7 +19,7 @@ def members_details(member_id):
     member = Member.query.get_or_404(member_id)
     extensions = Extension.query.filter_by(member_id=member_id).order_by(desc('date_performed'))
     rents = Rental.query.filter(and_(Rental.member_id==member_id, Rental.is_terminated==False)).order_by(desc('date_deadline'))
-    return render_template('member.html', member=member, extensions=extensions, book_rentals=rents, max_books=MAX_RENTED_BOOKS)
+    return render_template('members/member.html', member=member, extensions=extensions, book_rentals=rents, max_books=MAX_RENTED_BOOKS)
 
 @members.route("/members/create", methods=['GET', 'POST'])
 @login_required
@@ -42,7 +42,7 @@ def members_create():
         db.session.commit()
         flash(_g('Member is successfully added')+'.', 'success')
         return redirect(url_for('members.members_details', member_id=member.id))
-    return render_template('member_cu.html', form=form, is_creating=True)
+    return render_template('members/member_cu.html', form=form, is_creating=True)
 
 @members.route("/members/update/<int:member_id>", methods=['GET', 'POST'])
 @login_required
@@ -74,7 +74,7 @@ def members_update(member_id):
         form.email.data = member.email
         form.phone.data = member.phone_print
         form.address.data = member.address
-    return render_template('member_cu.html', form=form, is_creating=False)
+    return render_template('members/member_cu.html', form=form, is_creating=False)
 
 @members.route("/members")
 @login_required
@@ -179,7 +179,7 @@ def memberss(filtering = False, searching = False):
     else:
         list = my_query.order_by(desc(sort_criteria)).paginate(page=page, per_page=PAGINATION)
     args_filter_and_sort = {**args_filter, **args_sort}
-    return render_template('members.html', form=form, form2=form2, members_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, count_filtered = count_filtered)
+    return render_template('members/members.html', form=form, form2=form2, members_list=list, extra_filter_args=args_filter, extra_sort_and_filter_args=args_filter_and_sort, count_filtered = count_filtered)
 
 @members.route("/membersr")
 @login_required

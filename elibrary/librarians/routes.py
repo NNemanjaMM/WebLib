@@ -37,7 +37,7 @@ def login():
         else:
             flash(_g('Login unsuccessfull')+'. '+_g('Please check username and password')+'.', 'danger')
     form.username.data=''
-    return render_template('login.html', title=_g('Login'), form=form)
+    return render_template('librarians/login.html', title=_g('Login'), form=form)
 
 @librarians.route("/login/password", methods=['GET', 'POST'])
 def login_password_reset():
@@ -47,23 +47,23 @@ def login_password_reset():
     if form.validate_on_submit():
         librarian = Librarian.query.filter_by(username=form.username.data).first()
         if librarian:
-            if librarian.first_name == form.first_name.data and librarian.last_name == form.last_name.data:
+            if librarian.first_name == form.first_name.data and librarian.last_name == form.last_name.data and librarian.is_active:
                 librarian.change_password = True
                 EventWriter.write_user(EventType.librarian_password_request, librarian.id, _g('Following librarian requested password change')+' ('+_g('Librarian username')+': '+librarian.username+'):'+librarian.log_data(), librarian.username)
                 db.session.commit()
                 flash(_g('Reset password request is successfully sent to the administrator')+'.', 'success')
                 return redirect(url_for('librarians.login'))
-        flash(_g('Combination of the username, first name and last name does not exist')+'.', 'error')
+        flash(_g('Combination of the username, first name and last name does not exist, or the account is inactive')+'.', 'error')
         flash(_g('Please check your input and try again')+'.', 'error')
     form.username.data=''
     form.first_name.data=''
     form.last_name.data=''
-    return render_template('login_password_reset.html', form=form, title=_g('Password change request'))
+    return render_template('librarians/login_password_reset.html', form=form, title=_g('Password change request'))
 
 @librarians.route("/account")
 @login_required
 def account():
-    return render_template('account.html', account=current_user, admin_is_editing=False)
+    return render_template('librarians/account.html', account=current_user, admin_is_editing=False)
 
 @librarians.route("/account/update", methods=['GET', 'POST'])
 @login_required
@@ -90,7 +90,7 @@ def account_change():
         form.email.data = current_user.email
         form.phone.data = current_user.phone_print
         form.address.data = current_user.address
-    return render_template('account_cu.html', form=form, admin_is_editing=False, is_creating=False)
+    return render_template('librarians/account_cu.html', form=form, admin_is_editing=False, is_creating=False)
 
 @librarians.route("/account/password", methods=['GET', 'POST'])
 @login_required
@@ -106,7 +106,7 @@ def account_password():
             return redirect(url_for('librarians.account'))
         else:
             flash(_g('Current password value is not correct')+'.', 'error')
-    return render_template('account_password_change.html', form=form)
+    return render_template('librarians/account_password_change.html', form=form)
 
 @librarians.route("/librarians")
 @login_required
@@ -130,7 +130,7 @@ def librarianss():
         list = my_query.order_by(sort_criteria).all()
     else:
         list = my_query.order_by(desc(sort_criteria)).all()
-    return render_template('librarians.html', librarians_list=list, include_disabled=include_disabled_val, extra_filter_args=filter_args)
+    return render_template('librarians/librarians.html', librarians_list=list, include_disabled=include_disabled_val, extra_filter_args=filter_args)
 
 @librarians.route("/librarians/details/<int:librarian_id>")
 @login_required
@@ -138,7 +138,7 @@ def librarians_details(librarian_id):
     if not current_user.is_admin:
         abort(403)
     librarian = Librarian.query.get_or_404(librarian_id)
-    return render_template('account.html', account=librarian, admin_is_editing=True)
+    return render_template('librarians/account.html', account=librarian, admin_is_editing=True)
 
 @librarians.route("/librarians/create", methods=['GET', 'POST'])
 @login_required
@@ -163,7 +163,7 @@ def librarians_create():
         db.session.commit()
         flash(_g('Account is successfully added')+'.', 'success')
         return redirect(url_for('librarians.librarianss'))
-    return render_template('account_cu.html', form=form, is_creating=True)
+    return render_template('librarians/account_cu.html', form=form, is_creating=True)
 
 @librarians.route("/librarians/password/<int:librarian_id>", methods=['GET', 'POST'])
 @login_required
@@ -183,7 +183,7 @@ def librarians_password(librarian_id):
         db.session.commit()
         flash(_g('Account password is successfully updated')+'.', 'success')
         return redirect(url_for('librarians.librarians_details', librarian_id=librarian.id))
-    return render_template('account_password_change_request.html', form=form, librarian=librarian)
+    return render_template('librarians/account_password_change_request.html', form=form, librarian=librarian)
 
 @librarians.route("/librarians/availability/<int:librarian_id>", methods=['GET', 'POST'])
 @login_required
@@ -206,7 +206,7 @@ def librarians_availability(librarian_id):
             flash(_g('Account availability is successfully updated')+'.', 'info')
         db.session.commit()
         return redirect(url_for('librarians.librarianss'))
-    return render_template('account_availability.html', form=form_decide, librarian=librarian)
+    return render_template('librarians/account_availability.html', form=form_decide, librarian=librarian)
 
 @librarians.route("/librarians/administrate/<int:librarian_id>", methods=['GET', 'POST'])
 @login_required
@@ -245,7 +245,7 @@ def librarians_administrate(librarian_id):
         msg_approve = _g('Please approve or reject your removal from administrators')+'.'
 
     if request.method == 'GET':
-        return render_template('account_administrate_request.html', form=form_decide, librarian=librarian, title=msg_title, text=msg_approve)
+        return render_template('librarians/account_administrate_request.html', form=form_decide, librarian=librarian, title=msg_title, text=msg_approve)
     elif request.method == 'POST':
         if form_decide.reject.data and form_decide.validate():
             response = False
